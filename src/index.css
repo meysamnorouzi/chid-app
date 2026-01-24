@@ -1,0 +1,127 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'YekanBakh';
+  src: url('/font/YekanBakh-VF.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  font-family: 'YekanBakh', system-ui, sans-serif;
+  direction: rtl;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+:root {
+  --border-radius-border-radius-radius-lg: var(--primitives-sizes-16);
+  --border-radius-border-radius-radius-md: var(--primitives-sizes-12);
+  --border-radius-border-radius-radius-sm: var(--primitives-sizes-8);
+  --dimension-space-spacing-md: var(--primitive-dimension-16);
+  --primitive-color-base-foreground: rgba(20, 20, 20, 1);
+  --primitive-dimension-16: 16px;
+  --primitives-colors-dark-main-goten: rgba(255, 255, 255, 1);
+  --primitives-colors-dark-main-zeno: rgba(255, 255, 255, 0.56);
+  --primitives-colors-light-main-gray-0-white: rgba(255, 255, 255, 1);
+  --primitives-colors-light-main-gray-100: rgba(230, 230, 230, 1);
+  --primitives-colors-light-main-gray-500: rgba(101, 101, 101, 1);
+  --primitives-colors-light-main-gray-600: rgba(77, 77, 77, 1);
+  --primitives-colors-light-main-gray-700: rgba(51, 51, 51, 1);
+  --primitives-persianui-dark-main: rgba(255, 255, 255, 1);
+  --primitives-persianui-light-main: rgba(255, 255, 255, 1);
+  --primitives-sizes-0: 0px;
+  --primitives-sizes-12: 12px;
+  --primitives-sizes-16: 16px;
+  --primitives-sizes-20: 20px;
+  --primitives-sizes-4: 4px;
+  --primitives-sizes-8: 8px;
+  --semantic-colors-colors-main-0-goten: var(--primitives-colors-light-main-gray-0-white);
+  --semantic-colors-colors-main-500-zeno: var(--primitives-colors-light-main-gray-500);
+  --semantic-colors-persian-ui-do-not-matter-main: var(--primitives-persianui-light-main);
+  --semantic-text-primary: var(--primitive-color-base-foreground);
+  --spaces-margins-gaps-UI-gap-none: var(--primitives-sizes-0);
+  --spaces-paddings-UI-padding-2xs: var(--primitives-sizes-20);
+  --spaces-paddings-UI-padding-3xs: var(--primitives-sizes-16);
+  --spaces-paddings-UI-padding-5xs: var(--primitives-sizes-8);
+  --spaces-paddings-UI-padding-6xs: var(--primitives-sizes-4);
+  --spaces-paddings-UI-padding-none: var(--primitives-sizes-0);
+  --UI-type-text-sm-s-font-family: "Estedad-VF", Helvetica;
+  --UI-type-text-sm-s-font-size: 14px;
+  --UI-type-text-sm-s-font-style: normal;
+  --UI-type-text-sm-s-font-weight: 600;
+  --UI-type-text-sm-s-letter-spacing: 0px;
+  --UI-type-text-sm-s-line-height: 24px;
+  --UI-type-text-xs-r-font-family: "Estedad-VF", Helvetica;
+  --UI-type-text-xs-r-font-size: 12px;
+  --UI-type-text-xs-r-font-style: normal;
+  --UI-type-text-xs-r-font-weight: 400;
+  --UI-type-text-xs-r-letter-spacing: 0px;
+  --UI-type-text-xs-r-line-height: 16px;
+}
+
+[data-border-radius-mode="smooth"] {
+  --border-radius-border-radius-radius-lg: var(--primitives-sizes-16);
+  --border-radius-border-radius-radius-md: var(--primitives-sizes-12);
+  --border-radius-border-radius-radius-sm: var(--primitives-sizes-8);
+}
+
+[data-border-radius-mode="sharp"] {
+  --border-radius-border-radius-radius-lg: var(--primitives-sizes-0);
+  --border-radius-border-radius-radius-md: var(--primitives-sizes-0);
+  --border-radius-border-radius-radius-sm: var(--primitives-sizes-0);
+}
+
+[data-semantic-colors-mode="light"] {
+  --semantic-colors-colors-main-0-goten: var(--primitives-colors-light-main-gray-0-white);
+  --semantic-colors-colors-main-500-zeno: var(--primitives-colors-light-main-gray-500);
+  --semantic-colors-persian-ui-do-not-matter-main: var(--primitives-persianui-light-main);
+}
+
+[data-semantic-colors-mode="dark"] {
+  --semantic-colors-colors-main-0-goten: var(--primitives-colors-dark-main-goten);
+  --semantic-colors-colors-main-500-zeno: var(--primitives-colors-dark-main-zeno);
+  --semantic-colors-persian-ui-do-not-matter-main: var(--primitives-persianui-dark-main);
+}
+
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
