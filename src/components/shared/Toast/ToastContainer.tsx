@@ -31,12 +31,14 @@ const ToastContainer = ({
   // Position mappings
   const positionMap = {
     'top-left': 'top-4 left-4',
-    'top-center': 'top-4 left-1/2 -translate-x-1/2',
+    'top-center': 'top-0 left-0 right-0 w-full px-4 pt-4',
     'top-right': 'top-4 right-4',
     'bottom-left': 'bottom-4 left-4',
-    'bottom-center': 'bottom-4 left-1/2 -translate-x-1/2',
+    'bottom-center': 'bottom-0 left-0 right-0 w-full px-4 pb-4',
     'bottom-right': 'bottom-4 right-4',
   };
+  
+  const isFullWidth = position === 'bottom-center' || position === 'top-center';
 
   const displayedToasts = toasts.slice(0, maxToasts);
 
@@ -54,6 +56,7 @@ const ToastContainer = ({
         <Toast
           key={toast.id}
           {...toast}
+          fullWidth={isFullWidth}
           onClose={() => {
             onRemove(toast.id);
             toast.onClose?.();

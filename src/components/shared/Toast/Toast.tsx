@@ -22,6 +22,7 @@ const Toast = ({
   className = '',
   style,
   'aria-label': ariaLabel,
+  fullWidth = false,
 }: ToastProps) => {
   // Get theme from context, fallback to default theme if not in documentation context
   const themeContext = useContext(DocumentationThemeContext);
@@ -104,7 +105,9 @@ const Toast = ({
 
   return (
     <div
-      className={`flex items-start gap-3 p-4 rounded-lg shadow-lg min-w-[300px] max-w-[500px] ${className}`}
+      className={`flex items-start gap-3 p-4 rounded-lg shadow-lg ${
+        fullWidth ? 'w-full max-w-full' : 'min-w-[300px] max-w-[500px]'
+      } ${className}`}
       style={{
         backgroundColor: theme.background.card,
         border: `1px solid ${colors.border}`,

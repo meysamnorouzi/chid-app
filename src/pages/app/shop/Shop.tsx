@@ -340,6 +340,7 @@ const Shop = () => {
         greeting="سلام ، محمد"
         subtitle="به فروشگاه دیجی پلی خوش اومدی"
         icon={<ShoppingBagIcon className="w-5 h-5 text-[#7e4bd0]" />}
+        showCartBadge={true}
       />
       <div className="px-4">
 

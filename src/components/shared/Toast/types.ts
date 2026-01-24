@@ -85,6 +85,11 @@ export interface ToastProps {
    * ARIA label for accessibility
    */
   'aria-label'?: string;
+  
+  /**
+   * Make toast full width
+   */
+  fullWidth?: boolean;
 }
 
 /**

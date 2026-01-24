@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { ThemeLayout } from "../theme";
 import BottomNavigationApp from "../components/shared/BottomNavigationApp";
+import { ToastProvider } from "../components/shared/Toast";
 
 interface MainLayoutProps {
   children?: ReactNode;
@@ -17,20 +18,23 @@ const MainLayout = ({ children }: MainLayoutProps) => {
   const location = useLocation();
   const shouldHideBottomNav = 
     location.pathname.startsWith('/digifun') || 
-    /^\/shop\/[^/]+$/.test(location.pathname);
+    /^\/shop\/[^/]+$/.test(location.pathname) ||
+    location.pathname === '/cart';
 
   return (
     <ThemeLayout>
-      <div className="min-h-screen flex flex-col" dir="rtl">
-        {/* Header */}
+      <ToastProvider position="top-center" maxToasts={3}>
+        <div className="min-h-screen flex flex-col" dir="rtl">
+          {/* Header */}
 
-        {/* Main Content */}
-        <main className="flex-1 bg-gray-50" role="main">
-          {children || <Outlet />}
-        </main>
+          {/* Main Content */}
+          <main className="flex-1 bg-gray-50" role="main">
+            {children || <Outlet />}
+          </main>
 
-        {!shouldHideBottomNav && <BottomNavigationApp />}
-      </div>
+          {!shouldHideBottomNav && <BottomNavigationApp />}
+        </div>
+      </ToastProvider>
     </ThemeLayout>
   );
 };

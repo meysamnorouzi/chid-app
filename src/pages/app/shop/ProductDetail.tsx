@@ -11,7 +11,9 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import WalletHeader from "../../../components/shared/Wallet/WalletHeader";
-import { Breadcrumb, Chips } from "../../../components/shared";
+import { Breadcrumb, Chips, useToast } from "../../../components/shared";
+import { useCart } from "../../../hooks/useCart";
+import { formatPrice, parsePrice } from "../../../utils/priceUtils";
 
 interface ProductVariant {
   id: string;
@@ -502,15 +504,6 @@ const getAllProducts = (): Product[] => {
   return productSections.flatMap((section) => section.products);
 };
 
-// تابع برای تبدیل عدد به فرمت فارسی با جداکننده هزارگان
-const formatPrice = (price: number): string => {
-  return price.toLocaleString("fa-IR");
-};
-
-// تابع برای تبدیل رشته قیمت فارسی به عدد
-const parsePrice = (priceStr: string): number => {
-  return parseInt(priceStr.replace(/,/g, "").replace(/[۰-۹]/g, (d) => "۰۱۲۳۴۵۶۷۸۹".indexOf(d).toString()));
-};
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -518,6 +511,8 @@ const ProductDetail = () => {
 
   const allProducts = getAllProducts();
   const product = allProducts.find((p) => p.id === id);
+  const { addToCart } = useCart();
+  const { showToast } = useToast();
 
   // State برای variant های انتخاب شده
   const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({});
@@ -552,6 +547,38 @@ const ProductDetail = () => {
   
   const goToImage = (index: number) => {
     setCurrentImageIndex(index);
+  };
+  
+  // Add to cart handler
+  const handleAddToCart = () => {
+    if (!product) return;
+    
+    const finalPrice = calculateFinalPrice();
+    
+    // پیدا کردن فروشنده اول (ارزان‌ترین یا پیش‌فرض)
+    const selectedSeller = product.sellers && product.sellers.length > 0 
+      ? product.sellers[0] 
+      : null;
+    
+    addToCart({
+      productId: product.id,
+      title: product.title,
+      image: product.image,
+      price: product.price,
+      selectedVariants: selectedVariants,
+      finalPrice: finalPrice,
+      sellerId: selectedSeller?.id,
+      sellerName: selectedSeller?.name || "فروشگاه دیجی پلی",
+      shopName: "فروشگاه دیجی پلی",
+    });
+    
+    // Show success toast message
+    showToast({
+      type: 'success',
+      title: 'موفق',
+      message: 'محصول به سبد خرید اضافه شد',
+      duration: 3000,
+    });
   };
   
   // Modal functions
@@ -652,6 +679,7 @@ const ProductDetail = () => {
         greeting="سلام ، محمد"
         subtitle="مشاهده اطلاعات کامل محصول"
         icon={<ShoppingBagIcon className="w-5 h-5 text-[#7e4bd0]" />}
+        showCartBadge={true}
       />
 
       <div className="px-4 flex flex-col gap-4">
@@ -1125,7 +1153,10 @@ const ProductDetail = () => {
 
         {/* Action Buttons */}
         <div className="flex items-center gap-3">
-          <button className="flex-1 py-3 bg-[#7e4bd0] text-white rounded-lg font-semibold text-sm">
+          <button
+            onClick={handleAddToCart}
+            className="flex-1 py-3 bg-[#7e4bd0] text-white rounded-lg font-semibold text-sm hover:bg-[#6b3fb8] transition-colors"
+          >
             افزودن به سبد خرید
           </button>
           <button className="px-6 py-3 border-2 border-[#7e4bd0] text-[#7e4bd0] rounded-lg font-semibold text-sm flex items-center justify-center">

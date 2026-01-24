@@ -1,5 +1,7 @@
 import { IoNotifications } from "react-icons/io5";
 import { ReactNode } from "react";
+import { useNavigate } from "react-router-dom";
+import { useCart } from "../../../hooks/useCart";
 
 interface WalletHeaderProps {
   greeting?: string;
@@ -7,6 +9,7 @@ interface WalletHeaderProps {
   showBalance?: boolean;
   balance?: string;
   icon?: ReactNode;
+  showCartBadge?: boolean; // نمایش badge تعداد محصولات در سبد خرید
 }
 
 function WalletHeader({
@@ -15,7 +18,18 @@ function WalletHeader({
   showBalance = false,
   balance,
   icon,
+  showCartBadge = false,
 }: WalletHeaderProps) {
+  const navigate = useNavigate();
+  const { getTotalItems } = useCart();
+  const cartItemsCount = showCartBadge ? getTotalItems() : 0;
+
+  const handleIconClick = () => {
+    if (showCartBadge) {
+      navigate("/cart");
+    }
+  };
+
   return (
     <div className="flex items-center justify-between p-4 bg-white w-full">
       <div className="flex w-full items-center justify-between">
@@ -40,8 +54,20 @@ function WalletHeader({
         </div>
       </div>
 
-      <div className="p-2 border border-[#7e4bd0] w-fit rounded-full">
-        {icon || <IoNotifications className="w-5 h-5 text-[#7e4bd0]" />}
+      <div className="relative">
+        <div
+          onClick={showCartBadge ? handleIconClick : undefined}
+          className={`p-2 border border-[#7e4bd0] w-fit rounded-full ${
+            showCartBadge ? "cursor-pointer hover:bg-purple-50 transition-colors" : ""
+          }`}
+        >
+          {icon || <IoNotifications className="w-5 h-5 text-[#7e4bd0]" />}
+        </div>
+        {showCartBadge && cartItemsCount > 0 && (
+          <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
+            <span className="text-xs font-bold text-white">{cartItemsCount}</span>
+          </div>
+        )}
       </div>
     </div>
   );
