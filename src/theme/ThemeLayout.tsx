@@ -22,14 +22,14 @@ const ThemeLayout = ({ children }: ThemeLayoutProps) => {
   const { theme } = useTheme();
 
   return (
-    <div
-      className="min-h-screen transition-colors duration-300"
-      style={{
-        backgroundColor: theme.background.body,
-        color: theme.mode === 'dark' ? theme.colors.light.inverse : theme.colors.dark.default,
-      }}
-    >
-      <div className="app-shell">
+    <div className="desktop-wrapper">
+      <div
+        className="app-shell transition-colors duration-300"
+        style={{
+          backgroundColor: theme.background.body,
+          color: theme.mode === 'dark' ? theme.colors.light.inverse : theme.colors.dark.default,
+        }}
+      >
         {children}
       </div>
     </div>

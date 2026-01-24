@@ -35,63 +35,65 @@ const Onboarding = () => {
   };
 
   return (
-    <div className="onboarding-container app-shell">
-      {/* Video Background */}
-      <div className="video-background">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          onLoadedData={() => setIsVideoLoaded(true)}
-          className={`onboarding-video ${isVideoLoaded ? 'loaded' : ''}`}
-        >
-          <source
-            src="https://player.vimeo.com/progressive_redirect/playback/1017272898/rendition/720p/file.mp4?loc=external&log_user=0&signature=d02d61e39102e10801a1316ce6ba75bc842b6f7008f05fe111b3cac233caf241"
-            type="video/mp4"
-          />
-        </video>
-        <div className="video-overlay"></div>
-      </div>
-
-      {/* Content */}
-      <div className="onboarding-content">
-        {/* Skip Button */}
-        <button className="skip-button" onClick={handleSkip}>
-          رد کردن
-        </button>
-
-        {/* Step Indicator */}
-        <div className="step-indicator">
-          {steps.map((_, index) => (
-            <div
-              key={index}
-              className={`step-dot ${index === currentStep ? 'active' : ''} ${
-                index < currentStep ? 'completed' : ''
-              }`}
+    <div className="desktop-wrapper">
+      <div className="onboarding-container app-shell">
+        {/* Video Background */}
+        <div className="video-background">
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            onLoadedData={() => setIsVideoLoaded(true)}
+            className={`onboarding-video ${isVideoLoaded ? 'loaded' : ''}`}
+          >
+            <source
+              src="https://player.vimeo.com/progressive_redirect/playback/1017272898/rendition/720p/file.mp4?loc=external&log_user=0&signature=d02d61e39102e10801a1316ce6ba75bc842b6f7008f05fe111b3cac233caf241"
+              type="video/mp4"
             />
-          ))}
+          </video>
+          <div className="video-overlay"></div>
         </div>
 
-        {/* Step Content */}
-        <div className="step-content">
-          <h1 className="step-title">{steps[currentStep].title}</h1>
-          <p className="step-description">{steps[currentStep].description}</p>
-        </div>
-
-        {/* Navigation Buttons */}
-        <div className="navigation-buttons">
-          {currentStep > 0 && (
-            <button
-              className="nav-button prev-button"
-              onClick={() => setCurrentStep(currentStep - 1)}
-            >
-              قبلی
-            </button>
-          )}
-          <button className="nav-button next-button" onClick={handleNext}>
-            {currentStep === steps.length - 1 ? 'شروع' : 'بعدی'}
+        {/* Content */}
+        <div className="onboarding-content">
+          {/* Skip Button */}
+          <button className="skip-button" onClick={handleSkip}>
+            رد کردن
           </button>
+
+          {/* Step Indicator */}
+          <div className="step-indicator">
+            {steps.map((_, index) => (
+              <div
+                key={index}
+                className={`step-dot ${index === currentStep ? 'active' : ''} ${
+                  index < currentStep ? 'completed' : ''
+                }`}
+              />
+            ))}
+          </div>
+
+          {/* Step Content */}
+          <div className="step-content">
+            <h1 className="step-title">{steps[currentStep].title}</h1>
+            <p className="step-description">{steps[currentStep].description}</p>
+          </div>
+
+          {/* Navigation Buttons */}
+          <div className="navigation-buttons">
+            {currentStep > 0 && (
+              <button
+                className="nav-button prev-button"
+                onClick={() => setCurrentStep(currentStep - 1)}
+              >
+                قبلی
+              </button>
+            )}
+            <button className="nav-button next-button" onClick={handleNext}>
+              {currentStep === steps.length - 1 ? 'شروع' : 'بعدی'}
+            </button>
+          </div>
         </div>
       </div>
     </div>

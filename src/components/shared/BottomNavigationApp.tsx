@@ -38,7 +38,7 @@ function BottomNavigationApp() {
   }
 
   return (
-    <nav className="fixed bottom-0 left-1/2 w-full max-w-[430px] -translate-x-1/2 bg-white border-t border-gray-200 px-4 pb-6 pt-3" dir="rtl">
+    <nav className="sticky bottom-0 w-full bg-white border-t border-gray-200 px-4 pb-6 pt-3 z-50" dir="rtl">
       <div className="flex justify-around items-center max-w-md mx-auto">
         {navItems.map((item) => {
           const Icon = item.icon

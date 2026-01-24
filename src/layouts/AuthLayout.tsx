@@ -15,11 +15,11 @@ interface AuthLayoutProps {
 const AuthLayout = ({ children }: AuthLayoutProps) => {
   return (
     <ThemeLayout>
-      <div className="min-h-screen flex flex-col" dir="rtl">
+      <div className="min-h-full flex flex-col" dir="rtl">
         {/* Header */}
 
         {/* Main Content */}
-        <main className="flex-1 bg-gray-50" role="main">
+        <main className="flex-1" role="main">
           {children || <Outlet />}
         </main>
 
