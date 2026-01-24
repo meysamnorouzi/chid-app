@@ -315,7 +315,7 @@ const Cart = () => {
       </div>
 
       {/* Fixed Summary and Action Buttons */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-4 shadow-lg z-40">
+      <div className="sticky bottom-0 w-full bg-white border-t border-gray-200 px-4 py-4 shadow-lg z-40">
         {/* Wallet Balance */}
         <div className="bg-gradient-to-r from-[#7e4bd0] to-[#9d6fe8] rounded-lg p-4 mb-3 text-white">
           <div className="flex items-center justify-between">

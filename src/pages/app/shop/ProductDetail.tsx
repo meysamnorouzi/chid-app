@@ -1137,7 +1137,7 @@ const ProductDetail = () => {
       )}
 
       {/* Fixed Price and Action Buttons */}
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full  bg-white border-t border-gray-200 px-4 py-4 shadow-lg">
+      <div className="sticky bottom-0 w-full bg-white border-t border-gray-200 px-4 py-4 shadow-lg z-40">
         {/* Price */}
         <div className="flex items-center w-full justify-between pb-4">
           <div className="flex items-center  w-full justify-between gap-1">
