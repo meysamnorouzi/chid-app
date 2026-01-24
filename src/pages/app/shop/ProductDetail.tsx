@@ -5,7 +5,10 @@ import {
   ArrowUpTrayIcon,
   HeartIcon,
   ChevronLeftIcon,
+  ChevronRightIcon,
   CheckCircleIcon,
+  StarIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
 import WalletHeader from "../../../components/shared/Wallet/WalletHeader";
 import { Breadcrumb, Chips } from "../../../components/shared";
@@ -40,9 +43,26 @@ interface ProductSpecification {
   value: string; // مقدار مشخصه (مثل "تک رنگ")
 }
 
+interface UserReview {
+  id: string;
+  userName: string;
+  isBuyer: boolean; // آیا خریدار است
+  rating: number; // امتیاز از 1 تا 5
+  text: string; // متن دیدگاه
+  date: string; // تاریخ دیدگاه
+}
+
+interface ReviewSummary {
+  overallRating: number; // امتیاز کلی
+  totalReviews: number; // تعداد کل دیدگاه‌ها
+  buyerReviewsCount: number; // تعداد دیدگاه‌های خریداران
+  aiSummary?: string; // خلاصه دیدگاه‌ها تولید شده با AI
+}
+
 interface Product {
   id: string;
   image: string;
+  images?: string[]; // لیست تصاویر محصول برای carousel
   title: string;
   price: string;
   isFavorite?: boolean;
@@ -51,6 +71,10 @@ interface Product {
   variantOptions?: ProductVariantOption[]; // گزینه‌های variant محصول
   sellers?: Seller[]; // لیست فروشندگان و قیمت‌های آن‌ها
   specifications?: ProductSpecification[]; // مشخصات محصول
+  reviews?: {
+    summary: ReviewSummary;
+    userReviews: UserReview[];
+  };
 }
 
 // این داده‌ها باید از API یا state management بیایند
@@ -65,6 +89,11 @@ const getAllProducts = (): Product[] => {
           id: "1",
           image:
             "https://dkstatics-public.digikala.com/digikala-products/2a4a9b54fe7e10129644d6a9a54268c2208580c4_1758041894.jpg?x-oss-process=image/resize,m_lfit,h_300,w_300/format,webp/quality,q_80",
+          images: [
+            "https://dkstatics-public.digikala.com/digikala-products/2a4a9b54fe7e10129644d6a9a54268c2208580c4_1758041894.jpg?x-oss-process=image/resize,m_lfit,h_300,w_300/format,webp/quality,q_80",
+            "https://dkstatics-public.digikala.com/digikala-products/c83ed1542213c501b673031e33e4faa53a6791dc_1750576597.jpg?x-oss-process=image/resize,m_lfit,h_800,w_800/format,webp/quality,q_90",
+            "https://dkstatics-public.digikala.com/digikala-products/5d3dd3e71dc621bb60c9fecfdfe83237b4e74159_1746056905.jpg?x-oss-process=image/resize,m_lfit,h_800,w_800/format,webp/quality,q_90",
+          ],
           title: "کنسول بازی (همراه بازی انلاین و دو دسته اضافه )",
           price: "۱۲۰,۰۰۰,۰۰۰",
           isFavorite: true,
@@ -141,11 +170,42 @@ const getAllProducts = (): Product[] => {
               value: "۱۵.۶ اینچ",
             },
           ],
+          reviews: {
+            summary: {
+              overallRating: 4.6,
+              totalReviews: 209,
+              buyerReviewsCount: 262,
+              aiSummary: "کنسول بازی با قابلیت بازی آنلاین و دو دسته اضافه. این محصول یک محصول پرچم‌دار با طراحی با کیفیت، عملکرد قدرتمند و تجربه گیمینگ بهتر است. مناسب برای کاربران حرفه‌ای، گیمرها و تولیدکنندگان محتوا.",
+            },
+            userReviews: [
+              {
+                id: "review1",
+                userName: "کاربر دیجی پلی",
+                isBuyer: true,
+                rating: 5,
+                text: "درباره نقاط قوت و ضعف این محصول باید بگویم که تخصصی و فنی زیادی در طراحی و عملکرد دارد. تجربه خرید باید بگم از فروشگاه عالی بود و محصول به موقع رسید.",
+                date: "۲۱ دی ۱۴۰۴",
+              },
+              {
+                id: "review2",
+                userName: "کاربر دیجی پلی",
+                isBuyer: true,
+                rating: 4,
+                text: "محصول خوبی است اما قیمت کمی بالا است. کیفیت ساخت عالی است و عملکرد خوبی دارد.",
+                date: "۱۸ دی ۱۴۰۴",
+              },
+            ],
+          },
         },
         {
           id: "2",
           image:
             "https://dkstatics-public.digikala.com/digikala-products/c83ed1542213c501b673031e33e4faa53a6791dc_1750576597.jpg?x-oss-process=image/resize,m_lfit,h_800,w_800/format,webp/quality,q_90",
+          images: [
+            "https://dkstatics-public.digikala.com/digikala-products/c83ed1542213c501b673031e33e4faa53a6791dc_1750576597.jpg?x-oss-process=image/resize,m_lfit,h_800,w_800/format,webp/quality,q_90",
+            "https://dkstatics-public.digikala.com/digikala-products/2a4a9b54fe7e10129644d6a9a54268c2208580c4_1758041894.jpg?x-oss-process=image/resize,m_lfit,h_300,w_300/format,webp/quality,q_80",
+            "https://dkstatics-public.digikala.com/digikala-products/4ba5899a913140dddf69798fc936ff8c565af35f_1763455046.jpg?x-oss-process=image/resize,m_lfit,h_300,w_300/format,webp/quality,q_80",
+          ],
           title: "لپ تاپ گیمینگ ایسوس",
           price: "۱۳۰,۰۰۰,۰۰۰",
           isFavorite: true,
@@ -222,6 +282,40 @@ const getAllProducts = (): Product[] => {
               ],
             },
           ],
+          reviews: {
+            summary: {
+              overallRating: 4.7,
+              totalReviews: 156,
+              buyerReviewsCount: 189,
+              aiSummary: "لپ تاپ گیمینگ ایسوس با پردازنده قدرتمند و کارت گرافیک اختصاصی. این محصول یک لپ تاپ گیمینگ حرفه‌ای با طراحی با کیفیت، صفحه نمایش عالی و عملکرد فوق‌العاده است. مناسب برای گیمرها، طراحان گرافیک و کاربران حرفه‌ای که به عملکرد بالا نیاز دارند.",
+            },
+            userReviews: [
+              {
+                id: "review1",
+                userName: "کاربر دیجی پلی",
+                isBuyer: true,
+                rating: 5,
+                text: "لپ تاپ فوق‌العاده‌ای است! کارت گرافیک NVIDIA خیلی قوی است و بازی‌های سنگین را بدون مشکل اجرا می‌کند. صفحه نمایش ۱۷ اینچی هم کیفیت عالی دارد. تنها نکته منفی وزن آن است که کمی سنگین است.",
+                date: "۲۵ دی ۱۴۰۴",
+              },
+              {
+                id: "review2",
+                userName: "کاربر دیجی پلی",
+                isBuyer: true,
+                rating: 4,
+                text: "لپ تاپ خوبی است و عملکرد مناسبی دارد. برای کارهای گرافیکی و بازی مناسب است. اما باتری خیلی دوام نمی‌آورد و باید همیشه به برق وصل باشد.",
+                date: "۲۰ دی ۱۴۰۴",
+              },
+              {
+                id: "review3",
+                userName: "کاربر دیجی پلی",
+                isBuyer: true,
+                rating: 5,
+                text: "بهترین لپ تاپ گیمینگی که تا حالا داشتم. پردازنده AMD Ryzen 9 خیلی قدرتمند است و همه بازی‌ها را با تنظیمات بالا اجرا می‌کند. صفحه کلید RGB هم خیلی زیبا است.",
+                date: "۱۵ دی ۱۴۰۴",
+              },
+            ],
+          },
         },
         {
           id: "3",
@@ -427,6 +521,56 @@ const ProductDetail = () => {
 
   // State برای variant های انتخاب شده
   const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({});
+  
+  // State برای carousel تصاویر محصول
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  
+  // State برای modal بزرگنمایی تصویر
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+  const [modalImageIndex, setModalImageIndex] = useState(0);
+  
+  // لیست تصاویر محصول
+  const productImages = product?.images && product.images.length > 0 
+    ? product.images 
+    : product?.image 
+    ? [product.image] 
+    : [];
+  
+  // Reset image index when product changes
+  useEffect(() => {
+    setCurrentImageIndex(0);
+  }, [id]);
+  
+  // Navigation functions
+  const goToNextImage = () => {
+    setCurrentImageIndex((prev) => (prev + 1) % productImages.length);
+  };
+  
+  const goToPreviousImage = () => {
+    setCurrentImageIndex((prev) => (prev - 1 + productImages.length) % productImages.length);
+  };
+  
+  const goToImage = (index: number) => {
+    setCurrentImageIndex(index);
+  };
+  
+  // Modal functions
+  const openImageModal = (index: number) => {
+    setModalImageIndex(index);
+    setIsImageModalOpen(true);
+  };
+  
+  const closeImageModal = () => {
+    setIsImageModalOpen(false);
+  };
+  
+  const goToNextModalImage = () => {
+    setModalImageIndex((prev) => (prev + 1) % productImages.length);
+  };
+  
+  const goToPreviousModalImage = () => {
+    setModalImageIndex((prev) => (prev - 1 + productImages.length) % productImages.length);
+  };
 
   // مقداردهی اولیه variant ها (اولین گزینه هر variant)
   useEffect(() => {
@@ -467,6 +611,19 @@ const ProductDetail = () => {
     return formatPrice(finalPrice);
   };
 
+  // پیدا کردن محصولات مشابه بر اساس categoryId
+  const getSimilarProducts = (): Product[] => {
+    if (!product || !product.categoryId) return [];
+    
+    const similar = allProducts
+      .filter((p) => p.categoryId === product.categoryId && p.id !== product.id)
+      .slice(0, 10); // حداکثر 10 محصول مشابه
+    
+    return similar;
+  };
+
+  const similarProducts = getSimilarProducts();
+
   // تغییر variant انتخاب شده
   const handleVariantChange = (optionType: string, variantId: string) => {
     setSelectedVariants((prev) => ({
@@ -490,7 +647,7 @@ const ProductDetail = () => {
   }
 
   return (
-    <div className="flex flex-col bg-white min-h-screen pb-32">
+    <div className="flex flex-col bg-white min-h-screen pb-40">
       <WalletHeader
         greeting="سلام ، محمد"
         subtitle="مشاهده اطلاعات کامل محصول"
@@ -519,13 +676,53 @@ const ProductDetail = () => {
           </button>
         </div>
 
-        {/* Product Image */}
-        <div className="relative w-full rounded-lg overflow-hidden bg-gray-100">
-          <img
-            src={product.image}
-            alt={product.title}
-            className="w-full aspect-square object-cover"
-          />
+        {/* Product Image Carousel */}
+        <div className="relative w-full rounded-lg overflow-hidden">
+          <div 
+            className="relative w-full aspect-square overflow-hidden cursor-pointer"
+            onClick={() => openImageModal(currentImageIndex)}
+          >
+            {/* Images Container */}
+            <div 
+              className="flex transition-transform duration-300 ease-in-out h-full"
+              style={{ 
+                transform: `translateX(-${currentImageIndex * 100}%)`,
+                width: `${productImages.length * 100}%`
+              }}
+            >
+              {productImages.map((image, index) => (
+                  <div
+                    key={index}
+                    className="w-full h-full shrink-0"
+                    style={{ width: `${100 / productImages.length}%` }}
+                  >
+                  <img
+                    src={image}
+                    alt={`${product.title} - تصویر ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          {/* Dots Indicator - Outside the image */}
+          {productImages.length > 1 && (
+            <div className="flex items-center justify-center w-full gap-1 mt-2">
+              {productImages.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => goToImage(index)}
+                  className={`transition-all duration-300 rounded-full ${
+                    currentImageIndex === index
+                      ? "bg-black w-5"
+                      : "bg-gray-500 w-2 hover:bg-gray-400"
+                  } h-2`}
+                  aria-label={`رفتن به تصویر ${index + 1}`}
+                />
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Product Info */}
@@ -715,8 +912,201 @@ const ProductDetail = () => {
               </div>
             </div>
           )}
+
+          {/* User Reviews Section */}
+          {product.reviews && (
+            <div className="flex flex-col gap-4 mt-4">
+              {/* Header */}
+              <div className="flex items-center justify-between">
+                <button className="text-sm text-gray-600 hover:text-gray-800">
+                  مشاهده {product.reviews.summary.totalReviews} دیدگاه <span className="inline-block">›</span>
+                </button>
+                <h2 className="text-base font-semibold text-black">دیدگاه کاربرها</h2>
+              </div>
+
+              {/* Overall Rating */}
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1">
+                  <StarIcon className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                  <span className="text-base font-semibold text-black">
+                    {product.reviews.summary.overallRating}
+                  </span>
+                </div>
+                <span className="text-sm text-gray-500">
+                  (بر اساس نظر {product.reviews.summary.buyerReviewsCount} خریدار)
+                </span>
+              </div>
+
+              {/* Review Cards - Horizontal Scroll */}
+              <div className="overflow-x-auto -mx-4 px-4">
+                <div className="flex gap-3" style={{ direction: 'rtl' }}>
+                  {/* AI Summary Card */}
+                  {product.reviews.summary.aiSummary && (
+                    <div className="bg-[#7e4bd0] rounded-lg p-4 text-white shrink-0 w-[85%] min-w-[280px]">
+                      <div className="flex items-center gap-2 mb-2">
+                        <svg
+                          className="w-5 h-5"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                        <h3 className="text-sm font-semibold">خلاصه دیدگاه های خریداران</h3>
+                      </div>
+                      <p className="text-sm leading-relaxed mb-2">
+                        {product.reviews.summary.aiSummary}
+                      </p>
+                      <button className="text-sm underline opacity-90 hover:opacity-100">
+                        مشاهده بیشتر
+                      </button>
+                      <p className="text-xs opacity-75 mt-2">تولید شده با هوش مصنوعی</p>
+                    </div>
+                  )}
+
+                  {/* User Reviews */}
+                  {product.reviews.userReviews.map((review) => (
+                    <div key={review.id} className="bg-white border border-gray-200 rounded-lg p-4 shrink-0 w-[85%] min-w-[280px]">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-sm font-semibold text-black">{review.userName}</span>
+                        {review.isBuyer && (
+                          <>
+                            <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                            <span className="text-xs text-gray-500">خریدار</span>
+                          </>
+                        )}
+                      </div>
+                      
+                      {/* Rating Stars */}
+                      <div className="flex items-center gap-1 mb-2">
+                        {[...Array(5)].map((_, index) => (
+                          <StarIcon
+                            key={index}
+                            className={`w-4 h-4 ${
+                              index < review.rating
+                                ? 'fill-yellow-400 text-yellow-400'
+                                : 'text-gray-300'
+                            }`}
+                          />
+                        ))}
+                      </div>
+
+                      {/* Review Text */}
+                      <p className="text-sm text-gray-700 leading-relaxed mb-2 line-clamp-3">
+                        {review.text}
+                      </p>
+
+                      <button className="text-sm text-[#7e4bd0] hover:underline mb-2">
+                        مشاهده بیشتر
+                      </button>
+
+                      <p className="text-xs text-gray-500">{review.date}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Similar Products Section */}
+          {similarProducts.length > 0 && (
+            <div className="flex flex-col gap-3 mt-6 mb-4">
+              <h2 className="text-base font-semibold text-black">محصولات مشابه</h2>
+              <div className="overflow-x-auto -mx-4 px-4">
+                <div className="flex gap-3" style={{ direction: 'rtl' }}>
+                  {similarProducts.map((similarProduct) => (
+                    <div
+                      key={similarProduct.id}
+                      onClick={() => navigate(`/shop/${similarProduct.id}`)}
+                      className="bg-white border border-gray-200 rounded-lg p-3 shrink-0 w-[45%] min-w-[160px] cursor-pointer hover:border-[#7e4bd0] transition-colors"
+                    >
+                      <div className="relative w-full aspect-square rounded-lg overflow-hidden bg-gray-100 mb-2">
+                        <img
+                          src={similarProduct.image}
+                          alt={similarProduct.title}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <h3 className="text-xs font-semibold text-black mb-1 line-clamp-2 min-h-10">
+                        {similarProduct.title}
+                      </h3>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-1">
+                          <p className="text-sm font-bold text-black">
+                            {similarProduct.price}
+                          </p>
+                          <p className="text-xs text-gray-500">تومان</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
+
+      {/* Image Zoom Modal */}
+      {isImageModalOpen && (
+        <div 
+          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
+          onClick={closeImageModal}
+        >
+          {/* Close Button */}
+          <button
+            onClick={closeImageModal}
+            className="absolute top-4 left-4 p-2 bg-white/20 hover:bg-white/30 rounded-full transition-all z-10"
+            aria-label="بستن"
+          >
+            <XMarkIcon className="w-6 h-6 text-white" />
+          </button>
+
+          {/* Image Container */}
+          <div 
+            className="relative max-w-full max-h-[90vh] w-full h-full flex items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={productImages[modalImageIndex]}
+              alt={`${product.title} - تصویر ${modalImageIndex + 1}`}
+              className="max-w-full max-h-full object-contain"
+            />
+
+            {/* Navigation Arrows */}
+            {productImages.length > 1 && (
+              <>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    goToPreviousModalImage();
+                  }}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-white/20 hover:bg-white/30 rounded-full transition-all z-10"
+                  aria-label="تصویر قبلی"
+                >
+                  <ChevronRightIcon className="w-6 h-6 text-white" />
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    goToNextModalImage();
+                  }}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-white/20 hover:bg-white/30 rounded-full transition-all z-10"
+                  aria-label="تصویر بعدی"
+                >
+                  <ChevronLeftIcon className="w-6 h-6 text-white" />
+                </button>
+              </>
+            )}
+
+            {/* Image Counter */}
+            {productImages.length > 1 && (
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 bg-black/50 rounded-full text-white text-sm">
+                {modalImageIndex + 1} / {productImages.length}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Fixed Price and Action Buttons */}
       <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full  bg-white border-t border-gray-200 px-4 py-4 shadow-lg">

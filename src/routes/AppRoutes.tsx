@@ -1,7 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthLayout, MainLayout } from '../layouts';
 import DocumentationLayout from '../layouts/DocumentationLayout';
-import DevLayout from '../layouts/DevLayout';
 import Home from '../pages/app/Home';
 import Onboarding from '../pages/Onboarding';
 import Documentation from '../pages/Documentation/Documentation';

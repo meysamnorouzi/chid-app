@@ -48,7 +48,7 @@ const QrCode = () => {
           .then(() => {
             scannerRef.current?.clear();
           })
-          .catch((err: unknown) => {
+          .catch((err) => {
             console.error('Error stopping scanner:', err);
           });
       }
@@ -78,7 +78,7 @@ const QrCode = () => {
           qrbox: { width: 250, height: 250 },
           aspectRatio: 1.0,
         },
-        (decodedText: string) => {
+        (decodedText) => {
           handleScanSuccess(decodedText);
         },
         () => {
