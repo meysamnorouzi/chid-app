@@ -197,6 +197,8 @@ import Friends from '../pages/app/friends/Friends';
 import Shop from '../pages/app/shop/Shop';
 import ProductDetail from '../pages/app/shop/ProductDetail';
 import Cart from '../pages/app/shop/Cart';
+import OrderReceipt from '../pages/app/shop/OrderReceipt';
+import Orders from '../pages/app/shop/Orders';
 import WalletMoney from '../pages/app/wallet/WalletMoney';
 import WalletDigit from '../pages/app/wallet/WalletDigit';
 import WalletSaving from '../pages/app/wallet/WalletSaving';
@@ -222,6 +224,8 @@ const AppRoutes = () => {
         <Route path="/shop" element={<Shop />} />
         <Route path="/shop/:id" element={<ProductDetail />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/order-receipt" element={<OrderReceipt />} />
+        <Route path="/orders" element={<Orders />} />
         <Route path="/wallet-money" element={<WalletMoney />} />
         <Route path="/wallet-digit" element={<WalletDigit />} />
         <Route path="/wallet-saving" element={<WalletSaving />} />

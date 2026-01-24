@@ -19,7 +19,8 @@ const MainLayout = ({ children }: MainLayoutProps) => {
   const shouldHideBottomNav = 
     location.pathname.startsWith('/digifun') || 
     /^\/shop\/[^/]+$/.test(location.pathname) ||
-    location.pathname === '/cart';
+    location.pathname === '/cart' ||
+    location.pathname === '/order-receipt';
 
   return (
     <ThemeLayout>

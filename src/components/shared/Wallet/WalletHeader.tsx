@@ -1,7 +1,8 @@
-import { IoNotifications } from "react-icons/io5";
-import { ReactNode } from "react";
+import { IoNotifications, IoReceipt, IoPersonCircle, IoPerson, IoSettings, IoLogOut } from "react-icons/io5";
+import { ReactNode, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../../../hooks/useCart";
+import Modal from "../Modal";
 
 interface WalletHeaderProps {
   greeting?: string;
@@ -23,6 +24,7 @@ function WalletHeader({
   const navigate = useNavigate();
   const { getTotalItems } = useCart();
   const cartItemsCount = showCartBadge ? getTotalItems() : 0;
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
   const handleIconClick = () => {
     if (showCartBadge) {
@@ -30,11 +32,39 @@ function WalletHeader({
     }
   };
 
+  const handleProfileClick = () => {
+    setIsProfileModalOpen(true);
+  };
+
+  const handleMenuClick = (menuItem: string) => {
+    setIsProfileModalOpen(false);
+    // Handle navigation based on menu item
+    switch (menuItem) {
+      case "orders":
+        navigate("/orders");
+        break;
+      case "userInfo":
+        // navigate("/user-info");
+        break;
+      case "profile":
+        // navigate("/profile");
+        break;
+      case "settings":
+        // navigate("/settings");
+        break;
+      case "logout":
+        // Handle logout logic
+        break;
+      default:
+        break;
+    }
+  };
+
   return (
     <div className="flex items-center justify-between p-4 bg-white w-full">
       <div className="flex w-full items-center justify-between">
         <div className="flex gap-2 items-center">
-          <div className="relative">
+          <div className="relative cursor-pointer" onClick={handleProfileClick}>
             <img
               src="image/69c68ee04e3f0f73009ee241d8716406.jpg"
               className="w-12 h-12 object-cover border-2 border-[#7e4bd0] object-top rounded-full"
@@ -69,6 +99,94 @@ function WalletHeader({
           </div>
         )}
       </div>
+
+      {/* Profile Modal */}
+      <Modal
+        isOpen={isProfileModalOpen}
+        onClose={() => setIsProfileModalOpen(false)}
+        showCloseButton={true}
+        showHandleBar={true}
+        maxHeight="85vh"
+      >
+        <div className="flex flex-col">
+          {/* Profile Header */}
+          <div className="flex flex-col items-center pb-6 border-b border-gray-200">
+            <div className="relative mb-4">
+              <img
+                src="image/69c68ee04e3f0f73009ee241d8716406.jpg"
+                className="w-24 h-24 object-cover border-4 border-[#7e4bd0] object-top rounded-full"
+                alt="Profile"
+              />
+              <div className="w-4 h-4 rounded-full bg-green-600 absolute top-1 right-1 border-2 border-white"></div>
+            </div>
+            <h3 className="text-xl font-bold text-gray-800 mb-1">{greeting}</h3>
+            <p className="text-sm text-gray-600">{subtitle}</p>
+            {showBalance && balance && (
+              <p className="text-sm text-[#7e4bd0] font-medium mt-2">{balance}</p>
+            )}
+          </div>
+
+          {/* Menu Items */}
+          <div className="flex flex-col gap-2 mt-6">
+            <button
+              onClick={() => handleMenuClick("orders")}
+              className="flex items-center gap-4 p-4 rounded-lg hover:bg-gray-50 transition-colors text-right"
+            >
+              <IoReceipt className="w-6 h-6 text-[#7e4bd0] shrink-0" />
+              <span className="flex-1 text-gray-800 font-medium">لیست سفارشات</span>
+              <svg className="w-5 h-5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+
+            <button
+              onClick={() => handleMenuClick("userInfo")}
+              className="flex items-center gap-4 p-4 rounded-lg hover:bg-gray-50 transition-colors text-right"
+            >
+              <IoPersonCircle className="w-6 h-6 text-[#7e4bd0] shrink-0" />
+              <span className="flex-1 text-gray-800 font-medium">اطلاعات کاربری</span>
+              <svg className="w-5 h-5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+
+            <button
+              onClick={() => handleMenuClick("profile")}
+              className="flex items-center gap-4 p-4 rounded-lg hover:bg-gray-50 transition-colors text-right"
+            >
+              <IoPerson className="w-6 h-6 text-[#7e4bd0] shrink-0" />
+              <span className="flex-1 text-gray-800 font-medium">پروفایل</span>
+              <svg className="w-5 h-5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+
+            <button
+              onClick={() => handleMenuClick("settings")}
+              className="flex items-center gap-4 p-4 rounded-lg hover:bg-gray-50 transition-colors text-right"
+            >
+              <IoSettings className="w-6 h-6 text-[#7e4bd0] shrink-0" />
+              <span className="flex-1 text-gray-800 font-medium">تنظیمات</span>
+              <svg className="w-5 h-5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+
+            <div className="border-t border-gray-200 my-2"></div>
+
+            <button
+              onClick={() => handleMenuClick("logout")}
+              className="flex items-center gap-4 p-4 rounded-lg hover:bg-red-50 transition-colors text-right"
+            >
+              <IoLogOut className="w-6 h-6 text-red-500 shrink-0" />
+              <span className="flex-1 text-red-500 font-medium">خروج از حساب</span>
+              <svg className="w-5 h-5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

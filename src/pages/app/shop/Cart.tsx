@@ -11,9 +11,11 @@ import {
 import WalletHeader from "../../../components/shared/Wallet/WalletHeader";
 import { useCart } from "../../../hooks/useCart";
 import { formatPrice } from "../../../utils/priceUtils";
+import { useToast } from "../../../components/shared/Toast/ToastProvider";
 
 const Cart = () => {
   const navigate = useNavigate();
+  const { showToast } = useToast();
   const {
     cartItems,
     removeFromCart,
@@ -70,6 +72,108 @@ const Cart = () => {
       clearInterval(interval);
     };
   }, []);
+
+  // Handle purchase
+  const handlePurchase = () => {
+    if (!hasEnoughBalance || totalPrice === 0 || cartItems.length === 0) {
+      return;
+    }
+
+    try {
+      // 1. Deduct from wallet balance
+      const parentWalletKey = "parentWallet";
+      const storedParentWallet = localStorage.getItem(parentWalletKey);
+      
+      if (storedParentWallet) {
+        const walletData = JSON.parse(storedParentWallet);
+        const newBalance = walletData.money - totalPrice;
+        
+        if (newBalance < 0) {
+          showToast({
+            type: 'error',
+            title: 'خطا',
+            message: 'موجودی کیف پول کافی نیست',
+          });
+          return;
+        }
+
+        walletData.money = newBalance;
+        localStorage.setItem(parentWalletKey, JSON.stringify(walletData));
+        setWalletBalance(newBalance);
+      }
+
+      // 2. Create order
+      const orderId = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const now = new Date();
+      const orderDate = now.toLocaleDateString('fa-IR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+
+      const orderData = {
+        orderId,
+        items: cartItems.map(item => ({
+          productId: item.productId,
+          title: item.title,
+          image: item.image,
+          price: item.price,
+          quantity: item.quantity,
+          finalPrice: item.finalPrice,
+          shopName: item.shopName,
+          sellerName: item.sellerName,
+        })),
+        totalPrice,
+        orderDate,
+        status: "با موفقیت پرداخت شد",
+        statusBadge: "در انتظار تایید والد",
+      };
+
+      // 3. Save order to localStorage
+      const storedOrders = localStorage.getItem("orders");
+      const orders = storedOrders ? JSON.parse(storedOrders) : [];
+      orders.push(orderData);
+      localStorage.setItem("orders", JSON.stringify(orders));
+
+      // 4. Add notification
+      const notifications = JSON.parse(localStorage.getItem("notifications") || "[]");
+      notifications.unshift({
+        id: `notif-${Date.now()}`,
+        type: "shop",
+        title: "سفارش جدید",
+        message: `سفارش شما با شماره ${orderId} ثبت شد و در انتظار تایید والد است`,
+        date: new Date().toISOString(),
+        read: false,
+      });
+      localStorage.setItem("notifications", JSON.stringify(notifications));
+
+      // 5. Clear cart
+      clearCart();
+
+      // 6. Show success toast
+      showToast({
+        type: 'success',
+        title: 'موفقیت',
+        message: 'سفارش شما با موفقیت ثبت شد',
+        duration: 3000,
+      });
+
+      // 7. Navigate to receipt page
+      setTimeout(() => {
+        navigate("/order-receipt", { state: { orderData } });
+      }, 500);
+
+    } catch (error) {
+      console.error("Error processing purchase:", error);
+      showToast({
+        type: 'error',
+        title: 'خطا',
+        message: 'خطایی در پردازش سفارش رخ داد. لطفا دوباره تلاش کنید.',
+      });
+    }
+  };
 
   if (cartItems.length === 0) {
     return (
@@ -261,12 +365,7 @@ const Cart = () => {
             پاک کردن سبد خرید
           </button>
           <button
-            onClick={() => {
-              if (hasEnoughBalance && totalPrice > 0) {
-                // TODO: Process payment and navigate to checkout
-                alert("در حال توسعه...");
-              }
-            }}
+            onClick={handlePurchase}
             disabled={!hasEnoughBalance || totalPrice === 0}
             className={`py-3 rounded-lg font-semibold text-sm transition-all ${
               hasEnoughBalance && totalPrice > 0
