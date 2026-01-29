@@ -29,6 +29,32 @@ export interface BookPart {
 /** Public path for the main PDF book file (DigiBook). */
 export const DIGIBOOK_PDF_URL = "/pdf/Kmyk.pdf";
 
+/** Base path for DigiBook category card images (public/image/digibook/). */
+const DIGIBOOK_IMAGE_BASE = "/image/digibook";
+
+/** DigiBook category for the Explore tab (جستجو و کاوش). */
+export interface DigiBookCategory {
+  id: string;
+  name: string;
+  color: string;
+  desc: string;
+  /** Card image from public/image/digibook/ (e.g. مانگا.png). */
+  imageUrl: string;
+}
+
+/** All DigiBook categories — single source of truth for second tab. Uses digibook images for cards. */
+export const DIGIBOOK_CATEGORIES: DigiBookCategory[] = [
+  { id: "manga", name: "مانگا", color: "from-rose-500 to-pink-600", desc: "دنیای اختصاصی آثار ژاپنی", imageUrl: `${DIGIBOOK_IMAGE_BASE}/مانگا.png` },
+  { id: "comic", name: "کمیک بوک", color: "from-blue-500 to-indigo-600", desc: "آثار غربی و ایرانی", imageUrl: `${DIGIBOOK_IMAGE_BASE}/کمیک بوک.png` },
+  { id: "characters", name: "شخصیت‌های محبوب", color: "from-violet-500 to-purple-600", desc: "داستان‌های بر پایه قهرمانان محبوب", imageUrl: `${DIGIBOOK_IMAGE_BASE}/شخصیت های محبوب.png` },
+  { id: "fantasy", name: "فانتزی", color: "from-amber-500 to-orange-600", desc: "جادویی، حماسی", imageUrl: `${DIGIBOOK_IMAGE_BASE}/فانتزی.png` },
+  { id: "scifi", name: "علمی‌تخیلی", color: "from-cyan-500 to-teal-600", desc: "آینده‌نگرانه، فضایی", imageUrl: `${DIGIBOOK_IMAGE_BASE}/علمی تخیلی.png` },
+  { id: "mystery", name: "جنایی معمایی", color: "from-slate-600 to-slate-800", desc: "پلیسی و رازآلود", imageUrl: `${DIGIBOOK_IMAGE_BASE}/جنایی معمایی.png` },
+  { id: "adventure", name: "ماجراجویی", color: "from-red-500 to-rose-600", desc: "سفر و کشف و هیجان", imageUrl: `${DIGIBOOK_IMAGE_BASE}/ماجراجویی.png` },
+  { id: "literature", name: "ادبیات ایران و جهان", color: "from-emerald-500 to-green-600", desc: "کلاسیک و معاصر", imageUrl: `${DIGIBOOK_IMAGE_BASE}/ادبیات ایران و جهان.png` },
+  { id: "digiteen", name: "اختصاصی دیجی‌تین", color: "from-[#7e4bd0] to-[#6a3fb8]", desc: "محتوای انحصاری دیجی‌تین", imageUrl: `${DIGIBOOK_IMAGE_BASE}/اختصاصی دیجی تین.png` },
+];
+
 export interface BookDetail extends BookItem {
   summary: string;
   tags: string[];
@@ -54,6 +80,14 @@ export const CONTINUE_READING: BookItem[] = [
 export const LIBRARY_OFFLINE: BookItem[] = [
   { id: "o1", title: "کتاب آفلاین نمونه", author: "نویسنده و", coverUrl: IMG2, categoryId: "fantasy", isOffline: true },
 ];
+
+/** All books for list views (Explore, Home) — used by getBooksByCategory. */
+const ALL_BOOKS: BookItem[] = [...TRENDING_BOOKS, ...CONTINUE_READING];
+
+/** Books in a given category (for Explore tab drill-down). */
+export function getBooksByCategory(categoryId: string): BookItem[] {
+  return ALL_BOOKS.filter((b) => b.categoryId === categoryId);
+}
 
 /** All book IDs that have detail + parts (for detail page and reader). */
 const BOOK_IDS = new Set(["t1", "t2", "t3", "c1", "c2", "o1", "pdf1"]);
@@ -188,18 +222,8 @@ export function getBookById(id: string): BookDetail | null {
 }
 
 export function getCategoryName(categoryId: string): string {
-  const names: Record<string, string> = {
-    manga: "مانگا",
-    comic: "کمیک بوک",
-    characters: "شخصیت‌های محبوب",
-    fantasy: "فانتزی",
-    scifi: "علمی‌تخیلی",
-    mystery: "جنایی معمایی",
-    adventure: "ماجراجویی",
-    literature: "ادبیات ایران و جهان",
-    digiteen: "اختصاصی دیجی‌تین",
-  };
-  return names[categoryId] ?? categoryId;
+  const cat = DIGIBOOK_CATEGORIES.find((c) => c.id === categoryId);
+  return cat?.name ?? categoryId;
 }
 
 /** Offline: persist saved book IDs (e.g. in localStorage). */

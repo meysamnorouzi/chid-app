@@ -9,7 +9,14 @@ import {
   ArrowDownTrayIcon,
 } from "@heroicons/react/24/outline";
 import { WalletHeader } from "../../../components/shared/Wallet";
-import { TRENDING_BOOKS, CONTINUE_READING, getOfflineBooks, type BookItem } from "./data";
+import {
+  TRENDING_BOOKS,
+  CONTINUE_READING,
+  getOfflineBooks,
+  DIGIBOOK_CATEGORIES,
+  getBooksByCategory,
+  type BookItem,
+} from "./data";
 
 type TabId = "home" | "explore" | "create" | "library";
 
@@ -20,19 +27,6 @@ const TABS: { id: TabId; label: string }[] = [
   { id: "library", label: "کتابخانه" },
 ];
 
-// دسته‌بندی‌های دیجی بوک
-const CATEGORIES = [
-  { id: "manga", name: "مانگا", color: "from-rose-500 to-pink-600", desc: "دنیای اختصاصی آثار ژاپنی" },
-  { id: "comic", name: "کمیک بوک", color: "from-blue-500 to-indigo-600", desc: "آثار غربی و ایرانی" },
-  { id: "characters", name: "شخصیت‌های محبوب", color: "from-violet-500 to-purple-600", desc: "داستان‌های بر پایه قهرمانان محبوب" },
-  { id: "fantasy", name: "فانتزی", color: "from-amber-500 to-orange-600", desc: "جادویی، حماسی" },
-  { id: "scifi", name: "علمی‌تخیلی", color: "from-cyan-500 to-teal-600", desc: "آینده‌نگرانه، فضایی" },
-  { id: "mystery", name: "جنایی معمایی", color: "from-slate-600 to-slate-800", desc: "پلیسی و رازآلود" },
-  { id: "adventure", name: "ماجراجویی", color: "from-red-500 to-rose-600", desc: "سفر و کشف و هیجان" },
-  { id: "literature", name: "ادبیات ایران و جهان", color: "from-emerald-500 to-green-600", desc: "کلاسیک و معاصر" },
-  { id: "digiteen", name: "اختصاصی دیجی‌تین", color: "from-[#7e4bd0] to-[#6a3fb8]", desc: "محتوای انحصاری دیجی‌تین" },
-];
-
 const DigiBook = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<TabId>("home");
@@ -40,18 +34,19 @@ const DigiBook = () => {
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   const libraryOfflineBooks = useMemo(() => getOfflineBooks(), [activeTab]);
 
-  const category = selectedCategoryId ? CATEGORIES.find((c) => c.id === selectedCategoryId) : null;
+  const category = selectedCategoryId
+    ? DIGIBOOK_CATEGORIES.find((c) => c.id === selectedCategoryId)
+    : null;
 
-  // Filter books by category (for Explore drill-down) — mock list
-  const booksByCategory = useMemo(() => {
-    if (!selectedCategoryId) return [];
-    return [...TRENDING_BOOKS, ...CONTINUE_READING].filter((b) => b.categoryId === selectedCategoryId);
-  }, [selectedCategoryId]);
+  const booksByCategory = useMemo(
+    () => (selectedCategoryId ? getBooksByCategory(selectedCategoryId) : []),
+    [selectedCategoryId]
+  );
 
   const filteredCategories = useMemo(() => {
-    if (!searchQuery.trim()) return CATEGORIES;
+    if (!searchQuery.trim()) return DIGIBOOK_CATEGORIES;
     const q = searchQuery.trim().toLowerCase();
-    return CATEGORIES.filter(
+    return DIGIBOOK_CATEGORIES.filter(
       (c) => c.name.toLowerCase().includes(q) || c.desc.toLowerCase().includes(q)
     );
   }, [searchQuery]);
@@ -226,10 +221,18 @@ const DigiBook = () => {
                           key={cat.id}
                           whileTap={{ scale: 0.98 }}
                           onClick={() => setSelectedCategoryId(cat.id)}
-                          className={`rounded-xl bg-gradient-to-br ${cat.color} p-4 text-white text-right shadow-md hover:shadow-lg transition flex flex-col justify-end min-h-[100px]`}
+                          className="rounded-xl overflow-hidden shadow-md hover:shadow-lg transition relative min-h-[100px] w-full text-right"
                         >
-                          <span className="font-bold text-base">{cat.name}</span>
-                          <span className="text-xs opacity-90 mt-0.5">{cat.desc}</span>
+                          <img
+                            src={cat.imageUrl}
+                            alt=""
+                            className="absolute inset-0 w-full h-full object-cover"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                          <div className="relative p-3 flex flex-col justify-end min-h-[100px] text-white">
+                            <span className="font-bold text-base">{cat.name}</span>
+                            <span className="text-xs opacity-90 mt-0.5">{cat.desc}</span>
+                          </div>
                         </motion.button>
                       ))}
                     </div>
