@@ -5,6 +5,19 @@ import { HeartIcon, BookmarkIcon } from "@heroicons/react/24/solid";
 import { HeartIcon as HeartOutline, BookmarkIcon as BookmarkOutline } from "@heroicons/react/24/outline";
 import { WalletHeader } from "../../../components/shared/Wallet";
 
+// دسته‌بندی‌های شهر فرنگ
+const CATEGORIES = [
+  { id: "funtime", name: "فان تایم" },
+  { id: "tech", name: "تکنولوژی و دیجیتال" },
+  { id: "fashion", name: "مد و فشن" },
+  { id: "cooking", name: "آشپزی" },
+  { id: "body-soul", name: "جسم و روح" },
+  { id: "short-tricks", name: "ترفندهای کوتاه" },
+  { id: "science-edu", name: "علمی و آموزشی" },
+  { id: "travel", name: "سیر و سفر" },
+  { id: "bizteen", name: "بیزینس تین" },
+];
+
 export interface ReelItem {
   id: string;
   title: string;
@@ -13,49 +26,21 @@ export interface ReelItem {
   posterUrl?: string;
   author: string;
   likes: number;
+  categoryId: string;
 }
 
 const SAMPLE_REELS: ReelItem[] = [
-  {
-    id: "1",
-    title: "طبیعت زیبا",
-    description: "مناظر کوهستانی ایران",
-    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-    author: "دیجی‌نوجوان",
-    likes: 1240,
-  },
-  {
-    id: "2",
-    title: "ماجراجویی",
-    description: "سفر به شمال",
-    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
-    author: "سارا",
-    likes: 890,
-  },
-  {
-    id: "3",
-    title: "سرگرمی",
-    description: "لحظات شاد",
-    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
-    author: "علی",
-    likes: 2340,
-  },
-  {
-    id: "4",
-    title: "موسیقی",
-    description: "آهنگ مورد علاقه",
-    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
-    author: "رضا",
-    likes: 560,
-  },
-  {
-    id: "5",
-    title: "علم و فناوری",
-    description: "نکات جالب",
-    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
-    author: "زهرا",
-    likes: 1890,
-  },
+  { id: "1", title: "طبیعت زیبا", description: "مناظر کوهستانی ایران", videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4", author: "دیجی‌نوجوان", likes: 1240, categoryId: "travel" },
+  { id: "2", title: "ماجراجویی", description: "سفر به شمال", videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4", author: "سارا", likes: 890, categoryId: "travel" },
+  { id: "3", title: "سرگرمی", description: "لحظات شاد", videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4", author: "علی", likes: 2340, categoryId: "funtime" },
+  { id: "4", title: "موسیقی", description: "آهنگ مورد علاقه", videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4", author: "رضا", likes: 560, categoryId: "funtime" },
+  { id: "5", title: "علم و فناوری", description: "نکات جالب", videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4", author: "زهرا", likes: 1890, categoryId: "tech" },
+  { id: "6", title: "استایل تابستانه", description: "مد و فشن نوجوان", videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4", author: "سارا", likes: 720, categoryId: "fashion" },
+  { id: "7", title: "صبحانه فوری", description: "دستور پخت آسان", videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4", author: "علی", likes: 1100, categoryId: "cooking" },
+  { id: "8", title: "مدیتیشن ۵ دقیقه", description: "آرامش جسم و روح", videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4", author: "زهرا", likes: 950, categoryId: "body-soul" },
+  { id: "9", title: "ترفند آیفون", description: "۴ نکته که نمی‌دانستی", videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4", author: "رضا", likes: 2100, categoryId: "short-tricks" },
+  { id: "10", title: "چرا آسمان آبیه؟", description: "علم به زبان ساده", videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4", author: "دیجی‌نوجوان", likes: 1680, categoryId: "science-edu" },
+  { id: "11", title: "استارتاپ در نوجوانی", description: "بیزینس تین", videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4", author: "سارا", likes: 830, categoryId: "bizteen" },
 ];
 
 interface ReelCardProps {
@@ -143,21 +128,28 @@ function ReelCard({ reel, isActive, isLiked, isSaved, onLike, onSave }: ReelCard
 const ShahrFarang = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [likedIds, setLikedIds] = useState<Set<string>>(new Set());
   const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
   const containerRef = useRef<HTMLDivElement>(null);
 
   const filteredReels = useMemo(() => {
-    if (!searchQuery.trim()) return SAMPLE_REELS;
-    const q = searchQuery.trim().toLowerCase();
-    return SAMPLE_REELS.filter(
-      (r) =>
-        r.title.toLowerCase().includes(q) ||
-        r.description.toLowerCase().includes(q) ||
-        r.author.toLowerCase().includes(q)
-    );
-  }, [searchQuery]);
+    let list = SAMPLE_REELS;
+    if (selectedCategoryId) {
+      list = list.filter((r) => r.categoryId === selectedCategoryId);
+    }
+    if (searchQuery.trim()) {
+      const q = searchQuery.trim().toLowerCase();
+      list = list.filter(
+        (r) =>
+          r.title.toLowerCase().includes(q) ||
+          r.description.toLowerCase().includes(q) ||
+          r.author.toLowerCase().includes(q)
+      );
+    }
+    return list;
+  }, [searchQuery, selectedCategoryId]);
 
   const handleLike = useCallback((id: string) => {
     setLikedIds((prev) => {
@@ -201,7 +193,7 @@ const ShahrFarang = () => {
   // Reset active index when filter changes
   useEffect(() => {
     setActiveIndex(0);
-  }, [searchQuery]);
+  }, [searchQuery, selectedCategoryId]);
 
   return (
     <div className="flex flex-col h-[100dvh] max-h-[100dvh] overflow-hidden bg-black" dir="rtl">
@@ -256,6 +248,37 @@ const ShahrFarang = () => {
             </motion.div>
           )}
         </AnimatePresence>
+      </div>
+
+      {/* Category pills */}
+      <div className="shrink-0 px-4 py-2 bg-white border-b border-gray-100">
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-0.5">
+          <button
+            type="button"
+            onClick={() => setSelectedCategoryId(null)}
+            className={`shrink-0 px-4 py-2 rounded-full text-sm font-semibold transition-colors ${
+              selectedCategoryId === null
+                ? "bg-[#7e4bd0] text-white"
+                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+            }`}
+          >
+            همه
+          </button>
+          {CATEGORIES.map((cat) => (
+            <button
+              key={cat.id}
+              type="button"
+              onClick={() => setSelectedCategoryId(cat.id)}
+              className={`shrink-0 px-4 py-2 rounded-full text-sm font-semibold transition-colors ${
+                selectedCategoryId === cat.id
+                  ? "bg-[#7e4bd0] text-white"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              }`}
+            >
+              {cat.name}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Reels feed - full height scroll with snap (scrollbar hidden) */}

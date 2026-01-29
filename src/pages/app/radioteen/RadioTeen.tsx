@@ -55,6 +55,9 @@ type ViewMode = "home" | "category" | "player";
 
 const SPEED_OPTIONS = [0.75, 1, 1.25, 1.5];
 
+const FEATURED_CATEGORY_ID = "comedy";
+const FEATURED_EPISODES = MOCK_EPISODES.filter((e) => e.categoryId === FEATURED_CATEGORY_ID).slice(0, 2);
+
 const RadioTeen = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
@@ -148,8 +151,7 @@ const RadioTeen = () => {
             >
               {/* Featured: ویژه امروز — کمدی */}
               {(() => {
-                const comedyCat = PILL_CATEGORIES.find((c) => c.id === "comedy");
-                const comedyEps = MOCK_EPISODES.filter((e) => e.categoryId === "comedy").slice(0, 2);
+                const featCat = PILL_CATEGORIES.find((c) => c.id === FEATURED_CATEGORY_ID);
                 return (
                   <motion.section
                     initial={{ opacity: 0, y: 20 }}
@@ -158,14 +160,14 @@ const RadioTeen = () => {
                     className="relative rounded-2xl overflow-hidden shadow-lg min-h-[180px]"
                   >
                     <img
-                      src={comedyCat?.image ?? `${RADIOTEEN_IMG}/کمدی.png`}
+                      src={featCat?.image ?? `${RADIOTEEN_IMG}/کمدی.png`}
                       alt=""
                       className="absolute inset-0 w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/20" />
                     <div className="relative z-10 p-5 text-white flex flex-col h-full justify-end">
                       <p className="text-sm font-medium opacity-90 mb-0.5">
-                        ویژه امروز: کمدی
+                        ویژه امروز: {featCat?.name ?? "کمدی"}
                       </p>
                       <h2 className="text-xl font-bold mb-1">
                         پادکست‌های طنز و شاد
@@ -174,14 +176,14 @@ const RadioTeen = () => {
                         پیشنهاد این هفته
                       </p>
                       <div className="flex gap-3">
-                        {comedyEps.map((ep) => (
+                        {FEATURED_EPISODES.map((ep) => (
                           <button
                             key={ep.id}
                             onClick={() => handleEpisodeClick(ep)}
                             className="flex-1 min-w-0 flex items-center gap-2 bg-white/20 rounded-xl p-2 backdrop-blur-sm hover:bg-white/30 transition"
                           >
                             <img
-                              src={ep.coverUrl}
+                              src={featCat?.image ?? ep.coverUrl}
                               alt=""
                               className="w-12 h-12 rounded-lg object-cover aspect-square"
                             />
@@ -232,12 +234,12 @@ const RadioTeen = () => {
                       key={pill.id}
                       whileTap={{ scale: 0.98 }}
                       onClick={() => handleCategoryClick(pill.id)}
-                      className="relative rounded-2xl overflow-hidden aspect-[4/3] min-h-[110px] w-full shadow-lg hover:shadow-xl transition-shadow text-right group"
+                      className="relative rounded-2xl overflow-hidden aspect-[2/1] min-h-[110px] w-full shadow-lg hover:shadow-xl transition-shadow text-right group"
                     >
                       <img
                         src={pill.image}
                         alt=""
-                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        className="absolute inset-0 w-full h-full object-cover object-right group-hover:scale-105 transition-transform duration-300"
                       />
                       <div
                         className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-transparent"
@@ -282,15 +284,15 @@ const RadioTeen = () => {
                 </h2>
               </div>
 
-              <div className="relative rounded-2xl overflow-hidden h-24 -mx-1">
+              <div className="relative rounded-2xl overflow-hidden h-44 min-h-[180px]">
                 <img
                   src={category.image}
                   alt=""
-                  className="absolute inset-0 w-full h-full object-cover"
+                  className="absolute inset-0 w-full h-full object-cover object-right"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                <div className="absolute inset-0 flex items-end justify-end p-3">
-                  <span className="text-white font-bold text-lg drop-shadow-md">
+                <div className="absolute inset-0 flex items-end justify-end p-4">
+                  <span className="text-white font-bold text-xl drop-shadow-md">
                     {category.name}
                   </span>
                 </div>
@@ -319,9 +321,9 @@ const RadioTeen = () => {
                       onClick={() => handleEpisodeClick(ep)}
                     >
                       <img
-                        src={ep.coverUrl}
+                        src={category.image}
                         alt=""
-                        className="w-14 h-14 rounded-lg object-cover aspect-square"
+                        className="w-14 h-14 rounded-lg object-cover aspect-square shrink-0"
                       />
                       <div className="flex-1 min-w-0 text-right">
                         <p className="font-semibold text-gray-800 truncate">
