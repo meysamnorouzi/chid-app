@@ -41,7 +41,6 @@ export interface DigiBookCategory {
   /** Card image from public/image/digibook/ (e.g. مانگا.png). */
   imageUrl: string;
 }
-
 /** All DigiBook categories — single source of truth for second tab. Uses digibook images for cards. */
 export const DIGIBOOK_CATEGORIES: DigiBookCategory[] = [
   { id: "manga", name: "مانگا", color: "from-rose-500 to-pink-600", desc: "دنیای اختصاصی آثار ژاپنی", imageUrl: `${DIGIBOOK_IMAGE_BASE}/مانگا.png` },
