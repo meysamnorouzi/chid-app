@@ -174,16 +174,14 @@ export function getBookById(id: string): BookDetail | null {
 export function getCategoryName(categoryId: string): string {
   const names: Record<string, string> = {
     manga: "مانگا",
-    comic: "کمیک",
-    fanfiction: "فن‌فیکشن",
+    comic: "کمیک بوک",
+    characters: "شخصیت‌های محبوب",
     fantasy: "فانتزی",
     scifi: "علمی‌تخیلی",
-    horror: "ترسناک",
-    teen: "داستان نوجوان",
-    mystery: "معمایی/جنایی",
-    action: "اکشن",
-    paranormal: "ماوراءالطبیعه",
-    magazines: "مجلات معروف",
+    mystery: "جنایی معمایی",
+    adventure: "ماجراجویی",
+    literature: "ادبیات ایران و جهان",
+    digiteen: "اختصاصی دیجی‌تین",
   };
   return names[categoryId] ?? categoryId;
 }

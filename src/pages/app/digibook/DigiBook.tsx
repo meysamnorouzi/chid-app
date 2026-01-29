@@ -20,19 +20,17 @@ const TABS: { id: TabId; label: string }[] = [
   { id: "library", label: "کتابخانه" },
 ];
 
-// دسته‌بندی‌های اصلی (Explore) per spec
+// دسته‌بندی‌های دیجی بوک
 const CATEGORIES = [
   { id: "manga", name: "مانگا", color: "from-rose-500 to-pink-600", desc: "دنیای اختصاصی آثار ژاپنی" },
-  { id: "comic", name: "کمیک", color: "from-blue-500 to-indigo-600", desc: "آثار غربی و ایرانی" },
-  { id: "fanfiction", name: "فن‌فیکشن", color: "from-violet-500 to-purple-600", desc: "داستان‌های بر پایه شخصیت‌های محبوب" },
+  { id: "comic", name: "کمیک بوک", color: "from-blue-500 to-indigo-600", desc: "آثار غربی و ایرانی" },
+  { id: "characters", name: "شخصیت‌های محبوب", color: "from-violet-500 to-purple-600", desc: "داستان‌های بر پایه قهرمانان محبوب" },
   { id: "fantasy", name: "فانتزی", color: "from-amber-500 to-orange-600", desc: "جادویی، حماسی" },
   { id: "scifi", name: "علمی‌تخیلی", color: "from-cyan-500 to-teal-600", desc: "آینده‌نگرانه، فضایی" },
-  { id: "horror", name: "ترسناک", color: "from-gray-700 to-gray-900", desc: "ژانر وحشت و بقا" },
-  { id: "teen", name: "داستان نوجوان", color: "from-emerald-500 to-green-600", desc: "روزمرگی نسل Z/Alpha" },
-  { id: "mystery", name: "معمایی/جنایی", color: "from-slate-600 to-slate-800", desc: "پلیسی و رازآلود" },
-  { id: "action", name: "اکشن", color: "from-red-500 to-rose-600", desc: "ماجراجویی پرتحرک" },
-  { id: "paranormal", name: "ماوراءالطبیعه", color: "from-indigo-600 to-purple-800", desc: "ارواح و موجودات خیالی" },
-  { id: "magazines", name: "مجلات معروف", color: "from-[#7e4bd0] to-[#6a3fb8]", desc: "مثل نشنال جئوگرافیک" },
+  { id: "mystery", name: "جنایی معمایی", color: "from-slate-600 to-slate-800", desc: "پلیسی و رازآلود" },
+  { id: "adventure", name: "ماجراجویی", color: "from-red-500 to-rose-600", desc: "سفر و کشف و هیجان" },
+  { id: "literature", name: "ادبیات ایران و جهان", color: "from-emerald-500 to-green-600", desc: "کلاسیک و معاصر" },
+  { id: "digiteen", name: "اختصاصی دیجی‌تین", color: "from-[#7e4bd0] to-[#6a3fb8]", desc: "محتوای انحصاری دیجی‌تین" },
 ];
 
 const DigiBook = () => {

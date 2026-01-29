@@ -14,15 +14,18 @@ import {
 import { HeartIcon as HeartIconSolid } from "@heroicons/react/24/solid";
 import { WalletHeader } from "../../../components/shared/Wallet";
 
-// Category pill (7 from spec; 8th optional for "داستان")
+const RADIOTEEN_IMG = "/image/radioteen";
+
+// دسته‌بندی‌های رادیوتین — هر کتگوری تصویر اختصاصی از /image/radioteen/
 const PILL_CATEGORIES = [
-  { id: "science-comedy", name: "علمی کمدی", color: "from-[#7e4bd0] to-[#a855f7]", isFlagship: true },
-  { id: "true-crime", name: "جنایت و معما", color: "from-[#dc2626] to-[#b91c1c]" },
-  { id: "business", name: "پول‌ساز", color: "from-[#16a34a] to-[#15803d]" },
-  { id: "tech", name: "گیک‌تین", color: "from-[#2563eb] to-[#1d4ed8]" },
-  { id: "wellness", name: "وایب مثبت", color: "from-[#ea580c] to-[#c2410c]" },
-  { id: "pop-culture", name: "رادیو سینما", color: "from-[#db2777] to-[#be185d]" },
-  { id: "gaming", name: "گیم‌روم", color: "from-[#4f46e5] to-[#4338ca]" },
+  { id: "comedy", name: "کمدی", image: `${RADIOTEEN_IMG}/کمدی.png`, color: "from-[#7e4bd0]/80 to-[#a855f7]/80", isFlagship: true },
+  { id: "mystery", name: "معمایی", image: `${RADIOTEEN_IMG}/معمایی.png`, color: "from-[#dc2626]/80 to-[#b91c1c]/80" },
+  { id: "poledar-shou", name: "پولدار شو", image: `${RADIOTEEN_IMG}/پولدار شو.png`, color: "from-[#16a34a]/80 to-[#15803d]/80" },
+  { id: "geekteen", name: "گیک تین", image: `${RADIOTEEN_IMG}/گیک تین.png`, color: "from-[#2563eb]/80 to-[#1d4ed8]/80" },
+  { id: "vibe", name: "خوش وایب", image: `${RADIOTEEN_IMG}/خوش وایب.png`, color: "from-[#ea580c]/80 to-[#c2410c]/80" },
+  { id: "historical", name: "تاریخی", image: `${RADIOTEEN_IMG}/تاریخی.png`, color: "from-[#db2777]/80 to-[#be185d]/80" },
+  { id: "digiteen", name: "اختصاصی دیجی‌تین", image: `${RADIOTEEN_IMG}/دیجی تین.png`, color: "from-[#4f46e5]/80 to-[#4338ca]/80" },
+  { id: "kibood", name: "کی بود چی بود چکار کرد؟", image: `${RADIOTEEN_IMG}/کی بود چی بود چکار کرد؟ (2).png`, color: "from-[#0d9488]/80 to-[#0f766e]/80" },
 ];
 
 interface Episode {
@@ -34,17 +37,18 @@ interface Episode {
   podcastName: string;
 }
 
-// Mock episodes per category (cover: square WebP-ready placeholders)
+// Mock episodes per category
 const MOCK_EPISODES: Episode[] = [
-  { id: "e1", title: "علم در برابر شایعات", coverUrl: "/image/c30443dd88560f56a71aef4bc60965b7.jpg", duration: "۴۵ دقیقه", categoryId: "science-comedy", podcastName: "Science Vs" },
-  { id: "e2", title: "ستاره‌ها و فضا", coverUrl: "/image/c30443dd88560f56a71aef4bc60965b7.jpg", duration: "۳۸ دقیقه", categoryId: "science-comedy", podcastName: "StarTalk" },
-  { id: "e3", title: "اپیزود نمونه جنایت", coverUrl: "/image/af0a4321-a97c-4f47-82c1-1507d9c2ca61.png", duration: "۵۰ دقیقه", categoryId: "true-crime", podcastName: "جنایت و معما" },
-  { id: "e4", title: "سرمایه‌گذاری برای نوجوانان", coverUrl: "/image/af0a4321-a97c-4f47-82c1-1507d9c2ca61.png", duration: "۴۲ دقیقه", categoryId: "business", podcastName: "پول‌ساز" },
-  { id: "e5", title: "هوش مصنوعی به زبان ساده", coverUrl: "/image/af0a4321-a97c-4f47-82c1-1507d9c2ca61.png", duration: "۳۵ دقیقه", categoryId: "tech", podcastName: "گیک‌تین" },
-  { id: "e6", title: "ذهن آگاه و آرامش", coverUrl: "/image/af0a4321-a97c-4f47-82c1-1507d9c2ca61.png", duration: "۴۰ دقیقه", categoryId: "wellness", podcastName: "وایب مثبت" },
-  { id: "e7", title: "سینمای امروز", coverUrl: "/image/af0a4321-a97c-4f47-82c1-1507d9c2ca61.png", duration: "۳۳ دقیقه", categoryId: "pop-culture", podcastName: "رادیو سینما" },
-  { id: "e8", title: "بازی‌های پرفروش", coverUrl: "/image/af0a4321-a97c-4f47-82c1-1507d9c2ca61.png", duration: "۴۸ دقیقه", categoryId: "gaming", podcastName: "گیم‌روم" },
-  { id: "e9", title: "اپیزود دوم علمی کمدی", coverUrl: "/image/c30443dd88560f56a71aef4bc60965b7.jpg", duration: "۴۱ دقیقه", categoryId: "science-comedy", podcastName: "Science Vs" },
+  { id: "e1", title: "علم در برابر شایعات", coverUrl: "/image/c30443dd88560f56a71aef4bc60965b7.jpg", duration: "۴۵ دقیقه", categoryId: "comedy", podcastName: "کمدی" },
+  { id: "e2", title: "ستاره‌ها و فضا", coverUrl: "/image/c30443dd88560f56a71aef4bc60965b7.jpg", duration: "۳۸ دقیقه", categoryId: "comedy", podcastName: "کمدی" },
+  { id: "e3", title: "راز شبِ بارانی", coverUrl: "/image/af0a4321-a97c-4f47-82c1-1507d9c2ca61.png", duration: "۵۰ دقیقه", categoryId: "mystery", podcastName: "معمایی" },
+  { id: "e4", title: "سرمایه‌گذاری برای نوجوانان", coverUrl: "/image/af0a4321-a97c-4f47-82c1-1507d9c2ca61.png", duration: "۴۲ دقیقه", categoryId: "poledar-shou", podcastName: "پولدار شو" },
+  { id: "e5", title: "هوش مصنوعی به زبان ساده", coverUrl: "/image/af0a4321-a97c-4f47-82c1-1507d9c2ca61.png", duration: "۳۵ دقیقه", categoryId: "geekteen", podcastName: "گیک تین" },
+  { id: "e6", title: "ذهن آگاه و آرامش", coverUrl: "/image/af0a4321-a97c-4f47-82c1-1507d9c2ca61.png", duration: "۴۰ دقیقه", categoryId: "vibe", podcastName: "خوش وایب" },
+  { id: "e7", title: "تاریخ ایران باستان", coverUrl: "/image/af0a4321-a97c-4f47-82c1-1507d9c2ca61.png", duration: "۳۳ دقیقه", categoryId: "historical", podcastName: "تاریخی" },
+  { id: "e8", title: "مصاحبه با ستارهٔ نوجوان", coverUrl: "/image/af0a4321-a97c-4f47-82c1-1507d9c2ca61.png", duration: "۴۸ دقیقه", categoryId: "digiteen", podcastName: "اختصاصی دیجی‌تین" },
+  { id: "e9", title: "داستان آن شب", coverUrl: "/image/c30443dd88560f56a71aef4bc60965b7.jpg", duration: "۴۱ دقیقه", categoryId: "kibood", podcastName: "کی بود چی بود چکار کرد؟" },
+  { id: "e10", title: "اپیزود دوم کمدی", coverUrl: "/image/c30443dd88560f56a71aef4bc60965b7.jpg", duration: "۳۹ دقیقه", categoryId: "comedy", podcastName: "کمدی" },
 ];
 
 type ViewMode = "home" | "category" | "player";
@@ -142,46 +146,58 @@ const RadioTeen = () => {
               transition={{ duration: 0.25 }}
               className="space-y-5"
             >
-              {/* Featured: ویژه امروز - علمی کمدی */}
-              <motion.section
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4 }}
-                className="rounded-2xl overflow-hidden bg-gradient-to-br from-[#7e4bd0] to-[#6a3fb8] p-5 text-white shadow-lg"
-              >
-                <p className="text-sm font-medium opacity-90 mb-1">
-                  ویژه امروز: علمی کمدی
-                </p>
-                <h2 className="text-xl font-bold mb-2">
-                  Science Vs / StarTalk — ترجمه و بومی شده
-                </h2>
-                <p className="text-sm opacity-90 mb-4">
-                  پادکست پیشنهادی این هفته
-                </p>
-                <div className="flex gap-3">
-                  {MOCK_EPISODES.filter((e) => e.categoryId === "science-comedy")
-                    .slice(0, 2)
-                    .map((ep) => (
-                      <button
-                        key={ep.id}
-                        onClick={() => handleEpisodeClick(ep)}
-                        className="flex-1 min-w-0 flex items-center gap-2 bg-white/20 rounded-xl p-2 backdrop-blur-sm hover:bg-white/30 transition"
-                      >
-                        <img
-                          src={ep.coverUrl}
-                          alt=""
-                          className="w-12 h-12 rounded-lg object-cover aspect-square"
-                        />
-                        <div className="text-right truncate">
-                          <p className="text-sm font-semibold truncate">
-                            {ep.title}
-                          </p>
-                          <p className="text-xs opacity-80">{ep.duration}</p>
-                        </div>
-                      </button>
-                    ))}
-                </div>
-              </motion.section>
+              {/* Featured: ویژه امروز — کمدی */}
+              {(() => {
+                const comedyCat = PILL_CATEGORIES.find((c) => c.id === "comedy");
+                const comedyEps = MOCK_EPISODES.filter((e) => e.categoryId === "comedy").slice(0, 2);
+                return (
+                  <motion.section
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4 }}
+                    className="relative rounded-2xl overflow-hidden shadow-lg min-h-[180px]"
+                  >
+                    <img
+                      src={comedyCat?.image ?? `${RADIOTEEN_IMG}/کمدی.png`}
+                      alt=""
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/20" />
+                    <div className="relative z-10 p-5 text-white flex flex-col h-full justify-end">
+                      <p className="text-sm font-medium opacity-90 mb-0.5">
+                        ویژه امروز: کمدی
+                      </p>
+                      <h2 className="text-xl font-bold mb-1">
+                        پادکست‌های طنز و شاد
+                      </h2>
+                      <p className="text-sm opacity-90 mb-4">
+                        پیشنهاد این هفته
+                      </p>
+                      <div className="flex gap-3">
+                        {comedyEps.map((ep) => (
+                          <button
+                            key={ep.id}
+                            onClick={() => handleEpisodeClick(ep)}
+                            className="flex-1 min-w-0 flex items-center gap-2 bg-white/20 rounded-xl p-2 backdrop-blur-sm hover:bg-white/30 transition"
+                          >
+                            <img
+                              src={ep.coverUrl}
+                              alt=""
+                              className="w-12 h-12 rounded-lg object-cover aspect-square"
+                            />
+                            <div className="text-right truncate">
+                              <p className="text-sm font-semibold truncate">
+                                {ep.title}
+                              </p>
+                              <p className="text-xs opacity-80">{ep.duration}</p>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </motion.section>
+                );
+              })()}
 
               {/* Search */}
               <motion.section
@@ -201,7 +217,7 @@ const RadioTeen = () => {
                 </div>
               </motion.section>
 
-              {/* 7 Pill Categories - Spotify-style tiles */}
+              {/* دسته‌بندی پادکست‌ها - ۸ کتگوری */}
               <motion.section
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -216,14 +232,27 @@ const RadioTeen = () => {
                       key={pill.id}
                       whileTap={{ scale: 0.98 }}
                       onClick={() => handleCategoryClick(pill.id)}
-                      className={`rounded-xl bg-gradient-to-br ${pill.color} p-4 text-white text-right shadow-md hover:shadow-lg transition flex flex-col justify-end min-h-[100px]`}
+                      className="relative rounded-2xl overflow-hidden aspect-[4/3] min-h-[110px] w-full shadow-lg hover:shadow-xl transition-shadow text-right group"
                     >
-                      <span className="font-bold text-base">{pill.name}</span>
-                      {pill.isFlagship && (
-                        <span className="text-xs opacity-90 mt-0.5">
-                          پرچمدار
+                      <img
+                        src={pill.image}
+                        alt=""
+                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                      <div
+                        className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-transparent"
+                        aria-hidden
+                      />
+                      <div className="absolute inset-0 flex flex-col justify-end p-3">
+                        <span className="font-bold text-base text-white drop-shadow-md">
+                          {pill.name}
                         </span>
-                      )}
+                        {pill.isFlagship && (
+                          <span className="text-xs text-white/90 mt-0.5 drop-shadow-sm">
+                            پرچمدار
+                          </span>
+                        )}
+                      </div>
                     </motion.button>
                   ))}
                 </div>
@@ -251,6 +280,20 @@ const RadioTeen = () => {
                 <h2 className="text-xl font-bold text-gray-800">
                   {category.name}
                 </h2>
+              </div>
+
+              <div className="relative rounded-2xl overflow-hidden h-24 -mx-1">
+                <img
+                  src={category.image}
+                  alt=""
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <div className="absolute inset-0 flex items-end justify-end p-3">
+                  <span className="text-white font-bold text-lg drop-shadow-md">
+                    {category.name}
+                  </span>
+                </div>
               </div>
 
               <div className="relative">
