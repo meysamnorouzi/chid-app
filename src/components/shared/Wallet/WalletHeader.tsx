@@ -1,4 +1,3 @@
-import { IoNotifications, IoReceipt, IoPersonCircle, IoPerson, IoSettings, IoLogOut } from "react-icons/io5";
 import { ReactNode, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../../../hooks/useCart";
@@ -14,7 +13,7 @@ interface WalletHeaderProps {
 }
 
 function WalletHeader({
-  greeting = "سلام ، محمد",
+  greeting = "محمد مهرابی",
   subtitle,
   showBalance = false,
   balance,
@@ -43,8 +42,11 @@ function WalletHeader({
       case "orders":
         navigate("/orders");
         break;
+      case "favorites":
+        navigate("/favorites");
+        break;
       case "userInfo":
-        // navigate("/user-info");
+        navigate("/user-info");
         break;
       case "profile":
         // navigate("/profile");
@@ -53,7 +55,11 @@ function WalletHeader({
         // navigate("/settings");
         break;
       case "logout":
-        // Handle logout logic
+        // Clear auth data from localStorage
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('user');
+        // Redirect to login page
+        navigate('/login', { replace: true });
         break;
       default:
         break;
@@ -66,7 +72,7 @@ function WalletHeader({
         <div className="flex gap-2 items-center">
           <div className="relative cursor-pointer" onClick={handleProfileClick}>
             <img
-              src="image/69c68ee04e3f0f73009ee241d8716406.jpg"
+              src="/logo/teens profiles/karagah.svg"
               className="w-12 h-12 object-cover border-2 border-[#7e4bd0] object-top rounded-full"
               alt=""
             />
@@ -87,11 +93,17 @@ function WalletHeader({
       <div className="relative">
         <div
           onClick={showCartBadge ? handleIconClick : undefined}
-          className={`p-2 border border-[#7e4bd0] w-fit rounded-full ${
+          className={`p-2 border border-[#7e4bd0] w-12 h-12 flex justify-center items-center rounded-full ${
             showCartBadge ? "cursor-pointer hover:bg-purple-50 transition-colors" : ""
           }`}
         >
-          {icon || <IoNotifications className="w-5 h-5 text-[#7e4bd0]" />}
+          {icon || 
+          <div  
+      onClick={() => navigate(`/messages`)}
+      >
+             <img src="/icons/noti.svg" className="w-5 `h-5`" alt="notifications" />
+        </div>
+          }
         </div>
         {showCartBadge && cartItemsCount > 0 && (
           <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
@@ -113,7 +125,7 @@ function WalletHeader({
           <div className="flex flex-col items-center pb-6 border-b border-gray-200">
             <div className="relative mb-4">
               <img
-                src="image/69c68ee04e3f0f73009ee241d8716406.jpg"
+                 src="/logo/teens profiles/karagah.svg"
                 className="w-24 h-24 object-cover border-4 border-[#7e4bd0] object-top rounded-full"
                 alt="Profile"
               />
@@ -132,8 +144,19 @@ function WalletHeader({
               onClick={() => handleMenuClick("orders")}
               className="flex items-center gap-4 p-4 rounded-lg hover:bg-gray-50 transition-colors text-right"
             >
-              <IoReceipt className="w-6 h-6 text-[#7e4bd0] shrink-0" />
+              <img src="/icons/list.svg" className="w-6 h-6 shrink-0" alt="orders" />
               <span className="flex-1 text-gray-800 font-medium">لیست سفارشات</span>
+              <svg className="w-5 h-5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+
+            <button
+              onClick={() => handleMenuClick("favorites")}
+              className="flex items-center gap-4 p-4 rounded-lg hover:bg-gray-50 transition-colors text-right"
+            >
+              <img src="/icons/fav.svg" className="w-6 h-6 shrink-0" alt="favorites" />
+              <span className="flex-1 text-gray-800 font-medium">علاقه‌مندی‌ها</span>
               <svg className="w-5 h-5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
@@ -143,8 +166,8 @@ function WalletHeader({
               onClick={() => handleMenuClick("userInfo")}
               className="flex items-center gap-4 p-4 rounded-lg hover:bg-gray-50 transition-colors text-right"
             >
-              <IoPersonCircle className="w-6 h-6 text-[#7e4bd0] shrink-0" />
-              <span className="flex-1 text-gray-800 font-medium">اطلاعات کاربری</span>
+              <img src="/icons/profile.svg" className="w-6 h-6 shrink-0" alt="user info" />
+              <span className="flex-1 text-gray-800 font-medium">ویرایش اطلاعات کاربری</span>
               <svg className="w-5 h-5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
@@ -154,7 +177,7 @@ function WalletHeader({
               onClick={() => handleMenuClick("profile")}
               className="flex items-center gap-4 p-4 rounded-lg hover:bg-gray-50 transition-colors text-right"
             >
-              <IoPerson className="w-6 h-6 text-[#7e4bd0] shrink-0" />
+              <img src="/icons/profile.svg" className="w-6 h-6 shrink-0" alt="profile" />
               <span className="flex-1 text-gray-800 font-medium">پروفایل</span>
               <svg className="w-5 h-5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -165,7 +188,7 @@ function WalletHeader({
               onClick={() => handleMenuClick("settings")}
               className="flex items-center gap-4 p-4 rounded-lg hover:bg-gray-50 transition-colors text-right"
             >
-              <IoSettings className="w-6 h-6 text-[#7e4bd0] shrink-0" />
+              <img src="/icons/setting.svg" className="w-6 h-6 shrink-0" alt="settings" />
               <span className="flex-1 text-gray-800 font-medium">تنظیمات</span>
               <svg className="w-5 h-5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -178,7 +201,7 @@ function WalletHeader({
               onClick={() => handleMenuClick("logout")}
               className="flex items-center gap-4 p-4 rounded-lg hover:bg-red-50 transition-colors text-right"
             >
-              <IoLogOut className="w-6 h-6 text-red-500 shrink-0" />
+              <img src="/icons/logout.svg" className="w-6 h-6 shrink-0" alt="logout" style={{ filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }} />
               <span className="flex-1 text-red-500 font-medium">خروج از حساب</span>
               <svg className="w-5 h-5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />

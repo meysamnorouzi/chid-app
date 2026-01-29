@@ -10,9 +10,11 @@ import {
   StarIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
+import { HeartIcon as HeartIconSolid } from "@heroicons/react/24/solid";
 import WalletHeader from "../../../components/shared/Wallet/WalletHeader";
 import { Breadcrumb, Chips, useToast } from "../../../components/shared";
 import { useCart } from "../../../hooks/useCart";
+import { useFavorites } from "../../../hooks/useFavorites";
 import { formatPrice, parsePrice } from "../../../utils/priceUtils";
 
 interface ProductVariant {
@@ -132,7 +134,7 @@ const getAllProducts = (): Product[] => {
             },
             {
               id: "seller2",
-              name: "فروشگاه دیجی پلی",
+              name: "فروشگاه دیجی تین",
               price: "۱۱۸,۰۰۰,۰۰۰",
               badges: ["منتخب"],
               rating: 4.6,
@@ -182,7 +184,7 @@ const getAllProducts = (): Product[] => {
             userReviews: [
               {
                 id: "review1",
-                userName: "کاربر دیجی پلی",
+                userName: "محمد مهرابی",
                 isBuyer: true,
                 rating: 5,
                 text: "درباره نقاط قوت و ضعف این محصول باید بگویم که تخصصی و فنی زیادی در طراحی و عملکرد دارد. تجربه خرید باید بگم از فروشگاه عالی بود و محصول به موقع رسید.",
@@ -190,7 +192,7 @@ const getAllProducts = (): Product[] => {
               },
               {
                 id: "review2",
-                userName: "کاربر دیجی پلی",
+                userName: "محمد مهرابی",
                 isBuyer: true,
                 rating: 4,
                 text: "محصول خوبی است اما قیمت کمی بالا است. کیفیت ساخت عالی است و عملکرد خوبی دارد.",
@@ -231,7 +233,7 @@ const getAllProducts = (): Product[] => {
             },
             {
               id: "seller3",
-              name: "دیجی پلی",
+              name: "دیجی تین",
               price: "۱۳۲,۰۰۰,۰۰۰",
               badges: ["عملکرد عالی"],
               rating: 4.6,
@@ -294,7 +296,7 @@ const getAllProducts = (): Product[] => {
             userReviews: [
               {
                 id: "review1",
-                userName: "کاربر دیجی پلی",
+                userName: "محمد مهرابی",
                 isBuyer: true,
                 rating: 5,
                 text: "لپ تاپ فوق‌العاده‌ای است! کارت گرافیک NVIDIA خیلی قوی است و بازی‌های سنگین را بدون مشکل اجرا می‌کند. صفحه نمایش ۱۷ اینچی هم کیفیت عالی دارد. تنها نکته منفی وزن آن است که کمی سنگین است.",
@@ -302,7 +304,7 @@ const getAllProducts = (): Product[] => {
               },
               {
                 id: "review2",
-                userName: "کاربر دیجی پلی",
+                userName: "محمد مهرابی",
                 isBuyer: true,
                 rating: 4,
                 text: "لپ تاپ خوبی است و عملکرد مناسبی دارد. برای کارهای گرافیکی و بازی مناسب است. اما باتری خیلی دوام نمی‌آورد و باید همیشه به برق وصل باشد.",
@@ -310,7 +312,7 @@ const getAllProducts = (): Product[] => {
               },
               {
                 id: "review3",
-                userName: "کاربر دیجی پلی",
+                userName: "محمد مهرابی",
                 isBuyer: true,
                 rating: 5,
                 text: "بهترین لپ تاپ گیمینگی که تا حالا داشتم. پردازنده AMD Ryzen 9 خیلی قدرتمند است و همه بازی‌ها را با تنظیمات بالا اجرا می‌کند. صفحه کلید RGB هم خیلی زیبا است.",
@@ -512,6 +514,7 @@ const ProductDetail = () => {
   const allProducts = getAllProducts();
   const product = allProducts.find((p) => p.id === id);
   const { addToCart } = useCart();
+  const { addToFavorites, removeFromFavorites, isFavorite } = useFavorites();
   const { showToast } = useToast();
 
   // State برای variant های انتخاب شده
@@ -568,8 +571,8 @@ const ProductDetail = () => {
       selectedVariants: selectedVariants,
       finalPrice: finalPrice,
       sellerId: selectedSeller?.id,
-      sellerName: selectedSeller?.name || "فروشگاه دیجی پلی",
-      shopName: "فروشگاه دیجی پلی",
+      sellerName: selectedSeller?.name || "فروشگاه دیجی تین",
+      shopName: "فروشگاه دیجی تین",
     });
     
     // Show success toast message
@@ -579,6 +582,37 @@ const ProductDetail = () => {
       message: 'محصول به سبد خرید اضافه شد',
       duration: 3000,
     });
+  };
+
+  // Toggle favorite handler
+  const handleToggleFavorite = () => {
+    if (!product) return;
+
+    const favoriteItem = {
+      productId: product.id,
+      title: product.title,
+      image: product.image,
+      price: product.price,
+      categoryId: product.categoryId,
+    };
+
+    if (isFavorite(product.id)) {
+      removeFromFavorites(product.id);
+      showToast({
+        type: 'success',
+        title: 'موفق',
+        message: 'محصول از علاقه‌مندی‌ها حذف شد',
+        duration: 3000,
+      });
+    } else {
+      addToFavorites(favoriteItem);
+      showToast({
+        type: 'success',
+        title: 'موفق',
+        message: 'محصول به علاقه‌مندی‌ها اضافه شد',
+        duration: 3000,
+      });
+    }
   };
   
   // Modal functions
@@ -674,17 +708,19 @@ const ProductDetail = () => {
   }
 
   return (
-    <div className="flex flex-col bg-white min-h-screen pb-40">
+    <div className="flex flex-col bg-white min-h-screen pb-40 md:pb-4">
       <WalletHeader
-        greeting="سلام ، محمد"
-        subtitle="مشاهده اطلاعات کامل محصول"
+        greeting="محمد مهرابی"
+        subtitle="@mohammad-mehrabi"
         icon={<ShoppingBagIcon className="w-5 h-5 text-[#7e4bd0]" />}
         showCartBadge={true}
       />
 
-      <div className="px-4 flex flex-col gap-4">
+      <div className="px-4 md:px-6 lg:px-8 flex flex-col md:flex-row md:gap-8 lg:gap-12 gap-4 max-w-7xl mx-auto w-full">
+        {/* Left Column: Images */}
+        <div className="md:w-1/2 lg:w-2/5 shrink-0 md:sticky md:top-4 md:self-start">
         {/* Breadcrumb and Share */}
-        <div className="flex bg-gray-100 p-2 rounded-lg items-center justify-between mt-2">
+        <div className="flex bg-gray-100 p-2 md:p-3 rounded-lg items-center justify-between mt-2 md:mt-0 mb-4 md:mb-0">
           <Breadcrumb
             items={[
               {
@@ -697,15 +733,15 @@ const ProductDetail = () => {
               },
             ]}
             separator="/"
-            className="text-sm"
+            className="text-sm md:text-base"
           />
-          <button className="p-2 bg-gray-100 rounded-full text-gray-700">
-            <ArrowUpTrayIcon className="w-6 h-6" />
+          <button className="p-2 md:p-3 bg-gray-100 rounded-full text-gray-700 hover:bg-gray-200 transition-colors">
+            <ArrowUpTrayIcon className="w-6 h-6 md:w-7 md:h-7" />
           </button>
         </div>
 
         {/* Product Image Carousel */}
-        <div className="relative w-full rounded-lg overflow-hidden">
+        <div className="relative w-full rounded-lg md:rounded-xl overflow-hidden">
           <div 
             className="relative w-full aspect-square overflow-hidden cursor-pointer"
             onClick={() => openImageModal(currentImageIndex)}
@@ -736,16 +772,16 @@ const ProductDetail = () => {
           
           {/* Dots Indicator - Outside the image */}
           {productImages.length > 1 && (
-            <div className="flex items-center justify-center w-full gap-1 mt-2">
+            <div className="flex items-center justify-center w-full gap-1 md:gap-2 mt-2 md:mt-3">
               {productImages.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => goToImage(index)}
                   className={`transition-all duration-300 rounded-full ${
                     currentImageIndex === index
-                      ? "bg-black w-5"
-                      : "bg-gray-500 w-2 hover:bg-gray-400"
-                  } h-2`}
+                      ? "bg-black w-5 md:w-6 h-2 md:h-2.5"
+                      : "bg-gray-500 w-2 md:w-3 h-2 md:h-2.5 hover:bg-gray-400"
+                  }`}
                   aria-label={`رفتن به تصویر ${index + 1}`}
                 />
               ))}
@@ -753,21 +789,63 @@ const ProductDetail = () => {
           )}
         </div>
 
-        {/* Product Info */}
-        <div className="flex flex-col gap-3">
-          <div className="flex items-center gap-1">
-            <ShoppingBagIcon className="w-4 h-4 text-gray-500" />
-            <p className="text-xs text-gray-500">فروشگاه دیجی پلی</p>
+        {/* Price and Action Buttons - Desktop: Below Images, Mobile: Fixed at Bottom */}
+        <div className="hidden md:flex flex-col gap-4 mt-6">
+          {/* Price */}
+          <div className="flex items-center w-full justify-between bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+            <div className="flex items-center w-full justify-between gap-1">
+              <p className="text-sm text-gray-500">قیمت</p>
+              <div className="flex items-center gap-2">
+                <p className="text-3xl lg:text-4xl font-bold text-black">
+                  {calculateFinalPrice()}
+                </p>
+                <p className="text-base text-gray-500">تومان</p>
+              </div>
+            </div>
           </div>
 
-          <h1 className="text-xl font-bold text-black">{product.title}</h1>
+          {/* Action Buttons */}
+          <div className="flex flex-col gap-3">
+            <button
+              onClick={handleAddToCart}
+              className="w-full py-4 bg-[#7e4bd0] text-white rounded-xl font-semibold text-base hover:bg-[#6b3fb8] transition-colors shadow-sm"
+            >
+              افزودن به سبد خرید
+            </button>
+            <button
+              onClick={handleToggleFavorite}
+              className={`w-full px-8 py-4 border-2 rounded-xl font-semibold text-base flex items-center justify-center transition-colors ${
+                isFavorite(product.id)
+                  ? "bg-[#7e4bd0] border-[#7e4bd0] text-white"
+                  : "border-[#7e4bd0] text-[#7e4bd0] hover:bg-purple-50"
+              }`}
+              aria-label={isFavorite(product.id) ? "حذف از علاقه‌مندی‌ها" : "افزودن به علاقه‌مندی‌ها"}
+            >
+              {isFavorite(product.id) ? (
+                <HeartIconSolid className="w-6 h-6" />
+              ) : (
+                <HeartIcon className="w-6 h-6" />
+              )}
+            </button>
+          </div>
+        </div>
+        </div>
+
+        {/* Right Column: Product Info */}
+        <div className="md:w-1/2 lg:w-3/5 flex flex-col gap-4 md:gap-6">
+          <div className="flex items-center gap-1 md:gap-2">
+            <ShoppingBagIcon className="w-4 h-4 md:w-5 md:h-5 text-gray-500" />
+            <p className="text-xs md:text-sm text-gray-500">فروشگاه دیجی تین</p>
+          </div>
+
+          <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-black">{product.title}</h1>
 
           {product.description && (
-            <div className="bg-gray-50 rounded-lg p-4">
-              <h2 className="text-sm font-semibold text-black mb-2">
+            <div className="bg-gray-50 rounded-lg md:rounded-xl p-4 md:p-6">
+              <h2 className="text-sm md:text-base font-semibold text-black mb-2 md:mb-3">
                 توضیحات محصول
               </h2>
-              <p className="text-sm text-gray-700 leading-relaxed">
+              <p className="text-sm md:text-base text-gray-700 leading-relaxed">
                 {product.description}
               </p>
             </div>
@@ -775,15 +853,15 @@ const ProductDetail = () => {
 
           {/* Product Variants */}
           {product.variantOptions && product.variantOptions.length > 0 && (
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 md:gap-6">
               {product.variantOptions.map((option) => {
                 const selectedVariantId = selectedVariants[option.type];
                 return (
-                  <div key={option.type} className="flex flex-col gap-2">
-                    <h3 className="text-sm font-semibold text-black">
+                  <div key={option.type} className="flex flex-col gap-2 md:gap-3">
+                    <h3 className="text-sm md:text-base font-semibold text-black">
                       {option.label}
                     </h3>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-2 md:gap-3">
                       {option.variants.map((variant) => {
                         const isSelected = selectedVariantId === variant.id;
                         const isColorVariant = option.type === "color";
@@ -793,8 +871,8 @@ const ProductDetail = () => {
                             key={variant.id}
                             onClick={() => handleVariantChange(option.type, variant.id)}
                             className={`
-                              ${isColorVariant ? 'w-10 h-10' : 'px-4 py-2'}
-                              rounded-lg border-2 transition-all
+                              ${isColorVariant ? 'w-10 h-10 md:w-12 md:h-12' : 'px-4 md:px-5 py-2 md:py-2.5'}
+                              rounded-lg md:rounded-xl border-2 transition-all
                               ${isSelected 
                                 ? 'border-[#7e4bd0] bg-[#7e4bd0]' 
                                 : 'border-gray-300 bg-white hover:border-gray-400'
@@ -813,7 +891,7 @@ const ProductDetail = () => {
                           >
                             {!isColorVariant && (
                               <span
-                                className={`text-sm ${
+                                className={`text-sm md:text-base ${
                                   isSelected ? 'text-white font-semibold' : 'text-gray-700'
                                 }`}
                               >
@@ -853,30 +931,30 @@ const ProductDetail = () => {
 
           {/* Sellers Section */}
           {product.sellers && product.sellers.length > 0 && (
-            <div className="flex flex-col gap-3 mt-4">
-              <h2 className="text-base font-semibold text-black">فروشندگان</h2>
-              <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-3 md:gap-4 mt-4 md:mt-6">
+              <h2 className="text-base md:text-lg font-semibold text-black">فروشندگان</h2>
+              <div className="flex flex-col gap-2 md:gap-3">
                 {product.sellers.map((seller, index) => (
                   <div
                     key={seller.id}
-                    className={`flex items-center justify-between p-3 rounded-lg border border-gray-200 bg-white ${
+                    className={`flex items-center justify-between p-3 md:p-4 rounded-lg md:rounded-xl border border-gray-200 bg-white hover:shadow-md transition-shadow ${
                       index === 0 ? 'border-[#7e4bd0] bg-purple-50' : ''
                     }`}
                   >
-                    <div className="flex items-center gap-3 flex-1">
+                    <div className="flex items-center gap-3 md:gap-4 flex-1">
                       {/* Seller Icon */}
-                      <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center shrink-0">
+                      <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gray-100 flex items-center justify-center shrink-0">
                         {seller.isVerified ? (
-                          <CheckCircleIcon className="w-6 h-6 text-green-500" />
+                          <CheckCircleIcon className="w-6 h-6 md:w-7 md:h-7 text-green-500" />
                         ) : (
-                          <ShoppingBagIcon className="w-5 h-5 text-gray-500" />
+                          <ShoppingBagIcon className="w-5 h-5 md:w-6 md:h-6 text-gray-500" />
                         )}
                       </div>
 
                       {/* Seller Info */}
                       <div className="flex flex-col gap-1 flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <h3 className="text-sm font-semibold text-black truncate">
+                          <h3 className="text-sm md:text-base font-semibold text-black truncate">
                             {seller.name}
                           </h3>
                           {seller.badges && seller.badges.length > 0 && (
@@ -884,7 +962,7 @@ const ProductDetail = () => {
                               {seller.badges.map((badge, badgeIndex) => (
                                 <span
                                   key={badgeIndex}
-                                  className="px-2 py-0.5 bg-green-500 text-white text-xs rounded-full whitespace-nowrap"
+                                  className="px-2 md:px-3 py-0.5 md:py-1 bg-green-500 text-white text-xs md:text-sm rounded-full whitespace-nowrap"
                                 >
                                   {badge}
                                 </span>
@@ -894,7 +972,7 @@ const ProductDetail = () => {
                         </div>
                         {seller.rating && (
                           <div className="flex items-center gap-1">
-                            <span className="text-xs text-gray-500">
+                            <span className="text-xs md:text-sm text-gray-500">
                               امتیاز: {seller.rating}
                             </span>
                           </div>
@@ -904,12 +982,12 @@ const ProductDetail = () => {
                       {/* Price */}
                       <div className="flex items-center gap-2 shrink-0">
                         <div className="flex flex-col items-end">
-                          <p className="text-base font-bold text-black">
+                          <p className="text-base md:text-lg font-bold text-black">
                             {seller.price}
                           </p>
-                          <p className="text-xs text-gray-500">تومان</p>
+                          <p className="text-xs md:text-sm text-gray-500">تومان</p>
                         </div>
-                        <ChevronLeftIcon className="w-5 h-5 text-gray-400 shrink-0" />
+                        <ChevronLeftIcon className="w-5 h-5 md:w-6 md:h-6 text-gray-400 shrink-0" />
                       </div>
                     </div>
                   </div>
@@ -920,21 +998,21 @@ const ProductDetail = () => {
 
           {/* Product Specifications Section */}
           {product.specifications && product.specifications.length > 0 && (
-            <div className="flex flex-col gap-3 mt-4">
+            <div className="flex flex-col gap-3 md:gap-4 mt-4 md:mt-6">
               <div className="flex items-center justify-between">
-                <h2 className="text-base font-semibold text-black">مشخصات کالا</h2>
-                <button className="text-sm text-gray-600 hover:text-gray-800">
+                <h2 className="text-base md:text-lg font-semibold text-black">مشخصات کالا</h2>
+                <button className="text-sm md:text-base text-gray-600 hover:text-gray-800 transition-colors">
                   مشاهده همه <span className="inline-block">›</span>
                 </button>
               </div>
-              <div className="flex flex-wrap gap-2">
-                {product.specifications.slice(0, 3).map((spec, index) => (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-3">
+                {product.specifications.slice(0, 6).map((spec, index) => (
                   <div
                     key={index}
-                    className="flex-1 min-w-[calc(33.333%-0.5rem)] bg-white border border-gray-200 rounded-lg p-3"
+                    className="bg-white border border-gray-200 rounded-lg md:rounded-xl p-3 md:p-4 hover:shadow-md transition-shadow"
                   >
-                    <p className="text-xs text-gray-500 mb-1">{spec.label}</p>
-                    <p className="text-sm font-semibold text-black">{spec.value}</p>
+                    <p className="text-xs md:text-sm text-gray-500 mb-1 md:mb-2">{spec.label}</p>
+                    <p className="text-sm md:text-base font-semibold text-black">{spec.value}</p>
                   </div>
                 ))}
               </div>
@@ -943,57 +1021,57 @@ const ProductDetail = () => {
 
           {/* User Reviews Section */}
           {product.reviews && (
-            <div className="flex flex-col gap-4 mt-4">
+            <div className="flex flex-col gap-4 md:gap-6 mt-4 md:mt-6">
               {/* Header */}
               <div className="flex items-center justify-between">
-                <button className="text-sm text-gray-600 hover:text-gray-800">
+                <button className="text-sm md:text-base text-gray-600 hover:text-gray-800 transition-colors">
                   مشاهده {product.reviews.summary.totalReviews} دیدگاه <span className="inline-block">›</span>
                 </button>
-                <h2 className="text-base font-semibold text-black">دیدگاه کاربرها</h2>
+                <h2 className="text-base md:text-lg font-semibold text-black">دیدگاه کاربرها</h2>
               </div>
 
               {/* Overall Rating */}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 md:gap-3">
                 <div className="flex items-center gap-1">
-                  <StarIcon className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                  <span className="text-base font-semibold text-black">
+                  <StarIcon className="w-5 h-5 md:w-6 md:h-6 fill-yellow-400 text-yellow-400" />
+                  <span className="text-base md:text-lg font-semibold text-black">
                     {product.reviews.summary.overallRating}
                   </span>
                 </div>
-                <span className="text-sm text-gray-500">
+                <span className="text-sm md:text-base text-gray-500">
                   (بر اساس نظر {product.reviews.summary.buyerReviewsCount} خریدار)
                 </span>
               </div>
 
-              {/* Review Cards - Horizontal Scroll */}
-              <div className="overflow-x-auto -mx-4 px-4">
-                <div className="flex gap-3" style={{ direction: 'rtl' }}>
+              {/* Review Cards - Horizontal Scroll on Mobile, Grid on Desktop */}
+              <div className="overflow-x-auto md:overflow-x-visible -mx-4 md:mx-0 px-4 md:px-0">
+                <div className="flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4" style={{ direction: 'rtl' }}>
                   {/* AI Summary Card */}
                   {product.reviews.summary.aiSummary && (
-                    <div className="bg-[#7e4bd0] rounded-lg p-4 text-white shrink-0 w-[85%] min-w-[280px]">
-                      <div className="flex items-center gap-2 mb-2">
+                    <div className="bg-[#7e4bd0] rounded-lg md:rounded-xl p-4 md:p-6 text-white shrink-0 md:shrink-0 w-[85%] md:w-full min-w-[280px] md:min-w-0 md:col-span-2 lg:col-span-3">
+                      <div className="flex items-center gap-2 mb-2 md:mb-3">
                         <svg
-                          className="w-5 h-5"
+                          className="w-5 h-5 md:w-6 md:h-6"
                           fill="currentColor"
                           viewBox="0 0 20 20"
                         >
                           <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                         </svg>
-                        <h3 className="text-sm font-semibold">خلاصه دیدگاه های خریداران</h3>
+                        <h3 className="text-sm md:text-base font-semibold">خلاصه دیدگاه های خریداران</h3>
                       </div>
-                      <p className="text-sm leading-relaxed mb-2">
+                      <p className="text-sm md:text-base leading-relaxed mb-2 md:mb-3">
                         {product.reviews.summary.aiSummary}
                       </p>
-                      <button className="text-sm underline opacity-90 hover:opacity-100">
+                      <button className="text-sm md:text-base underline opacity-90 hover:opacity-100 transition-opacity">
                         مشاهده بیشتر
                       </button>
-                      <p className="text-xs opacity-75 mt-2">تولید شده با هوش مصنوعی</p>
+                      <p className="text-xs md:text-sm opacity-75 mt-2 md:mt-3">تولید شده با هوش مصنوعی</p>
                     </div>
                   )}
 
                   {/* User Reviews */}
                   {product.reviews.userReviews.map((review) => (
-                    <div key={review.id} className="bg-white border border-gray-200 rounded-lg p-4 shrink-0 w-[85%] min-w-[280px]">
+                    <div key={review.id} className="bg-white border border-gray-200 rounded-lg md:rounded-xl p-4 md:p-5 shrink-0 md:shrink-0 w-[85%] md:w-full min-w-[280px] md:min-w-0 hover:shadow-md transition-shadow">
                       <div className="flex items-center gap-2 mb-2">
                         <span className="text-sm font-semibold text-black">{review.userName}</span>
                         {review.isBuyer && (
@@ -1037,32 +1115,32 @@ const ProductDetail = () => {
 
           {/* Similar Products Section */}
           {similarProducts.length > 0 && (
-            <div className="flex flex-col gap-3 mt-6 mb-4">
-              <h2 className="text-base font-semibold text-black">محصولات مشابه</h2>
-              <div className="overflow-x-auto -mx-4 px-4">
-                <div className="flex gap-3" style={{ direction: 'rtl' }}>
+            <div className="flex flex-col gap-3 md:gap-4 mt-6 md:mt-8 mb-4 md:mb-6">
+              <h2 className="text-base md:text-lg font-semibold text-black">محصولات مشابه</h2>
+              <div className="overflow-x-auto md:overflow-x-visible -mx-4 md:mx-0 px-4 md:px-0">
+                <div className="flex md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4 lg:gap-6" style={{ direction: 'rtl' }}>
                   {similarProducts.map((similarProduct) => (
                     <div
                       key={similarProduct.id}
                       onClick={() => navigate(`/shop/${similarProduct.id}`)}
-                      className="bg-white border border-gray-200 rounded-lg p-3 shrink-0 w-[45%] min-w-[160px] cursor-pointer hover:border-[#7e4bd0] transition-colors"
+                      className="bg-white border border-gray-200 rounded-lg md:rounded-xl p-3 md:p-4 shrink-0 md:shrink w-[45%] md:w-full min-w-[160px] md:min-w-0 cursor-pointer hover:border-[#7e4bd0] hover:shadow-md transition-all"
                     >
-                      <div className="relative w-full aspect-square rounded-lg overflow-hidden bg-gray-100 mb-2">
+                      <div className="relative w-full aspect-square rounded-lg md:rounded-xl overflow-hidden bg-gray-100 mb-2 md:mb-3">
                         <img
                           src={similarProduct.image}
                           alt={similarProduct.title}
                           className="w-full h-full object-cover"
                         />
                       </div>
-                      <h3 className="text-xs font-semibold text-black mb-1 line-clamp-2 min-h-10">
+                      <h3 className="text-xs md:text-sm font-semibold text-black mb-1 md:mb-2 line-clamp-2 min-h-10 md:min-h-12">
                         {similarProduct.title}
                       </h3>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-1">
-                          <p className="text-sm font-bold text-black">
+                          <p className="text-sm md:text-base font-bold text-black">
                             {similarProduct.price}
                           </p>
-                          <p className="text-xs text-gray-500">تومان</p>
+                          <p className="text-xs md:text-sm text-gray-500">تومان</p>
                         </div>
                       </div>
                     </div>
@@ -1136,11 +1214,11 @@ const ProductDetail = () => {
         </div>
       )}
 
-      {/* Fixed Price and Action Buttons */}
-      <div className="sticky bottom-0 w-full bg-white border-t border-gray-200 px-4 py-4 shadow-lg z-40">
+      {/* Fixed Price and Action Buttons - Mobile Only */}
+      <div className="fixed md:hidden bottom-0 left-1/2 -translate-x-1/2 w-full bg-white border-t border-gray-200 px-4 py-4 shadow-lg">
         {/* Price */}
         <div className="flex items-center w-full justify-between pb-4">
-          <div className="flex items-center  w-full justify-between gap-1">
+          <div className="flex items-center w-full justify-between gap-1">
             <p className="text-xs text-gray-500">قیمت</p>
             <div className="flex items-center gap-1">
               <p className="text-2xl font-bold text-black">
@@ -1159,8 +1237,20 @@ const ProductDetail = () => {
           >
             افزودن به سبد خرید
           </button>
-          <button className="px-6 py-3 border-2 border-[#7e4bd0] text-[#7e4bd0] rounded-lg font-semibold text-sm flex items-center justify-center">
-            <HeartIcon className="w-5 h-5" />
+          <button
+            onClick={handleToggleFavorite}
+            className={`px-6 py-2.5 border-2 rounded-lg font-semibold text-sm flex items-center justify-center transition-colors ${
+              isFavorite(product.id)
+                ? "bg-[#7e4bd0] border-[#7e4bd0] text-white"
+                : "border-[#7e4bd0] text-[#7e4bd0] hover:bg-purple-50"
+            }`}
+            aria-label={isFavorite(product.id) ? "حذف از علاقه‌مندی‌ها" : "افزودن به علاقه‌مندی‌ها"}
+          >
+            {isFavorite(product.id) ? (
+              <HeartIconSolid className="w-5 h-5" />
+            ) : (
+              <HeartIcon className="w-5 h-5" />
+            )}
           </button>
         </div>
       </div>

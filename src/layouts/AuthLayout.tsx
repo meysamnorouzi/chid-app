@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Outlet } from "react-router-dom";
 import { ThemeLayout } from "../theme";
+import { ToastProvider } from "../components/shared/Toast";
 
 interface AuthLayoutProps {
   children?: ReactNode;
@@ -15,15 +16,17 @@ interface AuthLayoutProps {
 const AuthLayout = ({ children }: AuthLayoutProps) => {
   return (
     <ThemeLayout>
-      <div className="min-h-full flex flex-col" dir="rtl">
-        {/* Header */}
+      <ToastProvider position="top-center" maxToasts={3}>
+        <div className="min-h-screen flex flex-col" dir="rtl">
+          {/* Header */}
 
-        {/* Main Content */}
-        <main className="flex-1" role="main">
-          {children || <Outlet />}
-        </main>
+          {/* Main Content */}
+          <main className="flex-1 bg-white" role="main">
+            {children || <Outlet />}
+          </main>
 
-      </div>
+        </div>
+      </ToastProvider>
     </ThemeLayout>
   );
 };

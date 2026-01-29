@@ -46,6 +46,9 @@ function WalletSaving() {
   const [parentMoneyBalance, setParentMoneyBalance] = useState<number>(0);
   const [parentDigitBalance, setParentDigitBalance] = useState<number>(0);
 
+  // Parent invitation state
+  const [isParentInvited, setIsParentInvited] = useState<boolean>(false);
+
   // Transfer flow state
   const [transferType, setTransferType] = useState<"money" | "digit" | null>(
     null
@@ -56,6 +59,11 @@ function WalletSaving() {
 
 
   const loadParentWallet = () => {
+    // Load parent invitation state
+    const parentInvitationKey = "parentInvitation";
+    const storedInvitation = localStorage.getItem(parentInvitationKey);
+    setIsParentInvited(!!storedInvitation);
+
     // Load parent wallet (money and digits)
     const parentWalletKey = "parentWallet";
     const storedParentWallet = localStorage.getItem(parentWalletKey);
@@ -318,17 +326,21 @@ function WalletSaving() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20" dir="rtl">
+    <div className="min-h-screen bg-gray-50 pb-20 md:pb-4" dir="rtl">
       <WalletHeader
-        subtitle="به کیف پس‌انداز خوش اومدی"
+        subtitle="@mohammad-mehrabi"
         showBalance={true}
-        balance="موجودی شما ۲۳۰,۰۰۰,۰۰ تومان"
+        balance=""
       />
-      <WalletTabs activeTab="saving" />
+      <WalletTabs activeTab="saving" isParentInvited={isParentInvited} />
 
-      <div className="bg-white min-h-screen px-4 py-6 max-w-4xl mx-auto">
+      <div className="bg-white min-h-screen px-4 md:px-6 lg:px-8 py-6 md:py-8 max-w-6xl mx-auto">
+        {/* Desktop Layout: Card + Buttons on left, Transactions on right */}
+        <div className="md:grid md:grid-cols-2 md:gap-6 lg:gap-8 md:items-start">
+          {/* Left Column: Card + Buttons + Stats */}
+          <div className="md:col-span-1">
         {/* Main Balance Card */}
-        <div className="mb-6">
+        <div className="mb-6 md:mb-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -352,63 +364,25 @@ function WalletSaving() {
             >
               {/* Front of Card */}
               <div
-                className="relative bg-black rounded-2xl p-6 overflow-hidden aspect-video cursor-pointer select-none"
+                className="relative rounded-2xl overflow-hidden cursor-pointer select-none"
                 style={{
                   backfaceVisibility: "hidden",
                   WebkitBackfaceVisibility: "hidden",
                   pointerEvents: "auto",
                 }}
               >
-                {/* Card Pattern Background */}
-                <div className="absolute inset-0 opacity-10">
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-white rounded-full -mr-16 -mt-16"></div>
-                  <div className="absolute bottom-0 left-0 w-24 h-24 bg-white rounded-full -ml-12 -mb-12"></div>
-                </div>
-
-                {/* Main Content */}
-                <div className="relative z-10 h-full flex flex-col justify-between">
-                  {/* Top Section - Card Type */}
-                  <div className="flex items-center justify-between">
-                    <div>
-            
-                      <p className="text-white text-sm font-semibold">
-                      کیف پس‌انداز
-                      </p>
-                    </div>
-                    <div className="text-white/90">
-                      <WalletIcon className="w-8 h-8" />
-                    </div>
-                  </div>
-
-                  {/* Balance Display - Center */}
-                  <div className="flex-1 flex items-center justify-center">
-                    <div className="text-center flex items-center gap-2">
-                      <p className="text-white text-4xl font-bold mb-1">
-                        {formatBalance(totalBalance)}
-                      </p>
-                      <p className="text-white/70 text-sm font-medium">تومان</p>
-                    </div>
-                  </div>
-
-                  {/* Bottom Section */}
-                  <div className="flex items-end justify-between mt-auto">
-                    {/* Left Side - Account Owner */}
-                    <div>
-                      <p className="text-white/70 text-xs font-medium mb-1">
-                        صاحب حساب
-                      </p>
-                      <p className="text-white text-sm font-semibold">
-                        میثم نوروزی
-                      </p>
-                    </div>
-
-                    {/* Right Side - Card Number */}
-                    <div className="text-left">
-                      <p className="text-white text-sm font-semibold tracking-wider">
-                        تاریخ امروز ۲۶ دی ۱۴۰۴
-                      </p>
-                    </div>
-                  </div>
+                <img 
+                  src="/digitandpasandcards/Pasandaz-cart.jpg" 
+                  alt="کارت پس‌انداز" 
+                  className="w-full h-auto"
+                  draggable={false}
+                />
+                {/* Dark Overlay for better text visibility */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+                {/* Balance Overlay */}
+                <div className="absolute bottom-6 right-6 text-white drop-shadow-lg">
+                  <p className="text-sm font-medium opacity-90">موجودی پس‌انداز</p>
+                  <p className="text-2xl font-bold drop-shadow-md">{formatBalance(totalBalance)} <span className="text-sm font-medium">تومان</span></p>
                 </div>
               </div>
 
@@ -421,46 +395,52 @@ function WalletSaving() {
             <button
               onClick={() => setIsCardFlipped(true)}
               className={`w-6 h-2 rounded-full transition-all ${
-                isCardFlipped ? "bg-black w-6" : "bg-black"
+                isCardFlipped ? "bg-emerald-600 w-6" : "bg-emerald-600"
               }`}
             />
           </div>
 
           {/* Action Buttons */}
-          <div className="flex gap-2">
+          <div className="flex gap-2 md:gap-3">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="flex-1 flex items-center justify-center gap-2 bg-black text-white px-4 py-3 rounded-xl font-semibold transition-all"
+              className="flex-1 flex items-center justify-center gap-2 bg-emerald-600 text-white px-4 md:px-6 py-3 md:py-4 rounded-xl font-semibold transition-all text-sm md:text-base"
             >
-              <ArrowsRightLeftIcon className="w-5 h-5" />
+              <ArrowsRightLeftIcon className="w-5 h-5 md:w-6 md:h-6" />
               <span> گردش حساب </span>
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setShowDepositModal(true)}
-              className="flex-1 flex items-center justify-center gap-2 bg-black text-white px-4 py-3 rounded-xl font-semibold transition-all"
+              className="flex-1 flex items-center justify-center gap-2 bg-emerald-600 text-white px-4 md:px-6 py-3 md:py-4 rounded-xl font-semibold transition-all text-sm md:text-base"
             >
-              <ArrowDownTrayIcon className="w-5 h-5" />
+              <ArrowDownTrayIcon className="w-5 h-5 md:w-6 md:h-6" />
               <span>انتقال به کیف پول</span>
             </motion.button>
           </div>
         </div>
 
         {/* Stats Cards */}
-        <StatsCards
-          totalExpense={stats.totalExpense}
-          transactionsCount={stats.transactionsCount}
-          formatBalance={formatBalance}
-        />
+        <div className="mt-6 md:mt-8">
+          <StatsCards
+            totalExpense={stats.totalExpense}
+            transactionsCount={stats.transactionsCount}
+            formatBalance={formatBalance}
+          />
+        </div>
+          </div>
 
-        {/* Recent Transactions */}
-        <RecentTransactions
-          activities={recentActivities}
-          formatBalance={formatBalance}
-          formatTime={formatTime}
-        />
+          {/* Right Column: Recent Transactions */}
+          <div className="md:col-span-1 mt-6 md:mt-0">
+            <RecentTransactions
+              activities={recentActivities}
+              formatBalance={formatBalance}
+              formatTime={formatTime}
+            />
+          </div>
+        </div>
       </div>
 
       {/* Transfer to Wallet Modal */}
@@ -472,6 +452,7 @@ function WalletSaving() {
         direction="to-wallet"
         formatBalance={formatBalance}
         sourceBalance={totalBalance}
+        dominantColor="#059669"
         onTransfer={(amount) => {
           // Deduct from saving and add to parent wallet
           const savingBalanceKey = "savingBalance";
@@ -593,7 +574,7 @@ function WalletSaving() {
                   موجودی کافی نیست!
                 </p>
                 <p className="text-red-600 text-xs">
-                  موجودی فعلی شما:{" "}
+                  موجودی فعلیت:{" "}
                   {transferType === "money"
                     ? `${formatBalance(parentMoneyBalance)} تومان`
                     : `${formatBalance(parentDigitBalance)} دیجیت`}
@@ -699,10 +680,10 @@ function WalletSaving() {
                   className="block text-sm font-semibold text-gray-700"
                 >
                  {transferType === "money"
-                    ? "اطلاعات پس‌انداز شما"
+                    ? "اطلاعات پس‌انداز"
                     : " مقدار پولی که باید پرداخت کنی  (هر ۱۰ دیحیت ۲۵ هزارتومان) "}
                 </label>
-                <div className="bg-[#7e4bd0] w-full h-14 rounded-xl flex justify-center items-center text-white">
+                <div className="text-emerald-600 w-full h-14 rounded-xl flex justify-center items-center">
                 {transferType === "money"
                     ? " میثم نوروزی - موجودی فعلی : ۴۰,۰۰۰ تومان "
                     : " مبلغ : ۳۰,۰۰۰ تومان "}
@@ -731,12 +712,12 @@ function WalletSaving() {
                   min="1"
                 />
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-gray-500">موجودی شما:</span>
+                  <span className="text-gray-500">موجودیت:</span>
                   <span
                     className={`font-semibold ${
                       transferType === "money"
-                        ? "text-[#7e4bd0]"
-                        : "text-[#7e4bd0]"
+                        ? "text-emerald-600"
+                        : "text-emerald-600"
                     }`}
                   >
                     {transferType === "money"
@@ -823,7 +804,7 @@ function WalletSaving() {
                     !transferAmount ||
                     parseFloat(transferAmount) <= 0
                   }
-                  className="flex-1 bg-[#7e4bd0] text-white py-3 rounded-xl font-bold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="flex-1 bg-emerald-600 text-white py-3 rounded-xl font-bold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   <CheckIcon className="w-5 h-5" />
                   <span>

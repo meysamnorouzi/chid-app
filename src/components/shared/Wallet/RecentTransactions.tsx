@@ -1,11 +1,4 @@
 import { motion } from "framer-motion";
-import { CurrencyDollarIcon } from "@heroicons/react/24/outline";
-import {
-  AiOutlineWallet,
-  AiOutlineShopping,
-  AiOutlineRest,
-  AiOutlineArrowDown,
-} from "react-icons/ai";
 
 interface Activity {
   id: string;
@@ -34,11 +27,11 @@ function RecentTransactions({
   const getActivityIcon = (iconType: string) => {
     switch (iconType) {
       case "game":
-        return <AiOutlineShopping className="w-5 h-5" />;
+        return <img src="/icons/store.svg" className="w-5 h-5" alt="game" />;
       case "food":
-        return <AiOutlineRest className="w-5 h-5" />;
+        return <img src="/icons/cafe.svg" className="w-5 h-5" alt="food" />;
       default:
-        return <AiOutlineWallet className="w-5 h-5" />;
+        return <img src="/icons/wallet.svg" className="w-5 h-5" alt="wallet" />;
     }
   };
 
@@ -74,7 +67,7 @@ function RecentTransactions({
                 }`}
               >
                 {activity.type === "income" ? (
-                  <AiOutlineArrowDown className="w-6 h-6" />
+                  <img src="/icons/sendtopasandaz.svg" className="w-6 h-6" alt="income" />
                 ) : (
                   getActivityIcon(activity.icon)
                 )}
@@ -110,7 +103,7 @@ function RecentTransactions({
       ) : (
         <div className="text-center py-12">
           <div className="bg-gray-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-            <CurrencyDollarIcon className="w-8 h-8 text-gray-400" />
+            <img src="/icons/digitcoin.svg" className="w-8 h-8 opacity-40" alt="empty" />
           </div>
           <p className="text-gray-500 text-sm">{emptyMessage}</p>
         </div>

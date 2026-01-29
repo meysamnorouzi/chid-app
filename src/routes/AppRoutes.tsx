@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { AuthLayout, MainLayout } from '../layouts';
+import { AuthLayout, MainLayout, HomeLayout } from '../layouts';
 import DocumentationLayout from '../layouts/DocumentationLayout';
+import { ProtectedRoute } from '../components/shared/ProtectedRoute';
 import Home from '../pages/app/Home';
 import Onboarding from '../pages/Onboarding';
 import Documentation from '../pages/Documentation/Documentation';
@@ -190,6 +191,7 @@ import {
 } from '../pages/Documentation/tooltip';
 import Login from '../pages/app/auth/Login';
 import Register from '../pages/app/auth/Register';
+import AvatarSelection from '../pages/app/auth/AvatarSelection';
 import QrCode from '../pages/app/auth/QrCode';
 import Password from '../pages/app/auth/Password';
 import PasswordNot from '../pages/app/auth/PasswordNot';
@@ -197,13 +199,27 @@ import Friends from '../pages/app/friends/Friends';
 import Shop from '../pages/app/shop/Shop';
 import ProductDetail from '../pages/app/shop/ProductDetail';
 import Cart from '../pages/app/shop/Cart';
+import Favorites from '../pages/app/shop/Favorites';
 import OrderReceipt from '../pages/app/shop/OrderReceipt';
 import Orders from '../pages/app/shop/Orders';
 import WalletMoney from '../pages/app/wallet/WalletMoney';
 import WalletDigit from '../pages/app/wallet/WalletDigit';
 import WalletSaving from '../pages/app/wallet/WalletSaving';
+import InviteParent from '../pages/app/wallet/InviteParent';
+import RequestCard from '../pages/app/wallet/RequestCard';
 import MessagesPage from '../pages/app/messages/Messages';
+import UserInfo from '../pages/app/user/UserInfo';
 import Digifun from '../pages/app/digifun/Digifun';
+import SelectCardDesign from '../pages/app/wallet/SelectCardDesign';
+import { WalletCharge } from '../components/shared/Wallet';
+import Goals from '../pages/app/digiteen/Goals';
+import Challenges from '../pages/app/digiteen/Challenges';
+import Missions from '../pages/app/digiteen/Missions';
+import RadioTeen from '../pages/app/radioteen/RadioTeen';
+import DigiBook from '../pages/app/digibook/DigiBook';
+import BookDetail from '../pages/app/digibook/BookDetail';
+import Reader from '../pages/app/digibook/Reader';
+import ShahrFarang from '../pages/app/shahrfarang/ShahrFarang';
 
 const AppRoutes = () => {
   return (
@@ -213,28 +229,55 @@ const AppRoutes = () => {
       <Route element={<AuthLayout />}>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/select-avatar" element={<AvatarSelection />} />
         <Route path="/password" element={<Password />} />
         <Route path="/password-not" element={<PasswordNot />} />
         <Route path="/qrcode" element={<QrCode />} />
+        <Route path="/request-card" element={<RequestCard />} />
+        <Route path="/select-card-design" element={<SelectCardDesign />} />
+        <Route path="/wallet_charge" element={<WalletCharge />} />
+        <Route path="/user-info" element={<UserInfo />} />
       </Route>
-      {/* App Page */}
-      <Route element={<MainLayout />}>
-        <Route path="/" element={<Home />} />
-        <Route path="/friends" element={<Friends />} />
-        <Route path="/shop" element={<Shop />} />
-        <Route path="/shop/:id" element={<ProductDetail />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/order-receipt" element={<OrderReceipt />} />
-        <Route path="/orders" element={<Orders />} />
-        <Route path="/wallet-money" element={<WalletMoney />} />
-        <Route path="/wallet-digit" element={<WalletDigit />} />
-        <Route path="/wallet-saving" element={<WalletSaving />} />
-        <Route path="/messages" element={<MessagesPage />} />
-        <Route path="/digifun">
-          <Route index element={<Digifun />} />
-          <Route path="video" element={<Digifun />} />
-          <Route path="audio" element={<Digifun />} />
-          <Route path="read" element={<Digifun />} />
+      {/* App Page - Protected Routes */}
+      <Route element={<ProtectedRoute />}>
+        {/* Home page with special layout */}
+        <Route element={<HomeLayout />}>
+          <Route path="/" element={<Home />} />
+        </Route>
+        {/* Other pages with main layout */}
+        <Route element={<MainLayout />}>
+          <Route path="/friends" element={<Friends />} />
+          <Route path="/shop" element={<Shop />} />
+          <Route path="/shop/:id" element={<ProductDetail />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/favorites" element={<Favorites />} />
+          <Route path="/order-receipt" element={<OrderReceipt />} />
+          <Route path="/orders" element={<Orders />} />
+          <Route path="/wallet-money" element={<WalletMoney />} />
+          <Route path="/wallet-digit" element={<WalletDigit />} />
+       
+          <Route path="/wallet-saving" element={<WalletSaving />} />
+          <Route path="/invite-parent" element={<InviteParent />} />
+         
+          <Route path="/messages" element={<MessagesPage />} />
+          <Route path="/radioteen" element={<RadioTeen />} />
+          <Route path="/shahr-farang" element={<ShahrFarang />} />
+          <Route path="/digibook" element={<DigiBook />} />
+          <Route path="/digibook/:bookId" element={<BookDetail />} />
+          <Route path="/digibook/:bookId/part/:partId" element={<Reader />} />
+
+          <Route path="/digifun">
+            <Route index element={<Digifun />} />
+            <Route path="video" element={<Digifun />} />
+            <Route path="audio" element={<Digifun />} />
+            <Route path="read" element={<Digifun />} />
+          </Route>
+          <Route path="/digiteen">
+            <Route index element={<Navigate to="/digiteen/challenges" replace />} />
+            <Route path="goals" element={<Goals />} />
+            <Route path="challenges" element={<Challenges />} />
+            <Route path="missions" element={<Missions />} />
+          </Route>
         </Route>
       </Route>
       {/* Documentation Page */}

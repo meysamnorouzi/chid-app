@@ -1,5 +1,4 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import WalletHeader from "../../../components/shared/Wallet/WalletHeader";
 import { formatPrice } from "../../../utils/priceUtils";
 
@@ -44,14 +43,18 @@ const OrderReceipt = () => {
   return (
     <div className="flex flex-col bg-white min-h-screen pb-32">
       <WalletHeader
-        greeting="سلام ، محمد"
-        subtitle="رسید خرید"
+        greeting="محمد مهرابی"
+        subtitle="@mohammad-mehrabi"
       />
 
       <div className="flex flex-col items-center px-4 py-8">
         {/* Success Icon */}
-        <div className="w-24 h-24 rounded-full bg-green-100 flex items-center justify-center mb-6">
-          <CheckCircleIcon className="w-16 h-16 text-green-600" />
+        <div className="w-24 h-24 flex items-center justify-center mb-6">
+          <img 
+            src="/gif/Done2.gif" 
+            alt="Success" 
+            className="w-full h-full object-contain"
+          />
         </div>
 
         {/* Success Message */}
@@ -59,7 +62,7 @@ const OrderReceipt = () => {
           با موفقیت پرداخت شد
         </h2>
         <p className="text-sm text-gray-600 mb-8 text-center">
-          سفارش شما با موفقیت ثبت شد
+          سفارشت با موفقیت ثبت شد
         </p>
 
         {/* Order Details Card */}
@@ -126,16 +129,16 @@ const OrderReceipt = () => {
         {/* Action Buttons */}
         <div className="w-full max-w-md flex flex-col gap-3">
           <button
-            onClick={handleViewOrders}
-            className="w-full py-3 bg-[#7e4bd0] text-white rounded-lg font-semibold hover:bg-[#6b3fb8] transition-colors"
-          >
-            مشاهده لیست سفارشات
-          </button>
-          <button
             onClick={handleBackToShop}
             className="w-full py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
           >
             بازگشت به فروشگاه
+          </button>
+          <button
+            onClick={handleViewOrders}
+            className="w-full py-3 bg-[#7e4bd0] text-white rounded-lg font-semibold hover:bg-[#6b3fb8] transition-colors"
+          >
+            مشاهده لیست سفارشات
           </button>
         </div>
       </div>

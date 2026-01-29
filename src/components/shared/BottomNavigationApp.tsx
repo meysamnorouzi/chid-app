@@ -5,7 +5,7 @@ import {
   WalletIcon, 
   ShoppingBagIcon,
   UserGroupIcon,
-  ChatBubbleLeftRightIcon
+  SpeakerWaveIcon
 } from '@heroicons/react/24/outline'
 
 interface NavItem {
@@ -19,8 +19,8 @@ const navItems: NavItem[] = [
   { path: '/wallet-money', label: 'کیف پول', icon: WalletIcon },
   { path: '/shop', label: 'فروشگاه', icon: ShoppingBagIcon },
   { path: '/', label: 'خانه', icon: HomeIcon },
+  { path: '/radioteen', label: 'رادیو تین', icon: SpeakerWaveIcon },
   { path: '/friends', label: 'دوستان', icon: UserGroupIcon },
-  { path: '/messages', label: 'پیام‌ها', icon: ChatBubbleLeftRightIcon },
 ]
 
 function BottomNavigationApp() {
@@ -38,7 +38,7 @@ function BottomNavigationApp() {
   }
 
   return (
-    <nav className="sticky bottom-0 w-full bg-white border-t border-gray-200 px-4 pb-6 pt-3 z-50" dir="rtl">
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 w-full bg-white border-t border-gray-200 px-4 pb-6 pt-3" dir="rtl">
       <div className="flex justify-around items-center max-w-md mx-auto">
         {navItems.map((item) => {
           const Icon = item.icon

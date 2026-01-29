@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 89 122" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
+    <g transform="matrix(1,0,0,1,-616.896,-178.47336)">
+        <g transform="matrix(1,0,0,1,111.845,-1.03004)">
+            <g transform="matrix(1,0,0,1,132.63,-16.0416)">
+                <path d="M416.562,198.735C416.708,231.39 423.329,231.262 432.914,235.742C459.033,247.951 441.072,273.397 457.236,281.584" style="fill:none;stroke:black;stroke-width:6.38px;"/>
+            </g>
+        </g>
+        <g transform="matrix(1,0,0,1,111.845,-1.03004)">
+            <g transform="matrix(1.03361,0,0,1,118.056,-16.7095)">
+                <path d="M377.602,282.347L456.421,282.347" style="fill:none;stroke:black;stroke-width:6.27px;"/>
+            </g>
+        </g>
+        <g transform="matrix(1,0,0,1,111.845,-1.03004)">
+            <g transform="matrix(1,0,0,1,-111.572,4.72718)">
+                <path d="M654.113,265.866C638.627,270.919 641.899,292.114 660.238,293.429C674.336,294.44 681.219,272.168 664.958,264.993" style="fill:none;fill-rule:nonzero;stroke:black;stroke-width:6.15px;"/>
+            </g>
+        </g>
+        <g transform="matrix(1,0,0,1,111.845,-1.03004)">
+            <g transform="matrix(1,0,0,1,-111.595,5.20848)">
+                <path d="M661.381,273.391C654.403,273.443 651.336,284.108 661.736,284.511" style="fill:none;fill-rule:nonzero;stroke:black;stroke-width:6.15px;"/>
+            </g>
+        </g>
+        <g transform="matrix(1,0,0,1,111.845,-1.03004)">
+            <g transform="matrix(-1,0,0,1,965.477,-15.7928)">
+                <path d="M416.562,198.735C416.708,231.39 423.329,231.262 432.914,235.742C459.033,247.951 441.072,273.397 457.236,281.584" style="fill:none;stroke:black;stroke-width:6.38px;"/>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -48,7 +48,7 @@ const QrCode = () => {
           .then(() => {
             scannerRef.current?.clear();
           })
-          .catch((err) => {
+          .catch((err: unknown) => {
             console.error('Error stopping scanner:', err);
           });
       }
@@ -78,7 +78,7 @@ const QrCode = () => {
           qrbox: { width: 250, height: 250 },
           aspectRatio: 1.0,
         },
-        (decodedText) => {
+        (decodedText: string) => {
           handleScanSuccess(decodedText);
         },
         () => {
@@ -97,6 +97,13 @@ const QrCode = () => {
     }
   };
 
+  const validateLoginLink = (link: string): boolean => {
+    // بررسی اینکه لینک معتبر باشد (می‌تواند URL یا کد خاص باشد)
+    if (!link.trim()) return false;
+    // بررسی اینکه حداقل یک کاراکتر داشته باشد
+    return link.trim().length > 0;
+  };
+
   const handleScanSuccess = async (decodedText: string) => {
     // Stop scanning
     if (scannerRef.current) {
@@ -112,6 +119,25 @@ const QrCode = () => {
 
     // Set the scanned data to input
     setLoginLink(decodedText);
+    setError(''); // Clear any previous errors
+  };
+
+  const handleLoginLinkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLoginLink(e.target.value);
+    if (error) setError('');
+  };
+
+  const handleSubmit = async () => {
+    if (!validateLoginLink(loginLink)) {
+      setError('لطفاً لینک ورود را وارد کنید یا با کیوآر کد اسکن کنید');
+      return;
+    }
+
+    // TODO: Replace with actual API call to validate and use the login link
+    // await apiClient.post('/auth/qr-login', { loginLink });
+    
+    // For now, just navigate to home
+    navigate('/');
   };
 
   const checkCameraPermission = async () => {
@@ -170,7 +196,7 @@ const QrCode = () => {
     try {
       // Check if getUserMedia is available
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        setError('مرورگر شما از دسترسی به دوربین پشتیبانی نمی‌کند.');
+        setError('مرورگرت از دسترسی به دوربین پشتیبانی نمی‌کند.');
         setHasCameraPermission(false);
         return;
       }
@@ -220,17 +246,18 @@ const QrCode = () => {
   };
 
   return (
-    <div className="flex flex-col w-full min-h-screen">
-      <div className="w-full flex justify-center items-center bg-[#7e4bd0] p-12 min-h-[300px] rounded-b-3xl">
-        <img
-          src="/logo/QR.gif"
-          alt=""
-          className="w-40 "
-        />
-      </div>
-      <div className="flex flex-col w-full items-center justify-start flex-1 pt-10 p-4">
-        <div className="w-full mb-8">
-          <div className="flex flex-col gap-3">
+    <div className="flex flex-col w-full min-h-screen md:justify-center md:items-center md:bg-gray-50">
+      <div className="w-full flex flex-col md:max-w-md md:bg-white md:rounded-2xl md:shadow-lg md:overflow-hidden">
+        <div className="w-full flex justify-center items-center bg-[#7e4bd0] p-12 min-h-[300px] rounded-b-3xl md:min-h-[200px] md:rounded-t-2xl md:rounded-b-none">
+          <img
+            src="/logo/QR.gif"
+            alt=""
+            className="w-40 "
+          />
+        </div>
+        <div className="flex flex-col w-full items-center justify-start flex-1 pt-10 p-4 md:pt-0 md:p-8">
+          <div className="w-full mb-8 md:mb-0">
+            <div className="flex flex-col gap-3">
             {/* QR Scanner Preview Box */}
             <div className="space-y-2 w-full">
 
@@ -275,7 +302,7 @@ const QrCode = () => {
                           ? error
                           : hasCameraPermission === false
                           ? 'برای اسکن کیوآر کد، دسترسی به دوربین لازم است'
-                          : 'در حال بررسی دسترسی...'}
+                          : ''}
                       </span>
                       {(hasCameraPermission === false || hasCameraPermission === null) && (
                         <button
@@ -290,28 +317,37 @@ const QrCode = () => {
                 </div>
                 {/* Input Field */}
                 <label
-                htmlFor="phone"
-                className="block text-sm font-medium text-gray-700"
-              >
-                لینک ورود
-              </label>
+                  htmlFor="loginLink"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  لینک ورود
+                </label>
                 <input
+                  id="loginLink"
                   type="text"
                   value={loginLink}
-                  onChange={(e) => setLoginLink(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl mt-2 border border-gray-200 focus:border-black focus:ring-2 focus:ring-gray-300 outline-none transition-all "
+                  onChange={handleLoginLinkChange}
+                  className={`w-full px-4 py-3 rounded-xl mt-2 border ${
+                    error && !loginLink.trim()
+                      ? 'border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-200'
+                      : 'border-gray-200 focus:border-black focus:ring-2 focus:ring-gray-300'
+                  } outline-none transition-all`}
                   placeholder="  لینک ورود خود را وارد کنید ..."
                   dir="rtl"
                   required
                 />
+                {error && (
+                  <p className="text-red-500 text-xs mt-1">{error}</p>
+                )}
               </div>
             </div>
             <button
-              type="submit"
-              onClick={() => navigate('/')}
+              type="button"
+              onClick={handleSubmit}
+              disabled={!validateLoginLink(loginLink)}
               className="w-full bg-[#7e4bd0] hover:bg-gray-800 disabled:bg-gray-400 border border-[#7e4bd0] disabled:cursor-not-allowed text-white font-semibold py-3.5 rounded-xl  shadow-gray-300 transition-all active:scale-[0.98]"
             >
-              ورود به دیجی پلی
+              ورود به دیجی تین
             </button>
     
             <button
@@ -321,6 +357,7 @@ const QrCode = () => {
             >
               برگشت به صفحه قبلی
             </button>
+          </div>
           </div>
         </div>
       </div>

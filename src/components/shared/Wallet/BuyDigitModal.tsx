@@ -9,6 +9,9 @@ interface DigitPackage {
   price: number;
   label?: string;
   popular?: boolean;
+  giftIcon: string;
+  gradient: string;
+  bonus?: number;
 }
 
 interface BuyDigitModalProps {
@@ -21,12 +24,57 @@ interface BuyDigitModalProps {
 }
 
 const DIGIT_PACKAGES: DigitPackage[] = [
-  { id: "1", digits: 10, price: 25000, label: "پکیج کوچک" },
-  { id: "2", digits: 25, price: 60000, label: "پکیج متوسط" },
-  { id: "3", digits: 50, price: 115000, label: "پکیج بزرگ", popular: true },
-  { id: "4", digits: 100, price: 220000, label: "پکیج ویژه" },
-  { id: "5", digits: 200, price: 420000, label: "پکیج طلایی" },
-  { id: "6", digits: 500, price: 1000000, label: "پکیج الماس" },
+  { 
+    id: "1", 
+    digits: 100, 
+    price: 25000, 
+    label: "پکیج کوچک",
+    giftIcon: "/iconGift/IMG_5447.PNG",
+    gradient: "from-blue-50 to-blue-100"
+  },
+  { 
+    id: "2", 
+    digits: 200, 
+    price: 50000, 
+    label: "پکیج متوسط",
+    giftIcon: "/iconGift/IMG_5448.PNG",
+    gradient: "from-green-50 to-green-100"
+  },
+  { 
+    id: "3", 
+    digits: 300, 
+    price: 75000, 
+    label: "پکیج بزرگ", 
+    popular: true,
+    giftIcon: "/iconGift/IMG_5449.PNG",
+    gradient: "from-purple-50 to-purple-100"
+  },
+  { 
+    id: "4", 
+    digits: 400, 
+    price: 100000, 
+    label: "پکیج ویژه",
+    giftIcon: "/iconGift/IMG_5450.PNG",
+    gradient: "from-pink-50 to-pink-100"
+  },
+  { 
+    id: "5", 
+    digits: 1000, 
+    price: 250000, 
+    label: "پکیج طلایی",
+    giftIcon: "/iconGift/IMG_5451.PNG",
+    gradient: "from-yellow-50 to-yellow-100",
+    bonus: 100
+  },
+  { 
+    id: "6", 
+    digits: 2000, 
+    price: 500000, 
+    label: "پکیج الماس",
+    giftIcon: "/iconGift/IMG_5452.PNG",
+    gradient: "from-indigo-50 to-indigo-100",
+    bonus: 100
+  },
 ];
 
 function BuyDigitModal({
@@ -45,6 +93,8 @@ function BuyDigitModal({
   const handlePurchase = () => {
     if (selectedPackage) {
       const digits = selectedPackage.digits;
+      const bonus = selectedPackage.bonus || 0;
+      const totalDigits = digits + bonus;
       const price = selectedPackage.price;
 
       // Check if user has enough money
@@ -56,11 +106,11 @@ function BuyDigitModal({
           ? JSON.parse(storedParentWallet)
           : { money: 0, digits: 0 };
         walletData.money = (walletData.money || 0) - price;
-        walletData.digits = (walletData.digits || 0) + digits;
+        walletData.digits = (walletData.digits || 0) + totalDigits;
         localStorage.setItem(parentWalletKey, JSON.stringify(walletData));
 
         loadParentWallet();
-        onPurchase(digits, price);
+        onPurchase(totalDigits, price);
         handleClose();
       }
     } else if (customDigits && parseFloat(customDigits) > 0) {
@@ -123,156 +173,170 @@ function BuyDigitModal({
       title="خرید دیجیت"
       maxHeight="90vh"
     >
-      <div className="space-y-6">
-
-        <div className="w-full flex justify-center items-center">
-          <img src="/logo/digit.svg" alt="logo" className="w-40" />
-        </div>
+      <div className="space-y-6" dir="rtl">
+        {/* Header Logo */}
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className="w-full flex justify-center items-center"
+        >
+          <img src="/logo/digit.svg" alt="logo" className="w-32" />
+        </motion.div>
 
         {/* Exchange Rate Info */}
         <div className="space-y-2">
-          <label className="block text-sm font-semibold text-gray-700">
-            مقدار پولی که باید پرداخت کنی (هر ۱۰ دیجیت ۲۵ هزارتومان)
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+              هر ۱۰۰ دیجیت = ۲۵ هزار تومان
           </label>
           {getSelectedPrice() > 0 ? (
-            <div className="bg-[#7e4bd0] w-full h-14 rounded-xl flex justify-center items-center text-white">
-              <span className="text-lg font-bold">
-                مبلغ: {formatBalance(getSelectedPrice())} تومان
-              </span>
-            </div>
+            <motion.div
+              initial={{ scale: 0.95 }}
+              animate={{ scale: 1 }}
+              className="bg-gradient-to-r from-amber-500 to-amber-600 border-2 border-amber-600 w-full h-16 rounded-2xl flex justify-center items-center text-white shadow-lg"
+            >
+              <div className="text-center">
+                <span className="text-xs opacity-90 block mb-1">مبلغ پرداختی</span>
+                <span className="text-lg font-bold">
+                  {formatBalance(getSelectedPrice())} تومان
+                </span>
+              </div>
+            </motion.div>
           ) : (
-            <div className="bg-gray-100 w-full h-14 rounded-xl flex justify-center items-center text-gray-500">
-              <span className="text-sm">یک پکیج انتخاب کنید</span>
+            <div className="bg-gradient-to-r from-gray-100 to-gray-200 w-full h-16 rounded-2xl flex justify-center items-center text-gray-500 border-2 border-gray-200">
+              <span className="text-sm">یک پکیج هدیه انتخاب کنید </span>
             </div>
           )}
         </div>
 
-        {/* Package Selection */}
+        {/* Package Selection with Gift Icons */}
         <div className="space-y-3">
-          <label className="block text-sm font-semibold text-gray-700">
+          <label className="block text-sm font-semibold text-gray-700 mb-3">
             انتخاب پکیج دیجیت
           </label>
-          <div className="grid grid-cols-2 gap-3">
-            {DIGIT_PACKAGES.map((pkg) => {
+          <div className="grid grid-cols-2 gap-4">
+            {DIGIT_PACKAGES.map((pkg, index) => {
               const isSelected = selectedPackage?.id === pkg.id;
               const canAfford = parentMoneyBalance >= pkg.price;
 
               return (
                 <motion.button
                   key={pkg.id}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  whileHover={{ scale: canAfford ? 1.05 : 1, y: canAfford ? -5 : 0 }}
+                  whileTap={{ scale: canAfford ? 0.95 : 1 }}
                   onClick={() => {
                     setSelectedPackage(pkg);
                     setCustomDigits("");
                   }}
                   disabled={!canAfford}
-                  className={`relative p-4 rounded-xl border-2 transition-all ${
+                  className={`relative p-4 rounded-2xl border-2 transition-all ${
                     isSelected
-                      ? "border-[#7e4bd0] bg-indigo-50"
-                      : "border-gray-200 bg-white hover:border-gray-300"
+                      ? `border-amber-600 bg-white shadow-xl ring-4 ring-amber-600 ring-opacity-30`
+                      : `border-gray-200 bg-white hover:border-gray-300 shadow-md hover:shadow-lg`
                   } ${
                     !canAfford
-                      ? "opacity-50 cursor-not-allowed"
+                      ? "opacity-40 cursor-not-allowed grayscale"
                       : "cursor-pointer"
                   }`}
                 >
-                  {pkg.popular && (
-                    <div className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs px-2 py-1 rounded-full font-bold">
-                      محبوب
-                    </div>
-                  )}
-                  <div className="text-center">
-                    <p className="text-lg font-bold text-gray-900 mb-1">
-                      {formatBalance(pkg.digits)} دیجیت
-                    </p>
-                    <p className="text-xs text-gray-500 mb-2">{pkg.label}</p>
-                    <p
-                      className={`text-sm font-semibold ${
-                        isSelected ? "text-[#7e4bd0]" : "text-gray-700"
-                      }`}
+                  {/* Bonus Badge */}
+                  {pkg.bonus && (
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className="absolute -top-2 -left-2 bg-white border-2 border-amber-600 text-amber-600 text-xs px-2 py-1 rounded-full font-bold shadow-lg z-10"
                     >
-                      {formatBalance(pkg.price)} تومان
-                    </p>
+                      +{formatBalance(pkg.bonus)}
+                    </motion.div>
+                  )}
+
+                  {/* Gift Icon */}
+                  <div className="flex justify-center items-center mb-3 mt-2">
+                    <motion.div
+                      animate={isSelected ? { scale: [1, 1.1, 1] } : {}}
+                      transition={{ duration: 0.5 }}
+                      className="relative"
+                    >
+                      <img
+                        src={pkg.giftIcon}
+                        alt={pkg.label}
+                        className="w-20 h-20 object-contain drop-shadow-lg"
+                      />
+                      {isSelected && (
+                        <motion.div
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          className="absolute -top-1 -right-1 w-6 h-6 bg-amber-600 rounded-full flex items-center justify-center shadow-lg"
+                        >
+                          <CheckIcon className="w-4 h-4 text-white" />
+                        </motion.div>
+                      )}
+                    </motion.div>
                   </div>
-                  {isSelected && (
-                    <div className="absolute top-2 left-2">
-                      <div className="w-5 h-5 bg-[#7e4bd0] rounded-full flex items-center justify-center">
-                        <CheckIcon className="w-3 h-3 text-white" />
-                      </div>
+
+                  {/* Package Info */}
+                  <div className="text-center space-y-1">
+                    <p className="text-xl font-bold text-gray-900">
+                      {formatBalance(pkg.digits)}
+                    </p>
+                    <p className="text-xs font-semibold text-gray-600 mb-2">
+                      {pkg.label}
+                    </p>
+                    <div className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-lg ${
+                      isSelected 
+                        ? "bg-amber-600 text-white" 
+                        : "bg-gray-100 text-gray-700"
+                    }`}>
+                      <span className="text-sm font-bold">
+                        {formatBalance(pkg.price)}
+                      </span>
+                      <span className="text-xs">تومان</span>
                     </div>
+                  </div>
+
+                  {/* Selection Indicator */}
+                  {isSelected && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="absolute inset-0 border-4 border-amber-600 rounded-2xl pointer-events-none"
+                    />
                   )}
                 </motion.button>
               );
             })}
           </div>
         </div>
+        
 
-        {/* Custom Amount */}
-        <div className="space-y-2">
-          <label className="block text-sm font-semibold text-gray-700">
-            یا مقدار دلخواه دیجیت وارد کنید
-          </label>
-          <div className="relative">
-            <input
-              type="number"
-              value={customDigits}
-              onChange={(e) => {
-                setCustomDigits(e.target.value);
-                setSelectedPackage(null);
-              }}
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-gray-900 focus:ring-2 focus:ring-gray-300 outline-none transition-all"
-              placeholder="مثال: 100"
-              dir="ltr"
-              min="1"
-            />
-            {customDigits && parseFloat(customDigits) > 0 && (
-              <div className="mt-2 text-right">
-                <p className="text-xs text-gray-500">
-                  قیمت: {formatBalance(calculateCustomPrice(parseFloat(customDigits)))}{" "}
-                  تومان
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Balance Info */}
-        <div className="flex items-center justify-between text-xs bg-gray-50 p-3 rounded-xl">
-          <span className="text-gray-500">موجودی شما:</span>
-          <span className="font-semibold text-[#7e4bd0]">
-            {formatBalance(parentMoneyBalance)} تومان
-          </span>
-        </div>
-
+        {/* Insufficient Balance Warning */}
         {getSelectedPrice() > parentMoneyBalance && (
-          <div className="bg-red-50 border border-red-200 rounded-xl p-3">
-            <p className="text-red-700 text-sm font-semibold">
-              موجودی کافی نیست!
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-gradient-to-r from-red-50 to-red-100 border-2 border-red-300 rounded-xl p-4 shadow-md"
+          >
+            <p className="text-red-700 text-sm font-bold mb-2 flex items-center gap-2">
+             موجودی کافی نیست!
             </p>
-            <p className="text-red-600 text-xs mt-1">
-              موجودی مورد نیاز: {formatBalance(getSelectedPrice())} تومان
+            <p className="text-red-600 text-xs">
+              موجودی مورد نیاز: <span className="font-bold">{formatBalance(getSelectedPrice())}</span> تومان
             </p>
-          </div>
+          </motion.div>
         )}
 
-        {/* Action Buttons */}
-        <div className="flex gap-3">
+        {/* Action Button */}
+        <div className="flex gap-3 pt-2">
           <motion.button
-            whileTap={{ scale: 0.98 }}
-            onClick={handleClose}
-            className="px-4 py-3 rounded-xl border-2 border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition-all flex items-center justify-center gap-2"
-          >
-            <ArrowLeftIcon className="w-5 h-5" />
-            بازگشت
-          </motion.button>
-          <motion.button
-            whileTap={{ scale: 0.98 }}
+            whileHover={{ scale: canPurchase() ? 1.02 : 1 }}
+            whileTap={{ scale: canPurchase() ? 0.98 : 1 }}
             onClick={handlePurchase}
             disabled={!canPurchase()}
-            className="flex-1 bg-[#7e4bd0] text-white py-3 rounded-xl font-bold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="flex-1 bg-gradient-to-r from-amber-500 to-amber-600 text-white py-4 rounded-xl font-bold shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-lg hover:shadow-2xl transition-all"
           >
-            <CheckIcon className="w-5 h-5" />
+            <CheckIcon className="w-6 h-6" />
             <span>خرید دیجیت</span>
           </motion.button>
         </div>

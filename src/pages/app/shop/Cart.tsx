@@ -143,7 +143,7 @@ const Cart = () => {
         id: `notif-${Date.now()}`,
         type: "shop",
         title: "سفارش جدید",
-        message: `سفارش شما با شماره ${orderId} ثبت شد و در انتظار تایید والد است`,
+        message: `سفارشت باتره ${orderId} ثبت شد و در انتظار تایید والد است`,
         date: new Date().toISOString(),
         read: false,
       });
@@ -156,7 +156,7 @@ const Cart = () => {
       showToast({
         type: 'success',
         title: 'موفقیت',
-        message: 'سفارش شما با موفقیت ثبت شد',
+        message: 'سفارشت با موفقیت ثبت شد',
         duration: 3000,
       });
 
@@ -179,16 +179,24 @@ const Cart = () => {
     return (
       <div className="flex flex-col bg-white min-h-screen pb-32">
         <WalletHeader
-          greeting="سلام ، محمد"
-          subtitle="سبد خرید شما"
-          icon={<ShoppingBagIcon className="w-5 h-5 text-[#7e4bd0]" />}
+          greeting="محمد مهرابی"
+          subtitle="@mohammad-mehrabi"
+          icon={
+            <div onClick={() => navigate(-1)} className="cursor-pointer flex items-center justify-center">
+              <ChevronLeftIcon className="w-5 h-5 text-[#7e4bd0]" />
+            </div>
+          }
         />
 
         <div className="flex flex-col items-center justify-center flex-1 px-4 py-20">
-          <div className="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center mb-4">
-            <ShoppingBagIcon className="w-12 h-12 text-gray-400" />
+          <div className="mb-4">
+            <img 
+              src="/gif/Sabadkhali.gif" 
+              alt="سبد خرید خالی" 
+              className="w-48 h-48 object-contain"
+            />
           </div>
-          <h2 className="text-xl font-bold text-black mb-2">سبد خرید شما خالی است</h2>
+          <h2 className="text-xl font-bold text-black mb-2">سبد خریدت خالی است</h2>
           <p className="text-sm text-gray-500 text-center mb-6">
             محصولات مورد نظر خود را به سبد خرید اضافه کنید
           </p>
@@ -206,9 +214,13 @@ const Cart = () => {
   return (
     <div className="flex flex-col bg-white min-h-screen pb-40">
       <WalletHeader
-        greeting="سلام ، محمد"
-        subtitle="سبد خرید شما"
-        icon={<ShoppingBagIcon className="w-5 h-5 text-[#7e4bd0]" />}
+        greeting="محمد مهرابی"
+        subtitle="سبد خریدت"
+        icon={
+          <div onClick={() => navigate(-1)} className="cursor-pointer flex items-center justify-center">
+            <ChevronLeftIcon className="w-5 h-5 text-[#7e4bd0]" />
+          </div>
+        }
       />
 
       <div className="px-4 flex flex-col gap-4 pb-40">
@@ -315,9 +327,9 @@ const Cart = () => {
       </div>
 
       {/* Fixed Summary and Action Buttons */}
-      <div className="sticky bottom-0 w-full bg-white border-t border-gray-200 px-4 py-4 shadow-lg z-40">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-4 shadow-lg z-40">
         {/* Wallet Balance */}
-        <div className="bg-gradient-to-r from-[#7e4bd0] to-[#9d6fe8] rounded-lg p-4 mb-3 text-white">
+        <div className="rounded-lg p-4 mb-3 text-[#7e4bd0]">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <WalletIcon className="w-5 h-5" />
@@ -350,7 +362,7 @@ const Cart = () => {
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-red-500 rounded-full shrink-0"></div>
               <p className="text-sm text-red-700">
-                موجودی کیف پول شما کافی نیست. مبلغ مورد نیاز: {formatPrice(insufficientAmount)} تومان
+                موجودی کیف پولت کافی نیست. مبلغ مورد نیاز: {formatPrice(insufficientAmount)} تومان
               </p>
             </div>
           </div>

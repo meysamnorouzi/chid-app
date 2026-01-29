@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   ArrowDownTrayIcon,
@@ -27,6 +28,7 @@ interface Activity {
 }
 
 function WalletDigit() {
+  const navigate = useNavigate();
   const [totalBalance, setTotalBalance] = useState<number>(0);
   const [recentActivities, setRecentActivities] = useState<Activity[]>([]);
   const [stats, setStats] = useState({
@@ -45,7 +47,15 @@ function WalletDigit() {
   const [parentMoneyBalance, setParentMoneyBalance] = useState<number>(0);
   const [parentDigitBalance, setParentDigitBalance] = useState<number>(0);
 
+  // Parent invitation state
+  const [isParentInvited, setIsParentInvited] = useState<boolean>(false);
+
   const loadParentWallet = () => {
+    // Load parent invitation state
+    const parentInvitationKey = "parentInvitation";
+    const storedInvitation = localStorage.getItem(parentInvitationKey);
+    setIsParentInvited(!!storedInvitation);
+
     // Load parent wallet (money and digits)
     const parentWalletKey = "parentWallet";
     const storedParentWallet = localStorage.getItem(parentWalletKey);
@@ -80,7 +90,7 @@ function WalletDigit() {
       const defaultActivities: Activity[] = [
         {
           id: "activity_1",
-          title: "تسک: تمیز کردن اتاق",
+          title: "ماموریت: تمیز کردن اتاق",
           amount: 500,
           type: "income",
               date: now - 2 * 60 * 60 * 1000, // 2 hours ago
@@ -88,7 +98,7 @@ function WalletDigit() {
         },
         {
           id: "activity_2",
-          title: "تسک: انجام تکالیف",
+          title: "ماموریت: انجام تکالیف",
           amount: 300,
           type: "income",
               date: now - 24 * 60 * 60 * 1000 - 5 * 60 * 60 * 1000, // Yesterday
@@ -96,7 +106,7 @@ function WalletDigit() {
         },
         {
           id: "activity_3",
-          title: "تسک: کمک در کارهای خانه",
+          title: "ماموریت: کمک در کارهای خانه",
           amount: 200,
               type: "income",
               date: now - 3 * 24 * 60 * 60 * 1000, // 3 days ago
@@ -112,7 +122,7 @@ function WalletDigit() {
         },
         {
           id: "activity_5",
-          title: "تسک: مطالعه کتاب",
+          title: "ماموریت: مطالعه کتاب",
           amount: 400,
               type: "income",
               date: now - 7 * 24 * 60 * 60 * 1000, // 7 days ago
@@ -136,7 +146,7 @@ function WalletDigit() {
         },
         {
           id: "activity_8",
-          title: "تسک: ورزش کردن",
+          title: "ماموریت: ورزش کردن",
           amount: 350,
           type: "income",
           date: now - 15 * 24 * 60 * 60 * 1000, // 15 days ago
@@ -301,17 +311,21 @@ function WalletDigit() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20" dir="rtl">
+    <div className="min-h-screen bg-gray-50 pb-20 md:pb-4" dir="rtl">
       <WalletHeader
-        subtitle="به کیف دیجیت خوش اومدی"
+        subtitle="@mohammad-mehrabi"
         showBalance={true}
-        balance="موجودی شما ۲۳۰,۰۰۰,۰۰ تومان"
+        balance=""
       />
-      <WalletTabs activeTab="digit" />
+      <WalletTabs activeTab="digit" isParentInvited={isParentInvited} />
 
-      <div className="bg-white min-h-screen px-4 py-6 max-w-4xl mx-auto">
+      <div className="bg-white min-h-screen px-4 md:px-6 lg:px-8 py-6 md:py-8 max-w-6xl mx-auto">
+        {/* Desktop Layout: Card + Buttons on left, Transactions on right */}
+        <div className="md:grid md:grid-cols-2 md:gap-6 lg:gap-8 md:items-start">
+          {/* Left Column: Card + Buttons */}
+          <div className="md:col-span-1">
         {/* Main Balance Card */}
-        <div className="mb-6">
+        <div className="mb-6 md:mb-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -335,62 +349,23 @@ function WalletDigit() {
             >
               {/* Front of Card */}
               <div
-                className="relative bg-cyan-900 rounded-2xl p-6 overflow-hidden aspect-video cursor-pointer select-none"
+                className="relative rounded-2xl overflow-hidden cursor-pointer select-none"
                 style={{
                   backfaceVisibility: "hidden",
                   WebkitBackfaceVisibility: "hidden",
                   pointerEvents: "auto",
                 }}
               >
-                {/* Card Pattern Background */}
-                <div className="absolute inset-0 opacity-10">
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-white rounded-full -mr-16 -mt-16"></div>
-                  <div className="absolute bottom-0 left-0 w-24 h-24 bg-white rounded-full -ml-12 -mb-12"></div>
-                </div>
-
-                {/* Main Content */}
-                <div className="relative z-10 h-full flex flex-col justify-between">
-                  {/* Top Section - Card Type */}
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-white text-sm font-semibold">
-                        دارایی دیجیت شما
-                      </p>
-                    </div>
-                    <div className="text-white/90">
-                    <img src="/logo/digit.svg" alt="" className="w-8" />
-                    </div>
-                  </div>
-
-                  {/* Balance Display - Center */}
-                  <div className="flex-1 flex items-center justify-center">
-                    <div className="text-center flex items-center gap-2">
-                      <p className="text-white text-4xl font-bold mb-1">
-                        {formatBalance(parentDigitBalance)}
-                      </p>
-                      <p className="text-white/70 text-sm font-medium">دیجیت</p>
-                    </div>
-                  </div>
-
-                  {/* Bottom Section */}
-                  <div className="flex items-end justify-between mt-auto">
-                    {/* Left Side - Account Owner */}
-                    <div>
-                      <p className="text-white/70 text-xs font-medium mb-1">
-                        صاحب حساب
-                      </p>
-                      <p className="text-white text-sm font-semibold">
-                        میثم نوروزی
-                      </p>
-                    </div>
-
-                    {/* Right Side - Card Number */}
-                    <div className="text-left">
-                      <p className="text-white text-sm font-semibold tracking-wider">
-                        تاریخ امروز ۲۶ دی ۱۴۰۴
-                      </p>
-                    </div>
-                  </div>
+                <img 
+                  src="/digitandpasandcards/Digit-cart.svg" 
+                  alt="کارت دیجیت" 
+                  className="w-full h-auto"
+                  draggable={false}
+                />
+                {/* Balance Overlay */}
+                <div className="absolute bottom-6 right-6 text-white">
+                  <p className="text-sm font-medium opacity-80">موجودی دیجیت</p>
+                  <p className="text-2xl font-bold">{formatBalance(parentDigitBalance)} <span className="text-sm font-medium">دیجیت</span></p>
                 </div>
               </div>
             </div>
@@ -401,52 +376,56 @@ function WalletDigit() {
             <button
               onClick={() => setIsCardFlipped(true)}
               className={`w-6 h-2 rounded-full transition-all ${
-                isCardFlipped ? "bg-cyan-900 w-6" : "bg-cyan-900"
+                isCardFlipped ? "bg-amber-600 w-6" : "bg-amber-600"
               }`}
             />
           </div>
 
           {/* Action Buttons */}
-          <div className="flex gap-2">
+          <div className="flex gap-2 md:gap-3">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="flex-1 flex items-center justify-center gap-2 bg-cyan-900 text-white px-4 py-3 rounded-xl font-semibold transition-all"
+              onClick={() => navigate("/messages?filter=buy")}
+              className="flex-1 flex items-center justify-center gap-2 bg-amber-600 text-white px-4 md:px-6 py-3 md:py-4 rounded-xl font-semibold transition-all text-sm md:text-base"
             >
-              <ArrowsRightLeftIcon className="w-5 h-5" />
+              <ArrowsRightLeftIcon className="w-5 h-5 md:w-6 md:h-6" />
               <span> لیست خرید ها </span>
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setShowDepositModal(true)}
-              className="flex-1 flex items-center justify-center gap-2 bg-cyan-900 text-white px-4 py-3 rounded-xl font-semibold transition-all"
+              className="flex-1 flex items-center justify-center gap-2 bg-amber-600 text-white px-4 md:px-6 py-3 md:py-4 rounded-xl font-semibold transition-all text-sm md:text-base"
             >
-              <ArrowDownTrayIcon className="w-5 h-5" />
+              <ArrowDownTrayIcon className="w-5 h-5 md:w-6 md:h-6" />
               <span> خرید دیجیت </span>
             </motion.button>
           </div>
-          <div className="flex gap-2 mt-2">
+          <div className="flex gap-2 md:gap-3 mt-2">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setShowTransferModal(true)}
-              className="flex-1 flex items-center justify-center gap-2 bg-cyan-900 text-white px-4 py-3 rounded-xl font-semibold transition-all"
+              className="flex-1 flex items-center justify-center gap-2 bg-amber-600 text-white px-4 md:px-6 py-3 md:py-4 rounded-xl font-semibold transition-all text-sm md:text-base"
             >
-              <GiftIcon className="w-5 h-5" />
+              <GiftIcon className="w-5 h-5 md:w-6 md:h-6" />
               <span> هدیه </span>
             </motion.button>
           </div>
         </div>
+          </div>
 
-        <div>
-          <RecentTransactions
-            activities={recentActivities}
-            formatBalance={formatBalance}
-            formatTime={formatTime}
-            emptyMessage="هنوز تسک ثبت نشده که بتونی از اون دیجیت بگیری :)"
-            amountLabel="دیجیت"
-          />
+          {/* Right Column: Recent Transactions */}
+          <div className="md:col-span-1 mt-6 md:mt-0">
+            <RecentTransactions
+              activities={recentActivities}
+              formatBalance={formatBalance}
+              formatTime={formatTime}
+              emptyMessage="هنوز ماموریت ثبت نشده که بتونی از اون دیجیت بگیری :)"
+              amountLabel="دیجیت"
+            />
+          </div>
         </div>
 
   

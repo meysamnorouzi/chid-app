@@ -1,12 +1,5 @@
 import { motion } from "framer-motion";
-import {
-  ChevronLeftIcon,
-  MagnifyingGlassIcon,
-  ShoppingBagIcon,
-  WalletIcon,
-  CheckCircleIcon,
-  HeartIcon,
-} from "@heroicons/react/24/outline";
+import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 import { ReactNode, useState, useMemo, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import WalletHeader from "../../../components/shared/Wallet/WalletHeader";
@@ -101,22 +94,41 @@ const Shop = () => {
     {
       id: "all",
       name: "همه",
-      icon: <HeartIcon className="w-6 h-6" />,
+      icon: (
+        <div className="w-full h-full bg-gradient-to-br from-[#7e4bd0] to-[#a855f7] flex items-center justify-center">
+          <span className="text-white font-bold text-lg">همه</span>
+        </div>
+      ),
+    },
+    {
+      id: "digital",
+      name: "کالای دیجیتال",
+      icon: <img src="/icons/store/Curves.svg" alt="کالای دیجیتال" className="w-[100%] h-full object-cover p-4" />,
     },
     {
       id: "entertainment",
       name: "سرگرمی",
-      icon: <CheckCircleIcon className="w-6 h-6" />,
+      icon: <img src="/icons/store/game.svg" alt="سرگرمی" className="w-full h-full object-cover p-4" />,
     },
     {
-      id: "laptops",
-      name: "لپ تاپ ها",
-      icon: <WalletIcon className="w-6 h-6" />,
+      id: "books",
+      name: "کتاب و فرهنگ",
+      icon: <img src="/icons/store/ketab.svg" alt="کتاب و فرهنگ" className="w-full h-full object-cover p-4" />,
     },
     {
-      id: "room",
-      name: "اتاق",
-      icon: <ShoppingBagIcon className="w-6 h-6" />,
+      id: "clothing",
+      name: "پوشاک",
+      icon: <img src="/icons/store/lebas.svg" alt="پوشاک" className="w-full h-full object-cover p-4" />,
+    },
+    {
+      id: "sports",
+      name: "ورزش و سفر",
+      icon: <img src="/icons/store/safar.svg" alt="ورزش و سفر" className="w-full h-full object-cover p-4" />,
+    },
+    {
+      id: "pets",
+      name: "حیوانات خانگی",
+      icon: <img src="/iconstore/pets.svg" alt="حیوانات خانگی" className="w-full h-full object-cover" />,
     },
   ];
 
@@ -286,7 +298,7 @@ const Shop = () => {
   const filteredProducts = useMemo(() => {
     let filtered = allProducts;
 
-    if (activeCategory !== "all") {
+    if (activeCategory && activeCategory !== "all") {
       filtered = filtered.filter(
         (product) => product.categoryId === activeCategory
       );
@@ -302,71 +314,66 @@ const Shop = () => {
     return filtered;
   }, [allProducts, activeCategory, searchQuery]);
 
-  const ProductCard = ({ product }: { product: Product }) => (
+  const ProductCard = ({ product, isHorizontal = false }: { product: Product; isHorizontal?: boolean }) => (
     <div
       onClick={() => navigate(`/shop/${product.id}`)}
-      className="w-[calc(50vw-22px)] shrink-0 shadow-sm bg-white overflow-hidden rounded-lg relative cursor-pointer transition-transform hover:scale-[1.02] active:scale-[0.98]"
+      className={`${isHorizontal ? 'w-[calc(50vw-22px)] md:w-full' : 'w-full'} shrink-0 shadow-sm bg-white overflow-hidden rounded-lg md:rounded-xl relative cursor-pointer transition-transform hover:scale-[1.02] active:scale-[0.98]`}
     >
       <div className="relative">
-        {product.isFavorite && (
-          <div className="absolute right-1 top-1 flex gap-1 justify-center items-center p-1 bg-[#00000038] backdrop-blur-xs rounded-lg">
-            <HeartIcon className="w-6 h-6 text-white" />
-            <p className="text-xs text-white">علاقه مندی</p>
-          </div>
-        )}
         <img
           src={product.image}
           alt={product.title}
           className="w-full aspect-square object-cover"
         />
       </div>
-      <div className="p-2 flex flex-col gap-2">
+      <div className="p-2 md:p-3 lg:p-4 flex flex-col gap-2">
         <div className="flex items-center gap-1">
-          <ShoppingBagIcon className="w-4 h-4" />
-          <p className="text-xs">فروشگاه دیجی پلی</p>
+          <img src="/icons/store.svg" className="w-4 h-4 md:w-5 md:h-5" alt="فروشگاه" />
+          <p className="text-xs md:text-sm">فروشگاه دیجی تین</p>
         </div>
-        <p className="text-sm text-black font-medium">{product.title}</p>
-        <div className="flex gap-1 mt-8 items-center justify-end w-full">
-          <p className="text-black text-sm">{product.price}</p>
-          <p className="text-xs">تومان</p>
+        <p className="text-sm md:text-base lg:text-lg text-black font-medium line-clamp-2">{product.title}</p>
+        <div className="flex gap-1 mt-auto items-center justify-end w-full">
+          <p className="text-black text-sm md:text-base lg:text-lg font-semibold">{product.price}</p>
+          <p className="text-xs md:text-sm">تومان</p>
         </div>
       </div>
     </div>
   );
 
   return (
-    <div className="flex flex-col bg-white pb-24 gap-2 min-h-screen">
-      <WalletHeader
-        greeting="سلام ، محمد"
-        subtitle="به فروشگاه دیجی پلی خوش اومدی"
-        icon={<ShoppingBagIcon className="w-5 h-5 text-[#7e4bd0]" />}
-        showCartBadge={true}
-      />
-      <div className="px-4">
+    <div className="flex flex-col bg-white pb-24 md:pb-4 min-h-screen overflow-hidden">
+      {/* Fixed header - stays on top when scrolling */}
+      <div className="shrink-0 z-30 bg-white border-b border-gray-100">
+        <WalletHeader
+          greeting="محمد مهرابی"
+          subtitle="@mohammad-mehrabi"
+          icon={<img src="/icons/store.svg" className="w-5 h-5" alt="فروشگاه" />}
+          showCartBadge={true}
+        />
+      </div>
+      <div className="px-4 md:px-6 lg:px-8 flex-1 overflow-y-auto min-h-0 max-w-7xl mx-auto w-full">
 
-      <div className="grid grid-cols-4 gap-3">
+      <div className="flex gap-3 md:gap-4 lg:gap-5 mb-3 md:mb-4 lg:mb-6 overflow-x-auto md:overflow-x-visible scrollbar-hide pb-2 md:pb-0 md:justify-center md:flex-wrap">
         {categories.map((category) => (
           <div
             key={category.id}
             onClick={() => setActiveCategory(category.id)}
-            className={`h-20 border mb-3 flex items-center justify-center flex-col rounded-lg cursor-pointer transition-colors ${
-              activeCategory === category.id
-                ? "border-[#7e4bd0]"
-                : "border-gray-200"
-            }`}
+            className="flex flex-col items-center cursor-pointer shrink-0"
           >
             <div
-              className={
-                activeCategory === category.id ? "text-[#7e4bd0]" : "text-black"
-              }
+              className={`w-24 h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 border rounded-xl md:rounded-2xl transition-all overflow-hidden bg-white hover:shadow-md ${
+                activeCategory === category.id
+                  ? "border-[#7e4bd0] border-2 md:border-[3px]"
+                  : "border-gray-200 hover:border-gray-300"
+              }`}
             >
               {category.icon}
             </div>
             <p
-              className={`text-xs font-semibold mt-1 ${
+              className={`text-xs md:text-sm lg:text-base font-medium mt-2 md:mt-3 ${
                 activeCategory === category.id
-                  ? "text-[#7e4bd0]"
-                  : "text-gray-900"
+                  ? "text-[#7e4bd0] font-semibold"
+                  : "text-gray-700"
               }`}
             >
               {category.name}
@@ -380,21 +387,21 @@ const Shop = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.1 }}
-        className="mb-3"
+        className="mb-3 md:mb-4 lg:mb-6"
       >
-        <div className="relative">
-          <MagnifyingGlassIcon className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+        <div className="relative max-w-2xl md:mx-auto">
+          <img src="/icons/search.svg" className="absolute right-3 md:right-4 top-1/2 -translate-y-1/2 w-5 h-5 md:w-6 md:h-6 opacity-50" alt="جستجو" />
           <input
             type="text"
             placeholder="جستجوی محصولات ..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pr-10 pl-4 py-3 placeholder-gray-400 text-black bg-white border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent text-sm"
+            className="w-full pr-10 md:pr-12 pl-4 md:pl-6 py-3 md:py-4 placeholder-gray-400 text-black bg-white border border-gray-400 rounded-lg md:rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent text-sm md:text-base"
           />
         </div>
       </motion.div>
 
-      <div className="w-full mt-3 relative overflow-hidden rounded-lg">
+      <div className="w-full mt-3 md:mt-4 lg:mt-6 relative overflow-hidden rounded-lg md:rounded-xl lg:rounded-2xl">
         <div
           className="flex transition-transform duration-500 ease-in-out"
           style={{
@@ -409,21 +416,22 @@ const Shop = () => {
               <img
                 src={banner}
                 alt={`Banner ${index + 1}`}
-                className="w-full rounded-lg"
+                className="w-full rounded-lg md:rounded-xl lg:rounded-2xl object-cover"
+                style={{ maxHeight: '400px', objectFit: 'cover' }}
               />
             </div>
           ))}
         </div>
-        <div className="flex items-center justify-center w-full gap-1 mt-2">
+        <div className="flex items-center justify-center w-full gap-1 md:gap-2 mt-2 md:mt-3">
           {banners.map((_, index) => (
             <button
               key={index}
               onClick={() => goToSlide(index)}
               className={`transition-all duration-300 rounded-full ${
                 currentSlide === index
-                  ? "bg-black w-5"
-                  : "bg-gray-500 w-2 hover:bg-gray-400"
-              } h-2`}
+                  ? "bg-black w-5 md:w-6 h-2 md:h-2.5"
+                  : "bg-gray-500 w-2 md:w-3 h-2 md:h-2.5 hover:bg-gray-400"
+              }`}
               aria-label={`Go to slide ${index + 1}`}
             />
           ))}
@@ -431,50 +439,56 @@ const Shop = () => {
       </div>
 
       {filteredProducts.length > 0 ? (
-        <div className="mt-5">
-          <div className="flex w-full items-center justify-between mb-3">
-            <p className="text-black font-medium text-sm">
-              {searchQuery || activeCategory !== "all"
+        <div className="mt-5 md:mt-6 lg:mt-8">
+          <div className="flex w-full items-center justify-between mb-3 md:mb-4 lg:mb-6">
+            <p className="text-black font-medium text-sm md:text-base lg:text-lg">
+              {searchQuery
                 ? `نتایج جستجو (${filteredProducts.length})`
-                : "همه محصولات"}
+                : activeCategory === "all"
+                ? `همه محصولات (${filteredProducts.length})`
+                : `محصولات (${filteredProducts.length})`}
             </p>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 lg:gap-6">
             {filteredProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
         </div>
       ) : (
-        <div className="mt-5 text-center py-8">
-          <p className="text-gray-500 text-sm">
+        <div className="mt-5 md:mt-6 lg:mt-8 text-center py-8 md:py-12 lg:py-16">
+          <p className="text-gray-500 text-sm md:text-base lg:text-lg">
             محصولی یافت نشد. لطفاً جستجوی دیگری امتحان کنید.
           </p>
         </div>
       )}
 
-      {!searchQuery && activeCategory === "all" && (
+      {!searchQuery && !activeCategory && (
         <>
           {productSections.map((section) => (
-            <div key={section.id}>
-              <div className="flex w-full items-center justify-between mt-5">
-                <p className="text-black font-medium text-sm">
+            <div key={section.id} className="mt-5 md:mt-6 lg:mt-8">
+              <div className="flex w-full items-center justify-between mb-3 md:mb-4 lg:mb-6">
+                <p className="text-black font-medium text-sm md:text-base lg:text-lg">
                   {section.title}
                 </p>
-                <div className="text-[#7e4bd0] text-xs flex gap-1 items-center">
+                <div className="text-[#7e4bd0] text-xs md:text-sm lg:text-base flex gap-1 items-center cursor-pointer hover:text-[#6a3fb8] transition-colors">
                   <p>مشاهده همه</p>
-                  <ChevronLeftIcon className="w-5 h-5" />
+                  <ChevronLeftIcon className="w-5 h-5 md:w-6 md:h-6" />
                 </div>
               </div>
-              <div className="mt-2 overflow-x-auto scrollbar-hide">
-                <div
-                  className="flex gap-3 pb-2"
-                  style={{ width: "max-content" }}
-                >
+              {/* Mobile: Horizontal Scroll */}
+              <div className="mt-2 md:hidden overflow-x-auto scrollbar-hide">
+                <div className="flex gap-3 pb-2" style={{ width: "max-content" }}>
                   {section.products.map((product) => (
-                    <ProductCard key={product.id} product={product} />
+                    <ProductCard key={product.id} product={product} isHorizontal={true} />
                   ))}
                 </div>
+              </div>
+              {/* Desktop: Grid Layout */}
+              <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6 mt-3">
+                {section.products.map((product) => (
+                  <ProductCard key={product.id} product={product} isHorizontal={false} />
+                ))}
               </div>
             </div>
           ))}

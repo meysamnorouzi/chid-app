@@ -46,7 +46,7 @@ const ToastContainer = ({
 
   return (
     <div
-      className={`absolute z-50 flex flex-col gap-3 ${positionMap[position]} ${className}`}
+      className={`fixed z-50 flex flex-col gap-3 ${positionMap[position]} ${className}`}
       style={style}
       role="region"
       aria-label="Toast notifications"

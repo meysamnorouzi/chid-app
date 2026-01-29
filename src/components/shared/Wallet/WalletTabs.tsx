@@ -1,5 +1,3 @@
-import { WalletIcon, HeartIcon } from "@heroicons/react/24/outline";
-import { IoShuffle } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 
 type TabType = "money" | "saving" | "digit";
@@ -7,36 +5,38 @@ type TabType = "money" | "saving" | "digit";
 interface WalletTabsProps {
   activeTab: TabType;
   onTabChange?: (tab: TabType) => void;
+  isParentInvited?: boolean;
 }
 
-function WalletTabs({ activeTab, onTabChange }: WalletTabsProps) {
+function WalletTabs({ activeTab, onTabChange, isParentInvited = true }: WalletTabsProps) {
   const navigate = useNavigate();
 
   const tabs = [
     {
       id: "money" as TabType,
       label: "کیف پول",
-      icon: WalletIcon,
+      icon: "/icons/wallet.svg",
       activeColor: "indigo-700",
       path: "/wallet-money",
     },
     {
       id: "saving" as TabType,
       label: "پس‌انداز",
-      icon: IoShuffle,
+      icon: "/icons/pasandaz.svg",
       activeColor: "indigo-700",
       path: "/wallet-saving",
     },
     {
       id: "digit" as TabType,
       label: "دیجیت",
-      icon: HeartIcon,
+      icon: "/icons/digitcoin.svg",
       activeColor: "indigo-700",
       path: "/wallet-digit",
     },
   ];
 
-  const handleTabClick = (tab: TabType, path: string) => {
+  const handleTabClick = (tab: TabType, path: string, disabled: boolean) => {
+    if (disabled) return;
     if (onTabChange) {
       onTabChange(tab);
     }
@@ -44,25 +44,32 @@ function WalletTabs({ activeTab, onTabChange }: WalletTabsProps) {
   };
 
   return (
-    <div className="grid grid-cols-3 items-center px-4 gap-2">
+    <div className="grid grid-cols-3 items-center px-4 gap-2 bg-white py-2 sticky top-0 z-10">
       {tabs.map((tab) => {
-        const Icon = tab.icon;
         const isActive = activeTab === tab.id;
+        const isSavingTab = tab.id === "saving";
+        const isDisabled = isSavingTab && !isParentInvited;
 
         return (
           <div
             key={tab.id}
-            onClick={() => handleTabClick(tab.id, tab.path)}
-            className={`h-10 border gap-2 rounded-lg flex justify-center items-center transition-all cursor-pointer hover:opacity-80 ${
+            onClick={() => handleTabClick(tab.id, tab.path, isDisabled)}
+            className={`h-10 border gap-2 rounded-lg flex justify-center items-center transition-all ${
+              isDisabled
+                ? "opacity-50 cursor-not-allowed"
+                : "cursor-pointer hover:opacity-80"
+            } ${
               isActive
                 ? "border-[#7e4bd0]"
                 : "border-gray-400"
             }`}
           >
-            <Icon
+            <img
+              src={tab.icon}
               className={`w-5 h-5 ${
-                isActive ? "text-[#7e4bd0]" : "text-black"
+                isActive ? "" : "opacity-60"
               }`}
+              alt={tab.label}
             />
             <p
               className={`text-xs font-medium ${

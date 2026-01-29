@@ -47,49 +47,22 @@ const DocumentationContent = ({ children }: DocumentationLayoutProps) => {
   }, [location.pathname]);
 
   return (
-    <div className="desktop-wrapper">
-      <div 
-        className="app-shell transition-colors duration-300"
-        style={{ backgroundColor: theme.background.body }}
-      >
-        <div className="flex flex-col w-full min-h-full overflow-hidden">
-          {/* Mobile Menu Toggle Button */}
-          <button
-            onClick={() => setSidebarOpen(true)}
-            className="fixed top-4 left-4 z-20 p-2 rounded-lg transition-colors"
-            style={{
-              backgroundColor: theme.background.card,
-              color: theme.colors.gray[700],
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
-            }}
-            aria-label="Open sidebar"
-            aria-expanded={sidebarOpen}
-          >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
-          </button>
-
-          {/* Sidebar Drawer */}
+    <div 
+      className="min-h-screen transition-colors duration-300"
+      style={{ backgroundColor: theme.background.body }}
+    >
+      <div className="app-shell">
+        <div className="flex w-full h-screen overflow-hidden">
+          {/* Sidebar */}
           <DocumentationSidebar 
             isOpen={sidebarOpen}
             onToggle={() => setSidebarOpen(!sidebarOpen)}
           />
 
-          {/* Overlay for sidebar */}
+          {/* Overlay for mobile */}
           {sidebarOpen && (
             <div
-              className="fixed inset-0 bg-black bg-opacity-50 z-30"
+              className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
               onClick={() => setSidebarOpen(false)}
               aria-hidden="true"
             />
@@ -97,23 +70,50 @@ const DocumentationContent = ({ children }: DocumentationLayoutProps) => {
 
           {/* Main Content */}
           <main 
-            className="transition-all duration-300 flex flex-col w-full flex-1"
+            className="transition-all duration-300 h-screen flex flex-col w-full lg:w-[calc(100%-350px)]"
             role="main"
           >
-            <div className="w-full flex flex-col min-h-0 gap-4 p-4">
+            <div className="w-full flex flex-col min-h-0 gap-6 p-6 pl-0">
               {/* Header */}
               <Header />
 
+              {/* Mobile Menu Toggle Button */}
+              <button
+                onClick={() => setSidebarOpen(true)}
+                className="lg:hidden fixed top-4 left-4 z-20 p-2 rounded-lg transition-colors"
+                style={{
+                  backgroundColor: theme.background.card,
+                  color: theme.colors.gray[700],
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+                }}
+                aria-label="Open sidebar"
+                aria-expanded={sidebarOpen}
+              >
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
+                </svg>
+              </button>
+
               {/* Content Box with Scroll */}
               <div
-                className="overflow-y-auto rounded-xl border w-full flex-1"
+                className="overflow-y-auto rounded-xl border w-full"
                 style={{
                   backgroundColor: theme.background.card,
                   borderColor: theme.colors.gray[300],
                   boxShadow: theme.boxShadows.light,
                 }}
               >
-                <div className="p-4 w-full">
+                <div className="p-6 lg:p-8 w-full">
                   {children || <Outlet />}
                 </div>
               </div>
@@ -133,13 +133,13 @@ const DocumentationLoginContent = ({ children }: DocumentationLayoutProps) => {
   const { theme } = useDocumentationTheme();
 
   return (
-    <div className="desktop-wrapper">
-      <div
-        className="app-shell transition-colors duration-300"
-        dir="ltr"
-        style={{ backgroundColor: theme.background.body }}
-      >
-        <main className="w-full min-h-full flex items-center justify-center" role="main">
+    <div
+      className="min-h-screen transition-colors duration-300"
+      dir="ltr"
+      style={{ backgroundColor: theme.background.body }}
+    >
+      <div className="app-shell">
+        <main className="w-full flex-1" role="main">
           {children || <Outlet />}
         </main>
       </div>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { DocumentTextIcon } from "@heroicons/react/24/outline";
+import { motion, AnimatePresence } from "framer-motion";
 import WalletHeader from "../../../components/shared/Wallet/WalletHeader";
 import { formatPrice } from "../../../utils/priceUtils";
 
@@ -26,23 +26,23 @@ interface Order {
 
 const Orders = () => {
   const navigate = useNavigate();
+
   const [orders, setOrders] = useState<Order[]>([]);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
   useEffect(() => {
-    loadOrders();
-  }, []);
-
-  const loadOrders = () => {
     const storedOrders = localStorage.getItem("orders");
     if (storedOrders) {
-      const parsedOrders: Order[] = JSON.parse(storedOrders);
-      // Sort by date (newest first)
-      const sortedOrders = parsedOrders.sort((a, b) => {
-        return new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime();
-      });
-      setOrders(sortedOrders);
+      const parsed: Order[] = JSON.parse(storedOrders);
+      setOrders(
+        parsed.sort(
+          (a, b) =>
+            new Date(b.orderDate).getTime() -
+            new Date(a.orderDate).getTime()
+        )
+      );
     }
-  };
+  }, []);
 
   const getStatusBadgeColor = (status: string) => {
     switch (status) {
@@ -60,22 +60,13 @@ const Orders = () => {
   if (orders.length === 0) {
     return (
       <div className="flex flex-col bg-white min-h-screen pb-32">
-        <WalletHeader
-          greeting="سلام ، محمد"
-          subtitle="لیست سفارشات"
-        />
-
+        <WalletHeader greeting="محمد مهرابی" subtitle="@mohammad-mehrabi" />
         <div className="flex flex-col items-center justify-center flex-1 px-4 py-20">
-          <div className="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center mb-4">
-            <DocumentTextIcon className="w-12 h-12 text-gray-400" />
-          </div>
-          <h2 className="text-xl font-bold text-black mb-2">شما هنوز سفارشی ثبت نکرده‌اید</h2>
-          <p className="text-sm text-gray-500 text-center mb-6">
-            سفارشات شما در اینجا نمایش داده می‌شود
-          </p>
+          <img src="/gif/List.gif" alt="لیست سفارشات" className="w-60 h-60 mb-4" />
+          <p className="font-bold">سفارشی وجود ندارد</p>
           <button
             onClick={() => navigate("/shop")}
-            className="px-6 py-3 bg-[#7e4bd0] text-white rounded-lg font-semibold"
+            className="mt-6 px-6 py-3 bg-[#7e4bd0] text-white rounded-lg"
           >
             بازگشت به فروشگاه
           </button>
@@ -86,76 +77,156 @@ const Orders = () => {
 
   return (
     <div className="flex flex-col bg-white min-h-screen pb-32">
-      <WalletHeader
-        greeting="سلام ، محمد"
-        subtitle="لیست سفارشات"
-      />
+      <WalletHeader greeting="محمد مهرابی" subtitle="@mohammad-mehrabi" />
 
       <div className="px-4 flex flex-col gap-4 mt-2 pb-8">
         {orders.map((order) => (
-          <div
+          <motion.div
             key={order.orderId}
-            className="bg-white border border-gray-200 rounded-lg p-4"
+            whileTap={{ scale: 0.98 }}
+            onClick={() => setSelectedOrder(order)}
+            className="bg-white border rounded-lg p-4 cursor-pointer"
           >
-            {/* Order Header */}
-            <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-200">
-              <div className="flex flex-col gap-1">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-gray-500">شماره سفارش:</span>
-                  <span className="text-sm font-semibold text-gray-800">{order.orderId}</span>
-                </div>
-                <span className="text-xs text-gray-500">{order.orderDate}</span>
+            <div className="flex justify-between mb-3">
+              <div>
+                <p className="text-xs text-gray-500">شماره سفارش</p>
+                <p className="font-semibold">{order.orderId}</p>
+                <p className="text-xs text-gray-500">{order.orderDate}</p>
               </div>
-              <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusBadgeColor(order.statusBadge)}`}>
+              <span
+                className={`px-3 py-1 rounded-full h-6 text-xs font-semibold ${getStatusBadgeColor(
+                  order.statusBadge
+                )}`}
+              >
                 {order.statusBadge}
               </span>
             </div>
 
-            {/* Order Items Preview */}
-            <div className="flex flex-col gap-3 mb-4">
-              {order.items.slice(0, 2).map((item, index) => (
-                <div key={index} className="flex gap-3">
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="w-16 h-16 rounded-lg object-cover shrink-0"
-                  />
-                  <div className="flex-1 flex flex-col gap-1">
-                    <h4 className="text-sm font-semibold text-gray-800 line-clamp-2">
+            <div className="flex flex-col gap-2">
+              {order.items.slice(0, 2).map((item, i) => (
+                <div key={i} className="flex gap-3">
+                  <img src={item.image} className="w-16 h-16 rounded-lg" />
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold line-clamp-2">
                       {item.title}
-                    </h4>
-                    {item.shopName && (
-                      <p className="text-xs text-gray-500">{item.shopName}</p>
-                    )}
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-gray-600">تعداد: {item.quantity}</span>
-                      <span className="text-sm font-bold text-gray-800">
-                        {formatPrice(parseFloat(item.finalPrice) * item.quantity)} تومان
+                    </p>
+                    <div className="flex justify-between">
+                      <span className="text-xs">
+                        تعداد: {item.quantity}
                       </span>
+                   
                     </div>
                   </div>
                 </div>
               ))}
-              {order.items.length > 2 && (
-                <p className="text-xs text-gray-500 text-center">
-                  و {order.items.length - 2} محصول دیگر
-                </p>
-              )}
             </div>
 
-            {/* Order Total */}
-            <div className="flex items-center justify-between pt-4 border-t border-gray-200">
-              <span className="text-sm font-semibold text-gray-800">جمع کل سفارش</span>
-              <span className="text-lg font-bold text-[#7e4bd0]">
+            <div className="flex justify-between mt-4 pt-3 border-t">
+              <span className="font-semibold">جمع کل</span>
+              <span className="font-bold text-[#7e4bd0]">
                 {formatPrice(order.totalPrice)} تومان
               </span>
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
+
+      {/* Bottom Sheet */}
+      <AnimatePresence>
+        {selectedOrder && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              className="fixed inset-0 bg-black/40 z-40"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedOrder(null)}
+            />
+
+            {/* Sheet */}
+            <motion.div
+              className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-2xl max-h-[90vh] overflow-y-auto"
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", stiffness: 260, damping: 30 }}
+              drag="y"
+              dragConstraints={{ top: 0 }}
+              dragElastic={0.2}
+              onDragEnd={(_, info) => {
+                if (info.offset.y > 150) {
+                  setSelectedOrder(null);
+                }
+              }}
+            >
+              <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto my-3" />
+
+              <div className="px-4 pb-4 border-b">
+                <div className="flex justify-between">
+                  <h3 className="font-bold text-lg">جزئیات سفارش</h3>
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusBadgeColor(
+                      selectedOrder.statusBadge
+                    )}`}
+                  >
+                    {selectedOrder.statusBadge}
+                  </span>
+                </div>
+                <p className="text-xs text-gray-500">
+                  سفارش #{selectedOrder.orderId}
+                </p>
+                <p className="text-xs text-gray-500">
+                  {selectedOrder.orderDate}
+                </p>
+              </div>
+
+              <div className="px-4 py-4 flex flex-col gap-4">
+                {selectedOrder.items.map((item, i) => (
+                  <div key={i} className="flex gap-3">
+                    <img
+                      src={item.image}
+                      className="w-20 h-20 rounded-lg"
+                    />
+                    <div className="flex-1">
+                      <p className="font-semibold text-sm">{item.title}</p>
+                      {item.shopName && (
+                        <p className="text-xs text-gray-500">
+                          {item.shopName}
+                        </p>
+                      )}
+                      <div className="flex justify-between mt-1">
+                        <span className="text-xs">
+                          تعداد: {item.quantity}
+                        </span>
+         
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="px-4 py-4 border-t flex justify-between">
+                <span className="font-semibold">مبلغ نهایی</span>
+                <span className="font-bold text-lg text-[#7e4bd0]">
+                  {formatPrice(selectedOrder.totalPrice)} تومان
+                </span>
+              </div>
+
+              <div className="px-4 pb-6">
+                <button
+                  onClick={() => setSelectedOrder(null)}
+                  className="w-full py-3 rounded-xl bg-gray-100 font-semibold"
+                >
+                  بستن
+                </button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
 
 export default Orders;
-

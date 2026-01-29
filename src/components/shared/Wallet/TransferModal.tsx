@@ -14,6 +14,7 @@ interface TransferModalProps {
   targetBalance?: number;
   targetName?: string;
   onTransfer: (amount: number) => void;
+  dominantColor?: string;
 }
 
 function TransferModal({
@@ -25,6 +26,7 @@ function TransferModal({
   targetBalance,
   targetName = "میثم نوروزی",
   onTransfer,
+  dominantColor = "#7e4bd0",
 }: TransferModalProps) {
   const [transferAmount, setTransferAmount] = useState<string>("");
   const [insufficientBalance, setInsufficientBalance] = useState(false);
@@ -67,9 +69,9 @@ function TransferModal({
         {direction === "to-saving" && (
           <div className="space-y-2">
             <label className="block text-sm font-semibold text-gray-700">
-              اطلاعات پس‌انداز شما
+              اطلاعات پس‌انداز
             </label>
-            <div className="bg-[#7e4bd0] w-full h-14 rounded-xl flex justify-center items-center text-white">
+            <div className="w-full h-14 rounded-xl flex justify-center items-center" style={{ color: dominantColor }}>
               {targetName} - موجودی فعلی: {formatBalance(targetBalance || 0)}{" "}
               تومان
             </div>
@@ -97,12 +99,6 @@ function TransferModal({
             dir="ltr"
             min="1"
           />
-          <div className="flex items-center justify-between text-xs">
-            <span className="text-gray-500">موجودی شما:</span>
-            <span className="font-semibold text-[#7e4bd0]">
-              {formatBalance(sourceBalance)} تومان
-            </span>
-          </div>
         </div>
 
         {/* Insufficient Balance Warning */}
@@ -112,7 +108,7 @@ function TransferModal({
               موجودی کافی نیست!
             </p>
             <p className="text-red-600 text-xs mt-1">
-              موجودی شما: {formatBalance(sourceBalance)} تومان
+              موجودیت: {formatBalance(sourceBalance)} تومان
             </p>
             <p className="text-red-600 text-xs mt-1">
               مبلغ درخواستی:{" "}
@@ -125,21 +121,14 @@ function TransferModal({
         <div className="flex gap-3">
           <motion.button
             whileTap={{ scale: 0.98 }}
-            onClick={handleClose}
-            className="px-4 py-3 rounded-xl border-2 border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition-all flex items-center justify-center gap-2"
-          >
-            <ArrowLeftIcon className="w-5 h-5" />
-            بازگشت
-          </motion.button>
-          <motion.button
-            whileTap={{ scale: 0.98 }}
             onClick={handleTransfer}
             disabled={
               !transferAmount ||
               parseFloat(transferAmount) <= 0 ||
               parseFloat(transferAmount) > sourceBalance
             }
-            className="flex-1 bg-[#7e4bd0] text-white py-3 rounded-xl font-bold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="flex-1 text-white py-3 rounded-xl font-bold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            style={{ backgroundColor: dominantColor }}
           >
             <CheckIcon className="w-5 h-5" />
             <span>{buttonText}</span>

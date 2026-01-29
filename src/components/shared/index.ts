@@ -32,4 +32,5 @@ export * from './Tabs';
 export * from './Tag';
 export * from './Toast';
 export * from './Tooltip';
+export { default as Modal } from './Modal';
 

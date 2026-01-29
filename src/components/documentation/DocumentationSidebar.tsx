@@ -636,15 +636,15 @@ const DocumentationSidebar = ({
 
   return (
     <aside
-      className={`fixed inset-y-0 left-0 z-40 w-[85%] max-w-[360px] transition-transform duration-300 ease-in-out ${
+      className={`z-40 w-full transition-transform duration-300 lg:w-[350px] ease-in-out p-6 ${
         isOpen ? 'translate-x-0' : '-translate-x-full'
-      }`}
+      } lg:translate-x-0`}
       role="navigation"
       aria-label="Documentation navigation"
     >
       <div 
-        className="flex flex-col h-full w-full border-r rounded-r-xl shadow-xl"
-        style={{ borderColor: theme.colors.gray[300], backgroundColor: theme.background.body }}
+        className="flex flex-col h-full w-full lg:border rounded-xl"
+        style={{ borderColor: theme.colors.gray[300] }}
       >
         {/* App Name Header */}
         <div className="px-6 py-6 relative">

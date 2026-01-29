@@ -6,5 +6,5 @@ export { default as BuyDigitModal } from "./BuyDigitModal";
 export { default as TransferModal } from "./TransferModal";
 export { default as GiftModal } from "./GiftModal";
 export { default as TransferDigitModal } from "./TransferDigitModal";
-export { default as ChargeWalletModal } from "./ChargeWalletModal";
+export { default as WalletCharge } from "./WalletCharge";
 

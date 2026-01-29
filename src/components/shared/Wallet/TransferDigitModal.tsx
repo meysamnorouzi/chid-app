@@ -221,7 +221,7 @@ function TransferDigitModal({
                 min="1"
               />
               <div className="flex items-center justify-between text-xs">
-                <span className="text-gray-500">موجودی شما:</span>
+                <span className="text-gray-500">موجودیت:</span>
                 <span className="font-semibold text-[#7e4bd0]">
                   {formatBalance(parentDigitBalance)} دیجیت
                 </span>
@@ -235,7 +235,7 @@ function TransferDigitModal({
                   موجودی کافی نیست!
                 </p>
                 <p className="text-red-600 text-xs mt-1">
-                  موجودی شما: {formatBalance(parentDigitBalance)} دیجیت
+                  موجودیت: {formatBalance(parentDigitBalance)} دیجیت
                 </p>
                 <p className="text-red-600 text-xs mt-1">
                   مبلغ درخواستی: {formatBalance(parseFloat(transferAmount) || 0)} دیجیت
@@ -249,14 +249,6 @@ function TransferDigitModal({
         <div className="flex gap-3">
           <motion.button
             whileTap={{ scale: 0.98 }}
-            onClick={handleClose}
-            className="px-4 py-3 rounded-xl border-2 border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition-all flex items-center justify-center gap-2"
-          >
-            <ArrowLeftIcon className="w-5 h-5" />
-            بازگشت
-          </motion.button>
-          <motion.button
-            whileTap={{ scale: 0.98 }}
             onClick={handleTransfer}
             disabled={
               !searchedProfile ||
@@ -264,7 +256,7 @@ function TransferDigitModal({
               parseFloat(transferAmount) <= 0 ||
               parseFloat(transferAmount) > parentDigitBalance
             }
-            className="flex-1 bg-[#7e4bd0] text-white py-3 rounded-xl font-bold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="flex-1 bg-[#7e4bd0] text-white py-3 rounded-xl font-bold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 w-full"
           >
             <CheckIcon className="w-5 h-5" />
             <span>انتقال دیجیت</span>
