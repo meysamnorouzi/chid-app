@@ -2,6 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { getBookById } from "./data";
 import TextReader from "./TextReader";
 import ImageReader from "./ImageReader";
+import PdfReader from "./PdfReader";
 
 export default function Reader() {
   const { bookId, partId } = useParams<{ bookId: string; partId: string }>();
@@ -37,6 +38,17 @@ export default function Reader() {
       <TextReader
         title={part.title}
         paragraphs={paragraphs}
+        onClose={handleClose}
+      />
+    );
+  }
+
+  if (part.type === "pdf") {
+    const pdfUrl = typeof part.content === "string" ? part.content : part.content[0] ?? "";
+    return (
+      <PdfReader
+        title={part.title}
+        pdfUrl={pdfUrl}
         onClose={handleClose}
       />
     );

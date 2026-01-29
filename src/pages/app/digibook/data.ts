@@ -16,15 +16,18 @@ export interface BookItem {
   isOffline?: boolean;
 }
 
-export type PartType = "text" | "image";
+export type PartType = "text" | "image" | "pdf";
 
 export interface BookPart {
   id: string;
   title: string;
   type: PartType;
-  /** For text: paragraph strings. For image: image URLs (WebP preferred). */
+  /** For text: paragraph strings. For image: image URLs. For pdf: PDF URL (e.g. /pdf/Kmyk.pdf). */
   content: string[] | string;
 }
+
+/** Public path for the main PDF book file (DigiBook). */
+export const DIGIBOOK_PDF_URL = "/pdf/Kmyk.pdf";
 
 export interface BookDetail extends BookItem {
   summary: string;
@@ -40,6 +43,7 @@ export const TRENDING_BOOKS: BookItem[] = [
   { id: "t1", title: "سفر به ستاره‌ها", author: "نویسنده الف", coverUrl: IMG, categoryId: "scifi" },
   { id: "t2", title: "قلعه اژدها", author: "نویسنده ب", coverUrl: IMG2, categoryId: "fantasy" },
   { id: "t3", title: "راز شب", author: "نویسنده ج", coverUrl: IMG, categoryId: "mystery" },
+  { id: "pdf1", title: "کتاب نمونه PDF", author: "دیجی‌بوک", coverUrl: IMG2, categoryId: "literature" },
 ];
 
 export const CONTINUE_READING: BookItem[] = [
@@ -52,7 +56,7 @@ export const LIBRARY_OFFLINE: BookItem[] = [
 ];
 
 /** All book IDs that have detail + parts (for detail page and reader). */
-const BOOK_IDS = new Set(["t1", "t2", "t3", "c1", "c2", "o1"]);
+const BOOK_IDS = new Set(["t1", "t2", "t3", "c1", "c2", "o1", "pdf1"]);
 
 /** Mock book details with parts (صفحه شناسنامه کتاب + ریدر). */
 const BOOK_DETAILS: Record<string, BookDetail> = {
@@ -163,6 +167,18 @@ const BOOK_DETAILS: Record<string, BookDetail> = {
     tags: ["فانتزی", "آفلاین"],
     parts: [
       { id: "o1-p1", title: "پارت اول", type: "text", content: ["متن نمونه برای خواندن بدون اینترنت."] },
+    ],
+  },
+  pdf1: {
+    id: "pdf1",
+    title: "کتاب نمونه PDF",
+    author: "دیجی‌بوک",
+    coverUrl: IMG2,
+    categoryId: "literature",
+    summary: "خواندن فایل PDF در دیجی‌بوک. این کتاب از فایل Kmyk.pdf استفاده می‌کند.",
+    tags: ["PDF", "کتاب الکترونیک"],
+    parts: [
+      { id: "pdf1-p1", title: "مطالعه کتاب", type: "pdf", content: DIGIBOOK_PDF_URL },
     ],
   },
 };

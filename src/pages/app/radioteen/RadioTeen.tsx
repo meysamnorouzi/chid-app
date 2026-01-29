@@ -25,7 +25,7 @@ const PILL_CATEGORIES = [
   { id: "vibe", name: "خوش وایب", image: `${RADIOTEEN_IMG}/خوش وایب.png`, color: "from-[#ea580c]/80 to-[#c2410c]/80" },
   { id: "historical", name: "تاریخی", image: `${RADIOTEEN_IMG}/تاریخی.png`, color: "from-[#db2777]/80 to-[#be185d]/80" },
   { id: "digiteen", name: "اختصاصی دیجی‌تین", image: `${RADIOTEEN_IMG}/دیجی تین.png`, color: "from-[#4f46e5]/80 to-[#4338ca]/80" },
-  { id: "kibood", name: "کی بود چی بود چکار کرد؟", image: `${RADIOTEEN_IMG}/کی بود چی بود چکار کرد؟ (2).png`, color: "from-[#0d9488]/80 to-[#0f766e]/80" },
+  { id: "kibood", name: "کی بود چی بود چکار کرد؟", nameLines: ["کی بود چی بود", "چکار کرد؟"], image: `${RADIOTEEN_IMG}/کی بود چی بود چکار کرد؟ (2).png`, color: "from-[#0d9488]/80 to-[#0f766e]/80" },
 ];
 
 interface Episode {
@@ -239,16 +239,24 @@ const RadioTeen = () => {
                       <img
                         src={pill.image}
                         alt=""
-                        className="absolute inset-0 w-full h-full object-cover object-right group-hover:scale-105 transition-transform duration-300"
+                        className="absolute inset-0 w-full h-full object-cover object-left group-hover:scale-105 transition-transform duration-300"
                       />
-                      <div
+                      {/* <div
                         className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-transparent"
                         aria-hidden
-                      />
+                      /> */}
                       <div className="absolute inset-0 flex flex-col justify-end p-3">
-                        <span className="font-bold text-base text-white drop-shadow-md">
-                          {pill.name}
-                        </span>
+                        {"nameLines" in pill && pill.nameLines ? (
+                          <span className="font-bold text-base text-white drop-shadow-md leading-tight block">
+                            {pill.nameLines[0]}
+                            <br />
+                            {pill.nameLines[1]}
+                          </span>
+                        ) : (
+                          <span className="font-bold text-base text-white drop-shadow-md">
+                            {pill.name}
+                          </span>
+                        )}
                         {pill.isFlagship && (
                           <span className="text-xs text-white/90 mt-0.5 drop-shadow-sm">
                             پرچمدار
@@ -280,7 +288,15 @@ const RadioTeen = () => {
                   <ChevronRightIcon className="w-5 h-5 text-gray-600" />
                 </button>
                 <h2 className="text-xl font-bold text-gray-800">
-                  {category.name}
+                  {"nameLines" in category && category.nameLines ? (
+                    <>
+                      {category.nameLines[0]}
+                      <br />
+                      {category.nameLines[1]}
+                    </>
+                  ) : (
+                    category.name
+                  )}
                 </h2>
               </div>
 
@@ -291,10 +307,18 @@ const RadioTeen = () => {
                   className="absolute inset-0 w-full h-full object-cover object-right"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                <div className="absolute inset-0 flex items-end justify-end p-4">
-                  <span className="text-white font-bold text-xl drop-shadow-md">
-                    {category.name}
-                  </span>
+                <div className="absolute inset-0 flex flex-col items-end justify-end p-4 text-right">
+                  {"nameLines" in category && category.nameLines ? (
+                    <span className="text-white font-bold text-xl drop-shadow-md leading-tight">
+                      {category.nameLines[0]}
+                      <br />
+                      {category.nameLines[1]}
+                    </span>
+                  ) : (
+                    <span className="text-white font-bold text-xl drop-shadow-md">
+                      {category.name}
+                    </span>
+                  )}
                 </div>
               </div>
 
