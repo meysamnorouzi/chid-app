@@ -63,7 +63,7 @@ function WalletMoney() {
   const [cardRequestPending, setCardRequestPending] = useState<boolean>(false);
   const [cardRequestApproved, setCardRequestApproved] = useState<boolean>(false);
   const [selectedCardDesign, setSelectedCardDesign] = useState<string | null>(null);
-  
+
   // Card color state (extracted from card design)
   const [dominantColor, setDominantColor] = useState<string>("#7e4bd0");
   const [darkerColor, setDarkerColor] = useState<string>("#8b5cf6");
@@ -98,7 +98,7 @@ function WalletMoney() {
     if (!imageUrl.endsWith('.svg')) {
       img.crossOrigin = "anonymous";
     }
-    
+
     img.onload = () => {
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
@@ -145,7 +145,7 @@ function WalletMoney() {
       }
 
       const [r, g, b] = dominantColorKey.split(",").map(Number);
-      
+
       // Adjust brightness to make it suitable for card background
       const brightness = (r * 299 + g * 587 + b * 114) / 1000;
       let adjustedR = r;
@@ -165,7 +165,7 @@ function WalletMoney() {
 
       const color = `rgb(${Math.round(adjustedR)}, ${Math.round(adjustedG)}, ${Math.round(adjustedB)})`;
       setDominantColor(color);
-      
+
       // Create darker version for gradient
       const darkerR = Math.max(0, adjustedR * 0.7);
       const darkerG = Math.max(0, adjustedG * 0.7);
@@ -196,13 +196,13 @@ function WalletMoney() {
       const cardRequest = JSON.parse(storedCardRequest);
       // Always load the selected card design
       setSelectedCardDesign(cardRequest.cardDesignId);
-      
+
       // Extract dominant color from selected card design
       if (cardRequest.cardDesignId) {
         const cardImageUrl = `/carts/${cardRequest.cardDesignId}.svg`;
         extractDominantColor(cardImageUrl);
       }
-      
+
       // Check card request status
       if (cardRequest.status === "pending") {
         setCardRequestPending(true);
@@ -274,12 +274,12 @@ function WalletMoney() {
 
   const handleSendInvitation = async () => {
     if (!parentPhoneNumber || parentPhoneNumber.length < 11) return;
-    
+
     setIsSendingInvite(true);
-    
+
     // Simulate sending invitation
     await new Promise((resolve) => setTimeout(resolve, 2000));
-    
+
     // Store invitation in localStorage
     const invitation = {
       phoneNumber: parentPhoneNumber,
@@ -288,13 +288,13 @@ function WalletMoney() {
       status: "pending",
     };
     localStorage.setItem("parentInvitation", JSON.stringify(invitation));
-    
+
     setIsSendingInvite(false);
     setInviteSent(true);
-    
+
     // Show success modal
     setShowSuccessModal(true);
-    
+
     // After 3 seconds, close modal and reload to show the unlocked page
     setTimeout(() => {
       setShowSuccessModal(false);
@@ -429,19 +429,6 @@ function WalletMoney() {
     loadWalletData();
   }, []);
 
-  // Prevent body scroll when overlay is visible
-  useEffect(() => {
-    if (!isParentInvited) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [isParentInvited]);
-
-
   const formatBalance = (balance: number): string => {
     return new Intl.NumberFormat("fa-IR").format(balance);
   };
@@ -561,593 +548,588 @@ function WalletMoney() {
       <WalletHeader subtitle="@mohammad-mehrabi" />
       <WalletTabs activeTab="money" isParentInvited={isParentInvited} />
 
-      <div className={`bg-white min-h-screen px-4 md:px-6 lg:px-8 py-4 md:py-6 lg:py-8 max-w-6xl mx-auto relative ${!isParentInvited ? 'overflow-hidden' : ''}`}>
-        {/* Main Content - Always Visible but Blurred when locked */}
-        <div className={!isParentInvited ? "blur-sm pointer-events-none select-none" : ""}>
-        {/* Desktop Layout: Card + Buttons on left, Transactions on right */}
-        <div className="md:grid md:grid-cols-2 md:gap-6 lg:gap-8 md:items-start">
-          {/* Left Column: Card + Buttons + Stats */}
-          <div className="md:col-span-1">
-        {/* Main Balance Card - Always Active */}
-        <div className="mb-6 md:mb-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="relative w-full max-w-2xl md:max-w-3xl mx-auto"
-            style={{
-              perspective: "1000px",
-              touchAction: "pan-x",
-              userSelect: "none",
-              WebkitUserSelect: "none",
-            }}
-          >
-            <div
-              className="relative w-full cursor-pointer"
-              style={{
-                transformStyle: "preserve-3d",
-                transform: isCardFlipped ? "rotateY(180deg)" : "rotateY(0deg)",
-                transition: "transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)",
-                pointerEvents: "auto",
-              }}
-              onTouchStart={(e) => {
-                e.stopPropagation();
-                handleTouchStart(e);
-              }}
-              onTouchMove={(e) => {
-                e.stopPropagation();
-                handleTouchMove(e);
-              }}
-              onTouchEnd={(e) => {
-                e.stopPropagation();
-                handleTouchEnd();
-              }}
-              onMouseDown={(e) => {
-                e.stopPropagation();
-                handleMouseDown(e);
-              }}
-              onMouseMove={(e) => {
-                e.stopPropagation();
-                handleMouseMove(e);
-              }}
-              onMouseUp={(e) => {
-                e.stopPropagation();
-                handleMouseUp();
-              }}
-              onMouseLeave={(e) => {
-                e.stopPropagation();
-                handleMouseUp();
-              }}
-              onClick={(e) => {
-                e.stopPropagation();
-                handleCardClick();
-              }}
-            >
-              {/* Front of Card */}
-              <div
-                className="relative rounded-2xl overflow-hidden cursor-pointer select-none aspect-video"
-                style={{
-                  backfaceVisibility: "hidden",
-                  WebkitBackfaceVisibility: "hidden",
-                  pointerEvents: "auto",
-                }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  // Check if it was a click (not drag)
-                  if (touchStart !== null && touchEnd !== null) {
-                    const moveDistance = Math.abs(touchStart - touchEnd);
-                    if (moveDistance < 10) {
-                      setIsCardFlipped(!isCardFlipped);
-                    }
-                  } else {
-                    setIsCardFlipped(!isCardFlipped);
-                  }
-                }}
-              >
-                {/* Card Background Image */}
-                <img 
-                  src={selectedCardDesign 
-                    ? `/carts/${selectedCardDesign}.svg` 
-                    : `/digitandpasandcards/normal-cart-2.svg`} 
-                  alt="کارت بانکی" 
-                  className="w-full h-auto"
-                  draggable={false}
-                />
-                {/* Dark Overlay for better text visibility */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
-                {/* Balance Overlay */}
-                <div className="absolute bottom-6 right-6 text-white drop-shadow-lg">
-                  <p className="text-sm font-medium opacity-90">موجودی کیف پول</p>
-                  <p className="text-2xl font-bold drop-shadow-md">{formatBalance(parentMoneyBalance)} <span className="text-sm font-medium">تومان</span></p>
-                </div>
-              </div>
+      <div className={`px-4 md:px-6 lg:px-8 py-4 md:py-6 lg:py-8 max-w-6xl mx-auto relative ${isParentInvited ? 'bg-white ' : 'bg-gradient-to-br from-white/95 via-purple-50/90 to-indigo-50/90 backdrop-blur-md '} `}>
+        {/* Blur Overlay with Invitation Form - When Parent Not Invited */}
+        {isParentInvited ? (
+          <div className="md:grid md:grid-cols-2 md:gap-6 lg:gap-8 md:items-start">
+            {/* Left Column: Card + Buttons + Stats */}
+            <div className="md:col-span-1">
+              {/* Main Balance Card - Always Active */}
+              <div className="mb-6 md:mb-8">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="relative w-full max-w-2xl md:max-w-3xl mx-auto"
+                  style={{
+                    perspective: "1000px",
+                    touchAction: "pan-x",
+                    userSelect: "none",
+                    WebkitUserSelect: "none",
+                  }}
+                >
+                  <div
+                    className="relative w-full cursor-pointer"
+                    style={{
+                      transformStyle: "preserve-3d",
+                      transform: isCardFlipped ? "rotateY(180deg)" : "rotateY(0deg)",
+                      transition: "transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)",
+                      pointerEvents: "auto",
+                    }}
+                    onTouchStart={(e) => {
+                      e.stopPropagation();
+                      handleTouchStart(e);
+                    }}
+                    onTouchMove={(e) => {
+                      e.stopPropagation();
+                      handleTouchMove(e);
+                    }}
+                    onTouchEnd={(e) => {
+                      e.stopPropagation();
+                      handleTouchEnd();
+                    }}
+                    onMouseDown={(e) => {
+                      e.stopPropagation();
+                      handleMouseDown(e);
+                    }}
+                    onMouseMove={(e) => {
+                      e.stopPropagation();
+                      handleMouseMove(e);
+                    }}
+                    onMouseUp={(e) => {
+                      e.stopPropagation();
+                      handleMouseUp();
+                    }}
+                    onMouseLeave={(e) => {
+                      e.stopPropagation();
+                      handleMouseUp();
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleCardClick();
+                    }}
+                  >
+                    {/* Front of Card */}
+                    <div
+                      className="relative rounded-2xl overflow-hidden cursor-pointer select-none aspect-video"
+                      style={{
+                        backfaceVisibility: "hidden",
+                        WebkitBackfaceVisibility: "hidden",
+                        pointerEvents: "auto",
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // Check if it was a click (not drag)
+                        if (touchStart !== null && touchEnd !== null) {
+                          const moveDistance = Math.abs(touchStart - touchEnd);
+                          if (moveDistance < 10) {
+                            setIsCardFlipped(!isCardFlipped);
+                          }
+                        } else {
+                          setIsCardFlipped(!isCardFlipped);
+                        }
+                      }}
+                    >
+                      {/* Card Background Image */}
+                      <img
+                        src={selectedCardDesign
+                          ? `/carts/${selectedCardDesign}.svg`
+                          : `/digitandpasandcards/normal-cart-2.svg`}
+                        alt="کارت بانکی"
+                        className="w-full h-auto"
+                        draggable={false}
+                      />
+                      {/* Dark Overlay for better text visibility */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+                      {/* Balance Overlay */}
+                      <div className="absolute bottom-6 right-6 text-white drop-shadow-lg">
+                        <p className="text-sm font-medium opacity-90">موجودی کیف پول</p>
+                        <p className="text-2xl font-bold drop-shadow-md">{formatBalance(parentMoneyBalance)} <span className="text-sm font-medium">تومان</span></p>
+                      </div>
+                    </div>
 
-              {/* Back of Card */}
-              <div
-                className="absolute inset-0 rounded-2xl p-6 overflow-hidden aspect-video select-none cursor-pointer"
-                style={{
-                  backfaceVisibility: "hidden",
-                  WebkitBackfaceVisibility: "hidden",
-                  transform: "rotateY(180deg)",
-                  pointerEvents: "auto",
-                  background: selectedCardDesign 
-                    ? `linear-gradient(to bottom right, ${dominantColor}, ${darkerColor})`
-                    : "linear-gradient(to bottom right, #7e4bd0, #8b5cf6)",
-                }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  // Check if it was a click (not drag)
-                  if (touchStart !== null && touchEnd !== null) {
-                    const moveDistance = Math.abs(touchStart - touchEnd);
-                    if (moveDistance < 10) {
-                      setIsCardFlipped(!isCardFlipped);
-                    }
-                  } else {
-                    setIsCardFlipped(!isCardFlipped);
-                  }
-                }}
-              >
-                {/* Card Pattern Background */}
-                <div className="absolute inset-0 opacity-10">
-                  <div className="absolute top-0 left-0 w-32 h-32 bg-white rounded-full -ml-16 -mt-16"></div>
-                  <div className="absolute bottom-0 right-0 w-24 h-24 bg-white rounded-full -mr-12 -mb-12"></div>
-                </div>
+                    {/* Back of Card */}
+                    <div
+                      className="absolute inset-0 rounded-2xl p-6 overflow-hidden aspect-video select-none cursor-pointer"
+                      style={{
+                        backfaceVisibility: "hidden",
+                        WebkitBackfaceVisibility: "hidden",
+                        transform: "rotateY(180deg)",
+                        pointerEvents: "auto",
+                        background: selectedCardDesign
+                          ? `linear-gradient(to bottom right, ${dominantColor}, ${darkerColor})`
+                          : "linear-gradient(to bottom right, #7e4bd0, #8b5cf6)",
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // Check if it was a click (not drag)
+                        if (touchStart !== null && touchEnd !== null) {
+                          const moveDistance = Math.abs(touchStart - touchEnd);
+                          if (moveDistance < 10) {
+                            setIsCardFlipped(!isCardFlipped);
+                          }
+                        } else {
+                          setIsCardFlipped(!isCardFlipped);
+                        }
+                      }}
+                    >
+                      {/* Card Pattern Background */}
+                      <div className="absolute inset-0 opacity-10">
+                        <div className="absolute top-0 left-0 w-32 h-32 bg-white rounded-full -ml-16 -mt-16"></div>
+                        <div className="absolute bottom-0 right-0 w-24 h-24 bg-white rounded-full -mr-12 -mb-12"></div>
+                      </div>
 
-                {/* Back Content */}
-                <div className="relative z-10 h-full flex flex-col justify-between">
-            
-                  {/* Middle Section - CVV */}
-                  <div className="flex-1 flex flex-col mb-2 justify-center">
-                    <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <p className="text-white/70 text-xs drop-shadow">CVV</p>
-                        <p className="text-white text-lg font-bold tracking-widest drop-shadow-lg">
-                          123
-                        </p>
+                      {/* Back Content */}
+                      <div className="relative z-10 h-full flex flex-col justify-between">
+
+                        {/* Middle Section - CVV */}
+                        <div className="flex-1 flex flex-col mb-2 justify-center">
+                          <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4">
+                            <div className="flex items-center justify-between mb-2">
+                              <p className="text-white/70 text-xs drop-shadow">CVV</p>
+                              <p className="text-white text-lg font-bold tracking-widest drop-shadow-lg">
+                                123
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Bottom Section - Additional Info */}
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <p className="text-white/70 text-xs drop-shadow">شماره کارت</p>
+                            <p className="text-white text-sm font-semibold tracking-wider drop-shadow-lg">
+                              1214 5678 9012 3456
+                            </p>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <p className="text-white/70 text-xs drop-shadow">تاریخ انقضا</p>
+                            <p className="text-white text-sm font-semibold drop-shadow-lg">12/24</p>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <p className="text-white/70 text-xs drop-shadow">صاحب کارت</p>
+                            <p className="text-white text-sm font-semibold drop-shadow-lg">
+                              میثم نوروزی
+                            </p>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
-
-                  {/* Bottom Section - Additional Info */}
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <p className="text-white/70 text-xs drop-shadow">شماره کارت</p>
-                      <p className="text-white text-sm font-semibold tracking-wider drop-shadow-lg">
-                        1214 5678 9012 3456
-                      </p>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <p className="text-white/70 text-xs drop-shadow">تاریخ انقضا</p>
-                      <p className="text-white text-sm font-semibold drop-shadow-lg">12/24</p>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <p className="text-white/70 text-xs drop-shadow">صاحب کارت</p>
-                      <p className="text-white text-sm font-semibold drop-shadow-lg">
-                        میثم نوروزی
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Physical Card & Parent Invitation Box */}
-          {(!hasPhysicalCard || !isParentInvited) && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ 
-                opacity: 1, 
-                y: [0, -3, 0, -3, 0],
-                scale: [1, 1.03, 1, 1.03, 1],
-                rotate: [0, -1, 1, -1, 0],
-                boxShadow: [
-                  "0 0 0px rgba(126, 75, 208, 0), 0 0 0px rgba(139, 92, 246, 0)",
-                  "0 0 30px rgba(126, 75, 208, 0.5), 0 0 50px rgba(139, 92, 246, 0.3)",
-                  "0 0 0px rgba(126, 75, 208, 0), 0 0 0px rgba(139, 92, 246, 0)"
-                ],
-                borderColor: [
-                  "rgba(126, 75, 208, 0.2)",
-                  "rgba(126, 75, 208, 0.6)",
-                  "rgba(126, 75, 208, 0.2)"
-                ]
-              }}
-              transition={{ 
-                duration: 0.4,
-                y: {
-                  duration: 3,
-                  repeat: Infinity,
-                  repeatDelay: 2,
-                  ease: "easeInOut"
-                },
-                scale: {
-                  duration: 3,
-                  repeat: Infinity,
-                  repeatDelay: 2,
-                  ease: "easeInOut"
-                },
-                rotate: {
-                  duration: 3,
-                  repeat: Infinity,
-                  repeatDelay: 2,
-                  ease: "easeInOut"
-                },
-                boxShadow: {
-                  duration: 3,
-                  repeat: Infinity,
-                  repeatDelay: 2,
-                  ease: "easeInOut"
-                },
-                borderColor: {
-                  duration: 3,
-                  repeat: Infinity,
-                  repeatDelay: 2,
-                  ease: "easeInOut"
-                }
-              }}
-              className="mb-4 bg-gradient-to-r mt-4 from-purple-50 to-indigo-50 border-2 rounded-2xl p-4 relative overflow-hidden"
-            >
-              {/* Animated gradient overlay */}
-              <motion.div
-                className="absolute inset-0 opacity-0 pointer-events-none"
-                animate={{
-                  opacity: [0, 0.3, 0],
-                  x: ["-100%", "100%", "-100%"]
-                }}
-                transition={{
-                  duration: 3,
-                  repeat: Infinity,
-                  repeatDelay: 2,
-                  ease: "easeInOut"
-                }}
-                style={{
-                  background: "linear-gradient(90deg, transparent, rgba(126, 75, 208, 0.2), transparent)",
-                  width: "50%"
-                }}
-              />
-              <div className="flex items-start gap-3 mb-4 relative z-10">
-                <motion.div 
-                  className="w-10 h-10 bg-[#7e4bd0]/10 rounded-full flex items-center justify-center flex-shrink-0 relative"
-                  animate={{
-                    scale: [1, 1.2, 1.15, 1],
-                    rotate: [0, 10, -10, 5, -5, 0],
-                    backgroundColor: [
-                      "rgba(126, 75, 208, 0.1)",
-                      "rgba(126, 75, 208, 0.25)",
-                      "rgba(139, 92, 246, 0.2)",
-                      "rgba(126, 75, 208, 0.1)"
-                    ]
-                  }}
-                  transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    repeatDelay: 2,
-                    ease: "easeInOut"
-                  }}
-                >
-                  {/* Pulsing ring effect */}
-                  <motion.div
-                    className="absolute inset-0 rounded-full border-2 border-[#7e4bd0]"
-                    animate={{
-                      scale: [1, 1.5, 1.8],
-                      opacity: [0.6, 0.3, 0]
-                    }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                      repeatDelay: 2,
-                      ease: "easeOut"
-                    }}
-                  />
-                  <img 
-                    src={lineIconPaths.wallet} 
-                    className="w-5 h-5 relative z-10" 
-                    alt="کارت"
-                    style={{ filter: 'brightness(0) saturate(100%) invert(40%) sepia(95%) saturate(1352%) hue-rotate(243deg) brightness(95%) contrast(85%)' }}
-                  />
                 </motion.div>
-                <div className="flex-1">
-                  <motion.p 
-                    className="text-gray-800 font-bold text-sm mb-1"
+
+                {/* Physical Card & Parent Invitation Box */}
+                {(!hasPhysicalCard || !isParentInvited) && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
                     animate={{
-                      scale: [1, 1.05, 1],
-                      color: [
-                        "rgb(31, 41, 55)",
-                        "rgb(126, 75, 208)",
-                        "rgb(31, 41, 55)"
+                      opacity: 1,
+                      y: [0, -3, 0, -3, 0],
+                      scale: [1, 1.03, 1, 1.03, 1],
+                      rotate: [0, -1, 1, -1, 0],
+                      boxShadow: [
+                        "0 0 0px rgba(126, 75, 208, 0), 0 0 0px rgba(139, 92, 246, 0)",
+                        "0 0 30px rgba(126, 75, 208, 0.5), 0 0 50px rgba(139, 92, 246, 0.3)",
+                        "0 0 0px rgba(126, 75, 208, 0), 0 0 0px rgba(139, 92, 246, 0)"
+                      ],
+                      borderColor: [
+                        "rgba(126, 75, 208, 0.2)",
+                        "rgba(126, 75, 208, 0.6)",
+                        "rgba(126, 75, 208, 0.2)"
                       ]
                     }}
                     transition={{
-                      duration: 3,
-                      repeat: Infinity,
-                      repeatDelay: 2,
-                      ease: "easeInOut"
+                      duration: 0.4,
+                      y: {
+                        duration: 3,
+                        repeat: Infinity,
+                        repeatDelay: 2,
+                        ease: "easeInOut"
+                      },
+                      scale: {
+                        duration: 3,
+                        repeat: Infinity,
+                        repeatDelay: 2,
+                        ease: "easeInOut"
+                      },
+                      rotate: {
+                        duration: 3,
+                        repeat: Infinity,
+                        repeatDelay: 2,
+                        ease: "easeInOut"
+                      },
+                      boxShadow: {
+                        duration: 3,
+                        repeat: Infinity,
+                        repeatDelay: 2,
+                        ease: "easeInOut"
+                      },
+                      borderColor: {
+                        duration: 3,
+                        repeat: Infinity,
+                        repeatDelay: 2,
+                        ease: "easeInOut"
+                      }
                     }}
+                    className="mb-4 bg-gradient-to-r mt-4 from-purple-50 to-indigo-50 border-2 rounded-2xl p-4 relative overflow-hidden"
                   >
-                    {!hasPhysicalCard && !isParentInvited
-                      ? "کارت خریدتو انتخاب کن"
-                      : !hasPhysicalCard
-                      ? "کارت خریدتو انتخاب کن"
-                      : "والدین دعوت نشدن!"}
-                  </motion.p>
-                  <p className="text-gray-500 text-xs leading-5">
-                    {!hasPhysicalCard && !isParentInvited
-                      ? "لذت خرید حضوری و آنلاین با کارت مخصوص خودت"
-                      : !hasPhysicalCard
-                      ? "لذت خرید حضوری و آنلاین با کارت مخصوص خودت"
-                      : "والدینت رو دعوت کن تا بتونن حسابت رو شارژ کنن و هدیه بفرستن."}
-                  </p>
-                </div>
-              </div>
-              <div className="flex gap-2 relative z-10">
-                {!hasPhysicalCard && (
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={handleGetCard}
-                    className="flex-1 flex items-center justify-center gap-2 text-white px-4 py-2.5 rounded-xl font-semibold text-sm transition-all"
-                    style={{ backgroundColor: dominantColor }}
-                  >
-                    <img 
-                      src={lineIconPaths.wallet} 
-                      className="w-4 h-4" 
-                      alt="کارت"
-                      style={{ filter: 'brightness(0) invert(1)' }}
-                    />
-                    <span>درخواست کارت</span>
-                  </motion.button>
-                )}
-                {!isParentInvited && (
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={handleInviteParent}
-                    className={`flex-1 flex items-center justify-center gap-2 ${
-                      !hasPhysicalCard
-                        ? "bg-white border-2 text-white"
-                        : "text-white"
-                    } px-4 py-2.5 rounded-xl font-semibold text-sm transition-all`}
-                    style={!hasPhysicalCard 
-                      ? { borderColor: dominantColor, color: dominantColor }
-                      : { backgroundColor: dominantColor }
-                    }
-                  >
-                    <img 
-                      src={lineIconPaths.share} 
-                      className="w-4 h-4" 
-                      alt="دعوت"
-                      style={{ 
-                        filter: !hasPhysicalCard 
-                          ? 'brightness(0) saturate(100%) invert(40%) sepia(95%) saturate(1352%) hue-rotate(243deg) brightness(95%) contrast(85%)'
-                          : 'brightness(0) invert(1)'
+                    {/* Animated gradient overlay */}
+                    <motion.div
+                      className="absolute inset-0 opacity-0 pointer-events-none"
+                      animate={{
+                        opacity: [0, 0.3, 0],
+                        x: ["-100%", "100%", "-100%"]
+                      }}
+                      transition={{
+                        duration: 3,
+                        repeat: Infinity,
+                        repeatDelay: 2,
+                        ease: "easeInOut"
+                      }}
+                      style={{
+                        background: "linear-gradient(90deg, transparent, rgba(126, 75, 208, 0.2), transparent)",
+                        width: "50%"
                       }}
                     />
-                    <span>دعوت والد</span>
-                  </motion.button>
+                    <div className="flex items-start gap-3 mb-4 relative z-10">
+                      <motion.div
+                        className="w-10 h-10 bg-[#7e4bd0]/10 rounded-full flex items-center justify-center flex-shrink-0 relative"
+                        animate={{
+                          scale: [1, 1.2, 1.15, 1],
+                          rotate: [0, 10, -10, 5, -5, 0],
+                          backgroundColor: [
+                            "rgba(126, 75, 208, 0.1)",
+                            "rgba(126, 75, 208, 0.25)",
+                            "rgba(139, 92, 246, 0.2)",
+                            "rgba(126, 75, 208, 0.1)"
+                          ]
+                        }}
+                        transition={{
+                          duration: 3,
+                          repeat: Infinity,
+                          repeatDelay: 2,
+                          ease: "easeInOut"
+                        }}
+                      >
+                        {/* Pulsing ring effect */}
+                        <motion.div
+                          className="absolute inset-0 rounded-full border-2 border-[#7e4bd0]"
+                          animate={{
+                            scale: [1, 1.5, 1.8],
+                            opacity: [0.6, 0.3, 0]
+                          }}
+                          transition={{
+                            duration: 2,
+                            repeat: Infinity,
+                            repeatDelay: 2,
+                            ease: "easeOut"
+                          }}
+                        />
+                        <img
+                          src={lineIconPaths.wallet}
+                          className="w-5 h-5 relative z-10"
+                          alt="کارت"
+                          style={{ filter: 'brightness(0) saturate(100%) invert(40%) sepia(95%) saturate(1352%) hue-rotate(243deg) brightness(95%) contrast(85%)' }}
+                        />
+                      </motion.div>
+                      <div className="flex-1">
+                        <motion.p
+                          className="text-gray-800 font-bold text-sm mb-1"
+                          animate={{
+                            scale: [1, 1.05, 1],
+                            color: [
+                              "rgb(31, 41, 55)",
+                              "rgb(126, 75, 208)",
+                              "rgb(31, 41, 55)"
+                            ]
+                          }}
+                          transition={{
+                            duration: 3,
+                            repeat: Infinity,
+                            repeatDelay: 2,
+                            ease: "easeInOut"
+                          }}
+                        >
+                          {!hasPhysicalCard && !isParentInvited
+                            ? "کارت خریدتو انتخاب کن"
+                            : !hasPhysicalCard
+                              ? "کارت خریدتو انتخاب کن"
+                              : "والدین دعوت نشدن!"}
+                        </motion.p>
+                        <p className="text-gray-500 text-xs leading-5">
+                          {!hasPhysicalCard && !isParentInvited
+                            ? "لذت خرید حضوری و آنلاین با کارت مخصوص خودت"
+                            : !hasPhysicalCard
+                              ? "لذت خرید حضوری و آنلاین با کارت مخصوص خودت"
+                              : "والدینت رو دعوت کن تا بتونن حسابت رو شارژ کنن و هدیه بفرستن."}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2 relative z-10">
+                      {!hasPhysicalCard && (
+                        <motion.button
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={handleGetCard}
+                          className="flex-1 flex items-center justify-center gap-2 text-white px-4 py-2.5 rounded-xl font-semibold text-sm transition-all"
+                          style={{ backgroundColor: dominantColor }}
+                        >
+                          <img
+                            src={lineIconPaths.wallet}
+                            className="w-4 h-4"
+                            alt="کارت"
+                            style={{ filter: 'brightness(0) invert(1)' }}
+                          />
+                          <span>درخواست کارت</span>
+                        </motion.button>
+                      )}
+                      {!isParentInvited && (
+                        <motion.button
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={handleInviteParent}
+                          className={`flex-1 flex items-center justify-center gap-2 ${!hasPhysicalCard
+                              ? "bg-white border-2 text-white"
+                              : "text-white"
+                            } px-4 py-2.5 rounded-xl font-semibold text-sm transition-all`}
+                          style={!hasPhysicalCard
+                            ? { borderColor: dominantColor, color: dominantColor }
+                            : { backgroundColor: dominantColor }
+                          }
+                        >
+                          <img
+                            src={lineIconPaths.share}
+                            className="w-4 h-4"
+                            alt="دعوت"
+                            style={{
+                              filter: !hasPhysicalCard
+                                ? 'brightness(0) saturate(100%) invert(40%) sepia(95%) saturate(1352%) hue-rotate(243deg) brightness(95%) contrast(85%)'
+                                : 'brightness(0) invert(1)'
+                            }}
+                          />
+                          <span>دعوت والد</span>
+                        </motion.button>
+                      )}
+                    </div>
+                  </motion.div>
                 )}
-              </div>
-            </motion.div>
-          )}
 
-          {/* Card Request Pending Box */}
-          {cardRequestPending && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-              className="mb-4 bg-gradient-to-r mt-4 from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-4"
-            >
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 bg-amber-500/10 rounded-full flex items-center justify-center flex-shrink-0">
-                  <div className="relative">
-                    <CreditCardIcon className="w-5 h-5 text-amber-600" />
-                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-amber-500 rounded-full animate-pulse"></div>
-                  </div>
+                {/* Card Request Pending Box */}
+                {cardRequestPending && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4 }}
+                    className="mb-4 bg-gradient-to-r mt-4 from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-4"
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="w-10 h-10 bg-amber-500/10 rounded-full flex items-center justify-center flex-shrink-0">
+                        <div className="relative">
+                          <CreditCardIcon className="w-5 h-5 text-amber-600" />
+                          <div className="absolute -top-1 -right-1 w-3 h-3 bg-amber-500 rounded-full animate-pulse"></div>
+                        </div>
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-gray-800 font-bold text-sm mb-1">
+                          در انتظار تایید والد
+                        </p>
+                        <p className="text-gray-500 text-xs leading-5">
+                          درخواست کارت خرید ثبت شد! منتظر تایید والدین باش تا کارت برات ارسال بشه.
+                        </p>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* Card Request Approved Box */}
+                {cardRequestApproved && !hasPhysicalCard && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4 }}
+                    className="mb-4 bg-gradient-to-r mt-4 from-green-50 to-emerald-50 border border-green-200 rounded-2xl p-4"
+                  >
+                    <div className="flex items-start gap-3 mb-3">
+                      <div className="w-10 h-10 bg-green-500/10 rounded-full flex items-center justify-center flex-shrink-0">
+                        <CreditCardIcon className="w-5 h-5 text-green-600" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-gray-800 font-bold text-sm mb-1">
+                          کارت تایید شد!
+                        </p>
+                        <p className="text-gray-500 text-xs leading-5">
+                          کارت خریدت توسط والدین تایید شد. حالا می‌تونی کارت رو فعال کنی.
+                        </p>
+                      </div>
+                    </div>
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => setShowActivateCardModal(true)}
+                      className="w-full flex items-center justify-center gap-2 text-white px-4 py-2.5 rounded-xl font-semibold text-sm transition-all"
+                      style={{ backgroundColor: dominantColor }}
+                    >
+                      <CreditCardIcon className="w-4 h-4" />
+                      <span>فعال سازی کارت</span>
+                    </motion.button>
+                  </motion.div>
+                )}
+
+                {/* Action Buttons - Always Show */}
+                <div className="flex mt-2 gap-2 md:gap-3">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setShowTransferModal(true)}
+                    className="flex-1 flex items-center justify-center gap-2 text-white px-4 md:px-6 py-3 md:py-4 rounded-xl font-semibold transition-all text-sm md:text-base"
+                    style={{ backgroundColor: dominantColor }}
+                  >
+                    <ArrowsRightLeftIcon className="w-5 h-5 md:w-6 md:h-6" />
+                    <span>انتقال و خرید</span>
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => navigate("/wallet_charge")}
+                    className="flex-1 flex items-center justify-center gap-2 text-white px-4 md:px-6 py-3 md:py-4 rounded-xl font-semibold transition-all text-sm md:text-base"
+                    style={{ backgroundColor: dominantColor }}
+                  >
+                    <ArrowDownTrayIcon className="w-5 h-5 md:w-6 md:h-6" />
+                    <span>شارژ کیف پول</span>
+                  </motion.button>
                 </div>
-                <div className="flex-1">
-                  <p className="text-gray-800 font-bold text-sm mb-1">
-                    در انتظار تایید والد
-                  </p>
-                  <p className="text-gray-500 text-xs leading-5">
-                    درخواست کارت خرید ثبت شد! منتظر تایید والدین باش تا کارت برات ارسال بشه.
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-          )}
-
-          {/* Card Request Approved Box */}
-          {cardRequestApproved && !hasPhysicalCard && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-              className="mb-4 bg-gradient-to-r mt-4 from-green-50 to-emerald-50 border border-green-200 rounded-2xl p-4"
-            >
-              <div className="flex items-start gap-3 mb-3">
-                <div className="w-10 h-10 bg-green-500/10 rounded-full flex items-center justify-center flex-shrink-0">
-                  <CreditCardIcon className="w-5 h-5 text-green-600" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-gray-800 font-bold text-sm mb-1">
-                    کارت تایید شد!
-                  </p>
-                  <p className="text-gray-500 text-xs leading-5">
-                    کارت خریدت توسط والدین تایید شد. حالا می‌تونی کارت رو فعال کنی.
-                  </p>
-                </div>
-              </div>
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => setShowActivateCardModal(true)}
-                className="w-full flex items-center justify-center gap-2 text-white px-4 py-2.5 rounded-xl font-semibold text-sm transition-all"
-                style={{ backgroundColor: dominantColor }}
-              >
-                <CreditCardIcon className="w-4 h-4" />
-                <span>فعال سازی کارت</span>
-              </motion.button>
-            </motion.div>
-          )}
-
-          {/* Action Buttons - Always Show */}
-          <div className="flex mt-2 gap-2 md:gap-3">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setShowTransferModal(true)}
-              className="flex-1 flex items-center justify-center gap-2 text-white px-4 md:px-6 py-3 md:py-4 rounded-xl font-semibold transition-all text-sm md:text-base"
-              style={{ backgroundColor: dominantColor }}
-            >
-              <ArrowsRightLeftIcon className="w-5 h-5 md:w-6 md:h-6" />
-              <span>انتقال و خرید</span>
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => navigate("/wallet_charge")}
-              className="flex-1 flex items-center justify-center gap-2 text-white px-4 md:px-6 py-3 md:py-4 rounded-xl font-semibold transition-all text-sm md:text-base"
-              style={{ backgroundColor: dominantColor }}
-            >
-              <ArrowDownTrayIcon className="w-5 h-5 md:w-6 md:h-6" />
-              <span>شارژ کیف پول</span>
-            </motion.button>
-          </div>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => navigate("/messages")}
-            className="flex-1 flex items-center w-full mt-2 justify-center gap-2 text-white px-4 md:px-6 py-3 md:py-4 rounded-xl font-semibold transition-all text-sm md:text-base"
-            style={{ backgroundColor: dominantColor }}
-          >
-            <ListBulletIcon className="w-5 h-5 md:w-6 md:h-6" />
-            <span>گردش حساب</span>
-          </motion.button>
-        </div>
-
-        {/* Stats Cards */}
-        <div className="mt-6 md:mt-8">
-          <StatsCards
-            totalExpense={stats.totalExpense}
-            transactionsCount={stats.transactionsCount}
-            formatBalance={formatBalance}
-          />
-        </div>
-          </div>
-
-          {/* Right Column: Recent Transactions */}
-          <div className="md:col-span-1 mt-6 md:mt-0">
-            <RecentTransactions
-              activities={recentActivities}
-              formatBalance={formatBalance}
-              formatTime={formatTime}
-            />
-          </div>
-        </div>
-        </div>
-
-        {/* Blur Overlay with Invitation Form - When Parent Not Invited */}
-        {!isParentInvited && (
-          <div className="absolute inset-0 bg-gradient-to-br from-white/95 via-purple-50/90 to-indigo-50/90 backdrop-blur-md z-10 flex items-start justify-center pt-8" style={{ bottom: '80px', top: 0, height: 'calc(100% - 80px)' }}>
-            <div className="w-full max-w-md px-4 h-[calc(100vh-220px)] overflow-y-auto">
-              <div className="flex flex-col items-center justify-start pb-8">
-              {/* Lock GIF Animation */}
-              <motion.div
-                initial={{ scale: 0, rotate: -180 }}
-                animate={{ scale: 1, rotate: 0 }}
-                transition={{ type: "spring", duration: 0.8, bounce: 0.4 }}
-                className="mb-3"
-              >
-                <img
-                  src="/gif/Lock.gif"
-                  alt="Lock"
-                  className="w-44  object-contain drop-shadow-2xl"
-                />
-              </motion.div>
-
-              {/* Title */}
-              <motion.h2
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3, duration: 0.5 }}
-                className="text-xl font-bold text-gray-900 mb-1 text-center"
-              >
-                دعوت والد الزامیه!
-              </motion.h2>
-
-              {/* Description */}
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.4, duration: 0.5 }}
-                className="text-gray-600 text-center text-xs leading-5 mb-1 max-w-sm"
-              >
-               میخوای کیف پولت رو فعال کنی ؟ از والدت دعوت کن تا دیجی پرنت رو نصب کنه !
-              </motion.p>
-   
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.4, duration: 0.5 }}
-                className="text-gray-600 text-center text-xs leading-5 mb-4 max-w-sm"
-              >
-             راه اول ; اسکن کیوارکد
-              </motion.p>
-              {/* QR Code - Simple */}
-              <motion.div
-                initial={{ opacity: 0, y: 20, scale: 0.9 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ delay: 0.5, duration: 0.5 }}
-                className="mb-4 flex justify-center"
-              >
-                <div className="bg-white p-4 rounded-2xl shadow-lg">
-                  <img
-                    src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(inviteLink)}&bgcolor=ffffff&color=7e4bd0`}
-                    alt="QR Code"
-                    className="w-36 h-36 "
-                  />
-                </div>
-              </motion.div>
-
-              {/* Divider - Enhanced */}
-              <div className="flex items-center gap-3 w-full max-w-sm mb-4">
-                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-gray-300"></div>
-                <span className="text-gray-500 text-xs font-medium bg-white px-3 py-1 rounded-full border border-gray-200"> راه دوم ; ارسال لینک به شماره موبایل</span>
-                <div className="flex-1 h-px bg-gradient-to-l from-transparent via-gray-300 to-gray-300"></div>
-              </div>
-
-              {/* Invitation Form - Enhanced */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6, duration: 0.5 }}
-                className="w-full max-w-sm"
-              >
-                {/* Phone Input - Enhanced */}
-                <div className="mb-3">
-                  <AuthInput
-                    id="parentPhoneNumber"
-                    label="شماره موبایل والد"
-                    type="tel"
-                    value={parentPhoneNumber}
-                    onChange={(value) => setParentPhoneNumber(formatPhoneNumber(value))}
-                    placeholder="09123456789"
-                    isNumberOrLink={true}
-                    disabled={isSendingInvite || inviteSent}
-                    required
-                  />
-                </div>
-
-                {/* Send Button - Enhanced */}
-                <button
-                  type="button"
-                  onClick={handleSendInvitation}
-                  disabled={isSendingInvite || parentPhoneNumber.length < 11 || inviteSent}
-                  className="w-full bg-[#7e4bd0] hover:bg-gray-800 disabled:bg-gray-400 border border-[#7e4bd0] disabled:cursor-not-allowed text-white font-semibold py-3.5 rounded-xl shadow-gray-300 transition-all active:scale-[0.98]"
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => navigate("/messages")}
+                  className="flex-1 flex items-center w-full mt-2 justify-center gap-2 text-white px-4 md:px-6 py-3 md:py-4 rounded-xl font-semibold transition-all text-sm md:text-base"
+                  style={{ backgroundColor: dominantColor }}
                 >
-                  {isSendingInvite ? 'در حال ارسال...' : 'ارسال دعوتنامه'}
-                </button>
-              </motion.div>
+                  <ListBulletIcon className="w-5 h-5 md:w-6 md:h-6" />
+                  <span>گردش حساب</span>
+                </motion.button>
+              </div>
+
+              {/* Stats Cards */}
+              <div className="mt-6 md:mt-8">
+                <StatsCards
+                  totalExpense={stats.totalExpense}
+                  transactionsCount={stats.transactionsCount}
+                  formatBalance={formatBalance}
+                />
+              </div>
+            </div>
+
+            {/* Right Column: Recent Transactions */}
+            <div className="md:col-span-1 mt-6 md:mt-0">
+              <RecentTransactions
+                activities={recentActivities}
+                formatBalance={formatBalance}
+                formatTime={formatTime}
+              />
+            </div>
+          </div>
+        ) : (
+          <div className="flex items-start justify-center pt-8">
+            <div className="w-full max-w-md px-4">
+              <div className="flex flex-col items-center justify-start">
+                {/* Lock GIF Animation */}
+                <motion.div
+                  initial={{ scale: 0, rotate: -180 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ type: "spring", duration: 0.8, bounce: 0.4 }}
+                  className="mb-3"
+                >
+                  <img
+                    src="/gif/Lock.gif"
+                    alt="Lock"
+                    className="w-44 object-contain drop-shadow-2xl"
+                  />
+                </motion.div>
+
+                {/* Title */}
+                <motion.h2
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3, duration: 0.5 }}
+                  className="text-xl font-bold text-gray-900 mb-1 text-center"
+                >
+                  دعوت والد الزامیه!
+                </motion.h2>
+
+                {/* Description */}
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.4, duration: 0.5 }}
+                  className="text-gray-600 text-center text-xs leading-5 mb-1 max-w-sm"
+                >
+                  میخوای کیف پولت رو فعال کنی ؟ از والدت دعوت کن تا دیجی پرنت رو نصب کنه !
+                </motion.p>
+
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.4, duration: 0.5 }}
+                  className="text-gray-600 text-center text-xs leading-5 mb-4 max-w-sm"
+                >
+                  راه اول ; اسکن کیوارکد
+                </motion.p>
+                {/* QR Code - Simple */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20, scale: 0.9 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ delay: 0.5, duration: 0.5 }}
+                  className="mb-4 flex justify-center"
+                >
+                  <div className="bg-white p-4 rounded-2xl shadow-lg">
+                    <img
+                      src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(inviteLink)}&bgcolor=ffffff&color=7e4bd0`}
+                      alt="QR Code"
+                      className="w-36 h-36 "
+                    />
+                  </div>
+                </motion.div>
+
+                {/* Divider - Enhanced */}
+                <div className="flex items-center gap-3 w-full max-w-sm mb-4">
+                  <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-gray-300"></div>
+                  <span className="text-gray-500 text-xs font-medium bg-white px-3 py-1 rounded-full border border-gray-200"> راه دوم ; ارسال لینک به شماره موبایل</span>
+                  <div className="flex-1 h-px bg-gradient-to-l from-transparent via-gray-300 to-gray-300"></div>
+                </div>
+
+                {/* Invitation Form - Enhanced */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6, duration: 0.5 }}
+                  className="w-full max-w-sm"
+                >
+                  {/* Phone Input - Enhanced */}
+                  <div className="mb-3">
+                    <AuthInput
+                      id="parentPhoneNumber"
+                      label="شماره موبایل والد"
+                      type="tel"
+                      value={parentPhoneNumber}
+                      onChange={(value) => setParentPhoneNumber(formatPhoneNumber(value))}
+                      placeholder="09123456789"
+                      isNumberOrLink={true}
+                      disabled={isSendingInvite || inviteSent}
+                      required
+                    />
+                  </div>
+
+                  {/* Send Button - Enhanced */}
+                  <button
+                    type="button"
+                    onClick={handleSendInvitation}
+                    disabled={isSendingInvite || parentPhoneNumber.length < 11 || inviteSent}
+                    className="w-full bg-[#7e4bd0] hover:bg-gray-800 disabled:bg-gray-400 border border-[#7e4bd0] disabled:cursor-not-allowed text-white font-semibold py-3.5 rounded-xl shadow-gray-300 transition-all active:scale-[0.98]"
+                  >
+                    {isSendingInvite ? 'در حال ارسال...' : 'ارسال دعوتنامه'}
+                  </button>
+                </motion.div>
               </div>
             </div>
           </div>
@@ -1438,7 +1420,7 @@ function WalletMoney() {
           {/* Input */}
           <div className="mb-6">
             <label className="block text-sm font-bold text-gray-700 mb-2">
-             تره کارت
+              تره کارت
             </label>
             <input
               type="text"
@@ -1454,11 +1436,10 @@ function WalletMoney() {
                 setActivationError("");
               }}
               placeholder="۱۲۳۴ ۵۶۷۸ ۹۰۱۲ ۳۴۵۶"
-              className={`w-full px-4 py-4 rounded-xl border-2 text-center text-xl font-bold tracking-wider ${
-                activationError
+              className={`w-full px-4 py-4 rounded-xl border-2 text-center text-xl font-bold tracking-wider ${activationError
                   ? "border-red-300 focus:border-red-500"
                   : "border-gray-200 focus:border-[#7e4bd0]"
-              } outline-none transition-all`}
+                } outline-none transition-all`}
               dir="ltr"
             />
             {activationError && (
@@ -1495,7 +1476,7 @@ function WalletMoney() {
                 "physicalCardRequest",
                 JSON.stringify(cardRequest)
               );
-              
+
               // Mark physical card as active
               localStorage.setItem("hasPhysicalCard", "true");
 
