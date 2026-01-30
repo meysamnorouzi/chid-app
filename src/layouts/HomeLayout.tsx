@@ -27,8 +27,8 @@ const HomeLayout = ({ children }: HomeLayoutProps) => {
     { path: '/digibook', label: 'دیجی بوک', icon: lineIconPaths.book },
     { path: '/shahr-farang', label: 'شهر فرنگ', icon: lineIconPaths.shahreFarang },
     { path: '/radioteen', label: 'رادیو تین', icon: lineIconPaths.podcast },
-    { path: '/digiteen/goals', label: 'اهداف', icon: lineIconPaths.gift },
-    { path: '/friends', label: 'دوستان', icon: lineIconPaths.like },
+    { path: '/digiteen/goals', label: 'اهداف', icon: lineIconPaths.like },
+    { path: '/friends', label: 'دوستان', icon: lineIconPaths.gift },
     { path: '/messages', label: 'پیام‌ها', icon: lineIconPaths.notif },
     { path: '/user-info', label: 'پروفایل', icon: lineIconPaths.profile },
   ];

@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ChevronRightIcon, ArrowDownTrayIcon } from "@heroicons/react/24/outline";
+import { ChevronLeftIcon, ArrowDownTrayIcon } from "@heroicons/react/24/outline";
 import WalletHeader from "../../../components/shared/Wallet/WalletHeader";
 import {
   getBookById,
@@ -150,7 +150,7 @@ export default function BookDetail() {
                 className="w-full flex items-center justify-between gap-3 p-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition text-right"
               >
                 <span className="font-medium text-gray-800">{part.title}</span>
-                <ChevronRightIcon className="w-5 h-5 text-gray-400 shrink-0" />
+                <ChevronLeftIcon className="w-5 h-5 text-gray-400 shrink-0" />
               </button>
             ))}
           </div>

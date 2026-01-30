@@ -60,24 +60,34 @@ export interface BookDetail extends BookItem {
   parts: BookPart[];
 }
 
+/** Cover images from public/image/digibook/ */
+const COVER_BASE = "/image/digibook";
+const COVER1 = `${COVER_BASE}/cover 1.jpg`;
+const COVER2 = `${COVER_BASE}/cover 2.jpg`;
+const COVER3 = `${COVER_BASE}/cover 3.jpg`;
+const COVER4 = `${COVER_BASE}/cover 4.jpg`;
+const COVER5 = `${COVER_BASE}/cover 5.jpg`;
+
+/** Legacy image refs (for parts/content that still use them). */
 const IMG = "/image/c30443dd88560f56a71aef4bc60965b7.jpg";
 const IMG2 = "/image/af0a4321-a97c-4f47-82c1-1507d9c2ca61.png";
 
 /** Mock books for list views (Home, Explore, Library). */
 export const TRENDING_BOOKS: BookItem[] = [
-  { id: "t1", title: "سفر به ستاره‌ها", author: "نویسنده الف", coverUrl: IMG, categoryId: "scifi" },
-  { id: "t2", title: "قلعه اژدها", author: "نویسنده ب", coverUrl: IMG2, categoryId: "fantasy" },
-  { id: "t3", title: "راز شب", author: "نویسنده ج", coverUrl: IMG, categoryId: "mystery" },
-  { id: "pdf1", title: "کتاب نمونه PDF", author: "دیجی‌بوک", coverUrl: IMG2, categoryId: "literature" },
+  { id: "t1", title: "سفر به ستاره‌ها", author: "نویسنده الف", coverUrl: COVER1, categoryId: "scifi" },
+  { id: "t2", title: "قلعه اژدها", author: "نویسنده ب", coverUrl: COVER2, categoryId: "fantasy" },
+  { id: "t3", title: "راز شب", author: "نویسنده ج", coverUrl: COVER3, categoryId: "mystery" },
+  { id: "pdf1", title: "کتاب نمونه PDF", author: "دیجی‌بوک", coverUrl: COVER4, categoryId: "literature" },
+  { id: "t4", title: "دنیای مانگا", author: "نویسنده د", coverUrl: COVER5, categoryId: "manga" },
 ];
 
 export const CONTINUE_READING: BookItem[] = [
-  { id: "c1", title: "دنیای مانگا", author: "نویسنده د", coverUrl: IMG2, categoryId: "manga", part: 3, progress: 45 },
-  { id: "c2", title: "کمیک قهرمانان", author: "نویسنده ه", coverUrl: IMG, categoryId: "comic", part: 1, progress: 80 },
+  { id: "c1", title: "دنیای مانگا", author: "نویسنده د", coverUrl: COVER5, categoryId: "manga", part: 3, progress: 45 },
+  { id: "c2", title: "کمیک قهرمانان", author: "نویسنده ه", coverUrl: COVER1, categoryId: "comic", part: 1, progress: 80 },
 ];
 
 export const LIBRARY_OFFLINE: BookItem[] = [
-  { id: "o1", title: "کتاب آفلاین نمونه", author: "نویسنده و", coverUrl: IMG2, categoryId: "fantasy", isOffline: true },
+  { id: "o1", title: "کتاب آفلاین نمونه", author: "نویسنده و", coverUrl: COVER2, categoryId: "fantasy", isOffline: true },
 ];
 
 /** All books for list views (Explore, Home) — used by getBooksByCategory. */
@@ -89,7 +99,7 @@ export function getBooksByCategory(categoryId: string): BookItem[] {
 }
 
 /** All book IDs that have detail + parts (for detail page and reader). */
-const BOOK_IDS = new Set(["t1", "t2", "t3", "c1", "c2", "o1", "pdf1"]);
+const BOOK_IDS = new Set(["t1", "t2", "t3", "t4", "c1", "c2", "o1", "pdf1"]);
 
 /** Mock book details with parts (صفحه شناسنامه کتاب + ریدر). */
 const BOOK_DETAILS: Record<string, BookDetail> = {
@@ -97,7 +107,7 @@ const BOOK_DETAILS: Record<string, BookDetail> = {
     id: "t1",
     title: "سفر به ستاره‌ها",
     author: "نویسنده الف",
-    coverUrl: IMG,
+    coverUrl: COVER1,
     categoryId: "scifi",
     summary: "داستان نوجوانی که با سفینهٔ خود به اعماق فضا سفر می‌کند و با موجودات فرازمینی روبه‌رو می‌شود.",
     tags: ["فضا", "علمی‌تخیلی", "ماجراجویی"],
@@ -129,7 +139,7 @@ const BOOK_DETAILS: Record<string, BookDetail> = {
     id: "t2",
     title: "قلعه اژدها",
     author: "نویسنده ب",
-    coverUrl: IMG2,
+    coverUrl: COVER2,
     categoryId: "fantasy",
     summary: "شوالیهٔ جوانی باید قلعهٔ اژدها را فتح کند تا پادشاهی را نجات دهد.",
     tags: ["فانتزی", "اکشن", "اژدها"],
@@ -146,7 +156,7 @@ const BOOK_DETAILS: Record<string, BookDetail> = {
     id: "t3",
     title: "راز شب",
     author: "نویسنده ج",
-    coverUrl: IMG,
+    coverUrl: COVER3,
     categoryId: "mystery",
     summary: "یک کارآگاه جوان باید راز قتل در شب را حل کند.",
     tags: ["معمایی", "جنایی", "نوجوان"],
@@ -163,11 +173,31 @@ const BOOK_DETAILS: Record<string, BookDetail> = {
       },
     ],
   },
+  t4: {
+    id: "t4",
+    title: "دنیای مانگا",
+    author: "نویسنده د",
+    coverUrl: COVER5,
+    categoryId: "manga",
+    summary: "مانگای محبوب نوجوانان با دنیای خیالی و قهرمانان فراموش‌نشدنی.",
+    tags: ["مانگا", "ژاپنی", "اکشن"],
+    parts: [
+      {
+        id: "t4-p1",
+        title: "فصل اول",
+        type: "text",
+        content: [
+          "در دنیایی پر از ماجرا، قهرمان ما راه خود را پیدا می‌کند.",
+          "دوستی‌ها و نبردها او را به سمت سرنوشتش می‌برند.",
+        ],
+      },
+    ],
+  },
   c1: {
     id: "c1",
     title: "دنیای مانگا",
     author: "نویسنده د",
-    coverUrl: IMG2,
+    coverUrl: COVER5,
     categoryId: "manga",
     summary: "مانگای محبوب نوجوانان با دنیای خیالی و قهرمانان فراموش‌نشدنی.",
     tags: ["مانگا", "ژاپنی", "اکشن"],
@@ -181,7 +211,7 @@ const BOOK_DETAILS: Record<string, BookDetail> = {
     id: "c2",
     title: "کمیک قهرمانان",
     author: "نویسنده ه",
-    coverUrl: IMG,
+    coverUrl: COVER1,
     categoryId: "comic",
     summary: "قهرمانان ابرقدرت در نبرد با شر.",
     tags: ["کمیک", "قهرمانی", "اکشن"],
@@ -194,7 +224,7 @@ const BOOK_DETAILS: Record<string, BookDetail> = {
     id: "o1",
     title: "کتاب آفلاین نمونه",
     author: "نویسنده و",
-    coverUrl: IMG2,
+    coverUrl: COVER2,
     categoryId: "fantasy",
     summary: "نمونه‌ای که ذخیره آفلاین شده است.",
     tags: ["فانتزی", "آفلاین"],
@@ -206,7 +236,7 @@ const BOOK_DETAILS: Record<string, BookDetail> = {
     id: "pdf1",
     title: "کتاب نمونه PDF",
     author: "دیجی‌بوک",
-    coverUrl: IMG2,
+    coverUrl: COVER4,
     categoryId: "literature",
     summary: "خواندن فایل PDF در دیجی‌بوک. این کتاب از فایل Kmyk.pdf استفاده می‌کند.",
     tags: ["PDF", "کتاب الکترونیک"],

@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ChevronRightIcon,
+  ChevronLeftIcon,
   MagnifyingGlassIcon,
   PencilSquareIcon,
   BookmarkIcon,
@@ -59,7 +59,7 @@ const DigiBook = () => {
       </div>
 
       {/* Segment: ویترین | جستجو و کاوش | ایجاد | کتابخانه */}
-      <div className="px-4 pb-3 border-b border-gray-100 shrink-0">
+      <div className="px-4 py-3 border-b border-gray-100 shrink-0">
         <div className="flex gap-2 overflow-x-auto scrollbar-hide">
           {TABS.map((tab) => (
             <button
@@ -82,7 +82,6 @@ const DigiBook = () => {
 
       <div className="px-4 flex-1 overflow-y-auto min-h-0 pt-4">
         <AnimatePresence mode="wait">
-          {/* ——— ویترین (Home): فید شخصی‌سازی شده و ترندها ——— */}
           {activeTab === "home" && (
             <motion.div
               key="home"
@@ -102,7 +101,7 @@ const DigiBook = () => {
                 <h2 className="text-xl font-bold mb-2">کتاب و کمیک برای نوجوانان</h2>
                 <p className="text-sm opacity-90 mb-4">پیشنهادهای هفته بر اساس سلیقه تو</p>
                 <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-1">
-                  {TRENDING_BOOKS.slice(0, 3).map((book) => (
+                  {[TRENDING_BOOKS[4], TRENDING_BOOKS[3], TRENDING_BOOKS[1]].map((book) => (
                     <button
                       key={book.id}
                       onClick={() => navigate(`/digibook/${book.id}`)}
@@ -181,7 +180,7 @@ const DigiBook = () => {
                           </div>
                         )}
                       </div>
-                      <ChevronRightIcon className="w-5 h-5 text-gray-400 shrink-0" />
+                      <ChevronLeftIcon className="w-5 h-5 text-gray-400 shrink-0" />
                     </motion.div>
                   ))}
                 </div>
@@ -255,7 +254,7 @@ const DigiBook = () => {
                       className="p-2 rounded-full border border-gray-200 hover:bg-gray-50"
                       aria-label="برگشت"
                     >
-                      <ChevronRightIcon className="w-5 h-5 text-gray-600" />
+                      <ChevronLeftIcon className="w-5 h-5 text-gray-600" />
                     </button>
                     <h2 className="text-xl font-bold text-gray-800">
                       {category?.name}
@@ -281,7 +280,7 @@ const DigiBook = () => {
                             <p className="font-semibold text-gray-800 truncate">{book.title}</p>
                             <p className="text-sm text-gray-500">{book.author}</p>
                           </div>
-                          <ChevronRightIcon className="w-5 h-5 text-[#7e4bd0] shrink-0" />
+                          <ChevronLeftIcon className="w-5 h-5 text-[#7e4bd0] shrink-0" />
                         </motion.div>
                       ))
                     ) : (
@@ -362,7 +361,7 @@ const DigiBook = () => {
                           </div>
                         )}
                       </div>
-                      <ChevronRightIcon className="w-5 h-5 text-gray-400 shrink-0" />
+                      <ChevronLeftIcon className="w-5 h-5 text-gray-400 shrink-0" />
                     </motion.div>
                   ))}
                 </div>
@@ -391,7 +390,7 @@ const DigiBook = () => {
                         <p className="font-semibold text-gray-800 truncate">{book.title}</p>
                         <p className="text-xs text-[#7e4bd0] font-medium">آفلاین</p>
                       </div>
-                      <ChevronRightIcon className="w-5 h-5 text-gray-400 shrink-0" />
+                      <ChevronLeftIcon className="w-5 h-5 text-gray-400 shrink-0" />
                     </motion.div>
                   ))}
                   {libraryOfflineBooks.length === 0 && (

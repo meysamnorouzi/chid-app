@@ -138,7 +138,7 @@ const RadioTeen = () => {
         <WalletHeader subtitle="@mohammad-mehrabi" />
       </div>
 
-      <div className="px-4 flex-1 overflow-y-auto min-h-0">
+      <div className="p-4 flex-1 overflow-y-auto min-h-0">
         <AnimatePresence mode="wait">
           {viewMode === "home" && (
             <motion.div
