@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import AuthInput from '../../../components/shared/AuthInput';
 
 const Password = () => {
   const navigate = useNavigate();
@@ -76,28 +77,21 @@ const Password = () => {
                 {error}
               </div>
             )}
-            <div className="space-y-2 w-full">
-              <label
-                htmlFor="phone"
-                className="block text-sm font-medium text-gray-700"
-              >
-                شماره موبایل والد
-              </label>
-              <input
-                id="phone"
-                type="tel"
-                value={phoneNumber}
-                onChange={handlePhoneChange}
-                className={`w-full px-4 py-3 rounded-xl border ${
-                  error
-                    ? 'border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-200'
-                    : 'border-gray-200 focus:border-black focus:ring-2 focus:ring-gray-300'
-                } outline-none transition-all`}
-                placeholder=" شماره موبایل والد ..."
-                dir="rtl"
-                required
-              />
-            </div>
+            <AuthInput
+              id="phone"
+              label="شماره موبایل والد"
+              type="tel"
+              value={phoneNumber}
+              onChange={(value) => {
+                const formatted = formatPhoneNumber(value);
+                setPhoneNumber(formatted);
+                if (error) setError('');
+              }}
+              placeholder="09123456789"
+              error={error}
+              isNumberOrLink={true}
+              required
+            />
             <button
               type="submit"
               disabled={isLoading}

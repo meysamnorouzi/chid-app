@@ -5,6 +5,7 @@ import { ToastProvider } from "../components/shared/Toast";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { lineIconPaths } from "../utils/lineIcons";
 
 interface HomeLayoutProps {
   children?: ReactNode;
@@ -21,15 +22,15 @@ const HomeLayout = ({ children }: HomeLayoutProps) => {
   const navigate = useNavigate();
 
   const menuItems = [
-    { path: '/wallet-money', label: 'کیف پول', icon: '/icons/wallet.svg' },
-    { path: '/shop', label: 'فروشگاه', icon: '/icons/store.svg' },
-    { path: '/digibook', label: 'دیجی بوک', icon: '/icons/store/ketab.svg' },
-    { path: '/shahr-farang', label: 'شهر فرنگ', icon: '/icons/reels.svg' },
-    { path: '/radioteen', label: 'رادیو تین', icon: '/icons/radioteen.svg' },
-    { path: '/digiteen/goals', label: 'اهداف', icon: '/icons/gift.svg' },
-    { path: '/friends', label: 'دوستان', icon: '/icons/fav.svg' },
-    { path: '/messages', label: 'پیام‌ها', icon: '/icons/noti.svg' },
-    { path: '/user-info', label: 'پروفایل', icon: '/icons/profile.svg' },
+    { path: '/wallet-money', label: 'کیف پول', icon: lineIconPaths.wallet },
+    { path: '/shop', label: 'فروشگاه', icon: lineIconPaths.store },
+    { path: '/digibook', label: 'دیجی بوک', icon: lineIconPaths.book },
+    { path: '/shahr-farang', label: 'شهر فرنگ', icon: lineIconPaths.shahreFarang },
+    { path: '/radioteen', label: 'رادیو تین', icon: lineIconPaths.podcast },
+    { path: '/digiteen/goals', label: 'اهداف', icon: lineIconPaths.gift },
+    { path: '/friends', label: 'دوستان', icon: lineIconPaths.like },
+    { path: '/messages', label: 'پیام‌ها', icon: lineIconPaths.notif },
+    { path: '/user-info', label: 'پروفایل', icon: lineIconPaths.profile },
   ];
 
   return (
@@ -191,7 +192,7 @@ const HomeLayout = ({ children }: HomeLayoutProps) => {
               
               {/* Icon */}
               <motion.img
-                src="/icons/menu.svg"
+                src={lineIconPaths.menu}
                 alt="منو"
                 className="w-7 h-7 relative z-10 brightness-0 invert"
                 animate={isMenuOpen ? { 

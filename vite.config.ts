@@ -5,9 +5,10 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   optimizeDeps: {
-    include: ['pdfjs-dist'],
+    include: ['pdfjs-dist', 'react-pdf'],
   },
   server: {
+    host: true, // Allow access from local network (e.g., your phone on same WiFi)
     headers: {
       // CORS headers for fonts in development
       'Access-Control-Allow-Origin': '*',

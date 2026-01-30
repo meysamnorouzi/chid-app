@@ -19,6 +19,8 @@ import {
 } from "@heroicons/react/24/outline";
 import Modal from "../../../components/shared/Modal";
 import { ListBulletIcon } from "@heroicons/react/24/solid";
+import AuthInput from "../../../components/shared/AuthInput";
+import { lineIconPaths } from "../../../utils/lineIcons";
 import {
   WalletHeader,
   WalletTabs,
@@ -838,7 +840,7 @@ function WalletMoney() {
                     }}
                   />
                   <img 
-                    src="/icons/wallet.svg" 
+                    src={lineIconPaths.wallet} 
                     className="w-5 h-5 relative z-10" 
                     alt="کارت"
                     style={{ filter: 'brightness(0) saturate(100%) invert(40%) sepia(95%) saturate(1352%) hue-rotate(243deg) brightness(95%) contrast(85%)' }}
@@ -887,7 +889,7 @@ function WalletMoney() {
                     style={{ backgroundColor: dominantColor }}
                   >
                     <img 
-                      src="/icons/wallet.svg" 
+                      src={lineIconPaths.wallet} 
                       className="w-4 h-4" 
                       alt="کارت"
                       style={{ filter: 'brightness(0) invert(1)' }}
@@ -911,7 +913,7 @@ function WalletMoney() {
                     }
                   >
                     <img 
-                      src="/icons/share.svg" 
+                      src={lineIconPaths.share} 
                       className="w-4 h-4" 
                       alt="دعوت"
                       style={{ 
@@ -1123,39 +1125,28 @@ function WalletMoney() {
               >
                 {/* Phone Input - Enhanced */}
                 <div className="mb-3">
-                  <input
+                  <AuthInput
+                    id="parentPhoneNumber"
+                    label="شماره موبایل والد"
                     type="tel"
-                    inputMode="numeric"
                     value={parentPhoneNumber}
-                    onChange={(e) => setParentPhoneNumber(formatPhoneNumber(e.target.value))}
-                    placeholder="شماره موبایل والد"
-                    className="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 focus:border-[#7e4bd0] focus:ring-4 focus:ring-purple-100 outline-none transition-all text-center text-sm font-semibold tracking-wider bg-white shadow-md hover:shadow-lg"
-                    dir="ltr"
+                    onChange={(value) => setParentPhoneNumber(formatPhoneNumber(value))}
+                    placeholder="09123456789"
+                    isNumberOrLink={true}
                     disabled={isSendingInvite || inviteSent}
+                    required
                   />
                 </div>
 
                 {/* Send Button - Enhanced */}
-                <motion.button
-                  whileHover={{ scale: 1.02, boxShadow: "0 20px 25px -5px rgba(124, 58, 237, 0.3)" }}
-                  whileTap={{ scale: 0.98 }}
+                <button
+                  type="button"
                   onClick={handleSendInvitation}
                   disabled={isSendingInvite || parentPhoneNumber.length < 11 || inviteSent}
-                  className="w-full bg-gradient-to-r from-[#7e4bd0] via-[#8b5cf6] to-[#9f6ee0] text-white py-3 rounded-2xl font-bold text-sm shadow-xl shadow-purple-300/50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-all relative overflow-hidden group"
+                  className="w-full bg-[#7e4bd0] hover:bg-gray-800 disabled:bg-gray-400 border border-[#7e4bd0] disabled:cursor-not-allowed text-white font-semibold py-3.5 rounded-xl shadow-gray-300 transition-all active:scale-[0.98]"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
-                  {isSendingInvite ? (
-                    <>
-                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                      <span>در حال ارسال...</span>
-                    </>
-                  ) : (
-                    <>
-                      <PaperAirplaneIcon className="w-5 h-5 relative z-10" />
-                      <span className="relative z-10">ارسال دعوتنامه</span>
-                    </>
-                  )}
-                </motion.button>
+                  {isSendingInvite ? 'در حال ارسال...' : 'ارسال دعوتنامه'}
+                </button>
               </motion.div>
               </div>
             </div>
@@ -1268,7 +1259,7 @@ function WalletMoney() {
               className="flex flex-col items-center justify-center gap-3 p-6 rounded-xl border-2 border-gray-200 hover:border-gray-900 transition-all bg-white"
             >
               <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
-                <img src="/icons/sendtopasandaz.svg" className="w-8 h-8" alt="انتقال به پس‌انداز" />
+                <img src={lineIconPaths.sendToPasandaz} className="w-8 h-8" alt="انتقال به پس‌انداز" />
               </div>
               <div className="text-center">
                 <p className="font-bold text-gray-900 mb-1">انتقال به پس‌انداز</p>
@@ -1288,7 +1279,7 @@ function WalletMoney() {
               className="flex flex-col items-center justify-center gap-3 p-6 rounded-xl border-2 border-gray-200 hover:border-gray-900 transition-all bg-white"
             >
               <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
-                <img src="/icons/digitcoin.svg" className="w-8 h-8" alt="خرید دیجیت" />
+                <img src={lineIconPaths.digit} className="w-8 h-8" alt="خرید دیجیت" />
               </div>
               <div className="text-center">
                 <p className="font-bold text-gray-900 mb-1">خرید دیجیت</p>

@@ -23,6 +23,7 @@ import {
 } from "@heroicons/react/24/solid";
 import { WalletIcon } from "@heroicons/react/24/outline";
 import { Modal } from "../../../components/shared";
+import { lineIconPaths } from "../../../utils/lineIcons";
 
 interface MonthlyBadge {
   id: string;
@@ -388,7 +389,7 @@ const UserInfo = () => {
             onClick={() => navigate('/wallet-digit')}
             className="flex items-center gap-2 px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors border border-gray-200"
           >
-            <img src="/icons/digitcoin.svg" className="w-5 h-5" alt="دیجیت" />
+            <img src={lineIconPaths.digit} className="w-5 h-5" alt="دیجیت" />
             <span className="text-sm font-bold text-gray-800">
               {new Intl.NumberFormat("fa-IR").format(digitBalance)} دیجیت
             </span>

@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { CameraIcon } from '@heroicons/react/24/outline';
+import AuthInput from '../../../components/shared/AuthInput';
 
 const QrCode = () => {
   const navigate = useNavigate();
@@ -252,7 +253,7 @@ const QrCode = () => {
           <img
             src="/logo/QR.gif"
             alt=""
-            className="w-40 "
+            className="w-40 -mt-14"
           />
         </div>
         <div className="flex flex-col w-full items-center justify-start flex-1 pt-10 p-4 md:pt-0 md:p-8">
@@ -263,7 +264,7 @@ const QrCode = () => {
 
               <div className="relative w-full">
                 {/* Scanner Preview Box */}
-                <div className="w-full aspect-square  mx-auto mb-4 rounded-xl overflow-hidden bg-gray-100 border-2 border-gray-200 flex items-center justify-center relative">
+                <div className="w-64 h-64 mx-auto mb-4 rounded-xl overflow-hidden bg-gray-100 border-2 border-gray-200 flex items-center justify-center relative">
                   {/* Always render the scanner element when permission is granted, but hide it when not scanning */}
                   {hasCameraPermission === true && (
                     <div
@@ -276,69 +277,59 @@ const QrCode = () => {
                   {hasCameraPermission === true && !isScanning && loginLink && (
                     <button
                       onClick={startScanner}
-                      className="flex flex-col items-center justify-center gap-3 w-full h-full p-4 text-[#7e4bd0] hover:bg-gray-50 transition-colors absolute inset-0"
+                      className="flex flex-col items-center justify-center gap-2 w-full h-full p-2 text-[#7e4bd0] hover:bg-gray-50 transition-colors absolute inset-0"
                     >
-                      <CameraIcon className="w-16 h-16" />
-                      <span className="text-sm font-medium">اسکن مجدد کیوآر کد</span>
+                      <CameraIcon className="w-10 h-10" />
+                      <span className="text-xs font-medium text-center">اسکن مجدد</span>
                     </button>
                   )}
                   
                   {/* Show loading state when permission is granted but scanner is starting */}
                   {hasCameraPermission === true && !isScanning && !loginLink && (
-                    <div className="flex flex-col items-center justify-center gap-4 w-full h-full p-4 absolute inset-0">
-                      <CameraIcon className="w-16 h-16 text-gray-400 animate-pulse" />
-                      <span className="text-sm font-medium text-center px-2 text-gray-600">
-                        در حال راه‌اندازی دوربین...
+                    <div className="flex flex-col items-center justify-center gap-2 w-full h-full p-2 absolute inset-0">
+                      <CameraIcon className="w-10 h-10 text-gray-400 animate-pulse" />
+                      <span className="text-xs font-medium text-center px-2 text-gray-600">
+                        در حال راه‌اندازی...
                       </span>
                     </div>
                   )}
                   
                   {/* Show permission request UI when permission is not granted */}
                   {hasCameraPermission !== true && (
-                    <div className="flex flex-col items-center justify-center gap-4 w-full h-full p-4">
-                      <CameraIcon className="w-16 h-16 text-gray-400" />
-                      <span className="text-sm font-medium text-center px-2 text-gray-600">
+                    <div className="flex flex-col items-center justify-center gap-2 w-full h-full p-2">
+                      <CameraIcon className="w-10 h-10 text-gray-400" />
+                      <span className="text-xs font-medium text-center px-2 text-gray-600">
                         {error
                           ? error
                           : hasCameraPermission === false
-                          ? 'برای اسکن کیوآر کد، دسترسی به دوربین لازم است'
+                          ? 'دسترسی به دوربین لازم است'
                           : ''}
                       </span>
                       {(hasCameraPermission === false || hasCameraPermission === null) && (
                         <button
                           onClick={handleRequestPermission}
-                          className="bg-[#7e4bd0] hover:bg-[#6a3abf] text-white font-semibold px-6 py-2.5 rounded-xl transition-all active:scale-[0.98] shadow-sm"
+                          className="bg-[#7e4bd0] hover:bg-[#6a3abf] text-white font-semibold px-4 py-2 rounded-lg text-xs transition-all active:scale-[0.98] shadow-sm"
                         >
-                          اجازه دسترسی به دوربین
+                          اجازه دسترسی
                         </button>
                       )}
                     </div>
                   )}
                 </div>
                 {/* Input Field */}
-                <label
-                  htmlFor="loginLink"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  لینک ورود
-                </label>
-                <input
+                <AuthInput
                   id="loginLink"
+                  label="لینک ورود"
                   type="text"
                   value={loginLink}
-                  onChange={handleLoginLinkChange}
-                  className={`w-full px-4 py-3 rounded-xl mt-2 border ${
-                    error && !loginLink.trim()
-                      ? 'border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-200'
-                      : 'border-gray-200 focus:border-black focus:ring-2 focus:ring-gray-300'
-                  } outline-none transition-all`}
-                  placeholder="  لینک ورود خود را وارد کنید ..."
-                  dir="rtl"
+                  onChange={(value) => {
+                    setLoginLink(value);
+                    if (error) setError('');
+                  }}
+                  placeholder="https://example.com/login"
+                  isNumberOrLink={true}
                   required
                 />
-                {error && (
-                  <p className="text-red-500 text-xs mt-1">{error}</p>
-                )}
               </div>
             </div>
             <button

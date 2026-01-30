@@ -1,12 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import {
   ArrowRightIcon,
   CheckCircleIcon,
-  CreditCardIcon,
   ArrowLeftIcon,
   ArrowsRightLeftIcon,
+  DocumentTextIcon,
+  CameraIcon,
+  PhotoIcon,
+  VideoCameraIcon,
+  StopIcon,
 } from "@heroicons/react/24/outline";
 
 interface CardDesign {
@@ -30,19 +34,37 @@ const cardDesigns: CardDesign[] = [
   { id: "12", name: "شگفت انگیزان", image: "/carts/c8.svg" },
 ];
 
-// Step types
-type Step = "select" | "preview" | "success";
+// Step types: 3 verification steps before card selection
+type Step = "intro" | "id-upload" | "video" | "select" | "preview" | "success";
+
+// Sentence user must read in the video (for verification)
+const VIDEO_READ_SENTENCE =
+  "من با درخواست کارت خرید دیجی‌تین موافقم و تأیید می‌کنم که اطلاعاتم صحیح است.";
 
 function RequestCard() {
   const navigate = useNavigate();
   const [selectedCard, setSelectedCard] = useState<string | null>(null);
-  const [currentStep, setCurrentStep] = useState<Step>("select");
+  const [currentStep, setCurrentStep] = useState<Step>("intro");
   const [isLoading, setIsLoading] = useState(false);
   const [isCardFlipped, setIsCardFlipped] = useState(false);
   const [dominantColor, setDominantColor] = useState<string>("#7e4bd0");
   const [darkerColor, setDarkerColor] = useState<string>("#8b5cf6");
   const [dominantColorRgba, setDominantColorRgba] = useState<string>("rgba(126, 75, 208, 0.4)");
   const [dominantColorRgbaShadow, setDominantColorRgbaShadow] = useState<string>("rgba(126, 75, 208, 0.3)");
+
+  // Step 2: ID image
+  const [idImageUrl, setIdImageUrl] = useState<string | null>(null);
+  const idImageInputRef = useRef<HTMLInputElement>(null);
+  const idCameraInputRef = useRef<HTMLInputElement>(null);
+
+  // Step 3: Video
+  const [videoBlob, setVideoBlob] = useState<Blob | null>(null);
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [isRecording, setIsRecording] = useState(false);
+  const [hasRecordedVideo, setHasRecordedVideo] = useState(false);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const videoPreviewRef = useRef<HTMLVideoElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
 
   // Get user name from localStorage or use default
   const userName = "میثم نوروزی"; // Can be loaded from localStorage/context
@@ -160,18 +182,84 @@ function RequestCard() {
   }, [currentStep, selectedCard]);
 
   const handleNextStep = () => {
-    if (selectedCard) {
-      setCurrentStep("preview");
-    }
+    if (currentStep === "intro") setCurrentStep("id-upload");
+    else if (currentStep === "id-upload" && idImageUrl) setCurrentStep("video");
+    else if (currentStep === "video" && (hasRecordedVideo || videoUrl)) setCurrentStep("select");
+    else if (currentStep === "select" && selectedCard) setCurrentStep("preview");
   };
 
   const handleBack = () => {
-    if (currentStep === "preview") {
-      setCurrentStep("select");
-    } else {
-      navigate(-1);
+    if (currentStep === "preview") setCurrentStep("select");
+    else if (currentStep === "select") setCurrentStep("video");
+    else if (currentStep === "video") {
+      if (isRecording) stopVideoRecording();
+      setCurrentStep("id-upload");
+    } else if (currentStep === "id-upload") setCurrentStep("intro");
+    else if (currentStep === "intro") navigate(-1);
+    else navigate(-1);
+  };
+
+  // Step 2: ID image handlers
+  const handleIdImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && file.type.startsWith("image/")) {
+      const url = URL.createObjectURL(file);
+      if (idImageUrl) URL.revokeObjectURL(idImageUrl);
+      setIdImageUrl(url);
+    }
+    e.target.value = "";
+  };
+
+  const triggerIdUpload = () => idImageInputRef.current?.click();
+  const triggerIdCamera = () => idCameraInputRef.current?.click();
+
+  // Step 3: Video recording
+  const startVideoRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      streamRef.current = stream;
+      if (videoPreviewRef.current) videoPreviewRef.current.srcObject = stream;
+
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      const chunks: BlobPart[] = [];
+
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) chunks.push(e.data);
+      };
+      mediaRecorder.onstop = () => {
+        if (chunks.length) {
+          const blob = new Blob(chunks, { type: "video/webm" });
+          setVideoBlob(blob);
+          setVideoUrl(URL.createObjectURL(blob));
+          setHasRecordedVideo(true);
+        }
+        stream.getTracks().forEach((t) => t.stop());
+        streamRef.current = null;
+        if (videoPreviewRef.current) videoPreviewRef.current.srcObject = null;
+      };
+
+      mediaRecorder.start();
+      setIsRecording(true);
+    } catch (err) {
+      console.error("Error starting recording:", err);
     }
   };
+
+  const stopVideoRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      if (idImageUrl) URL.revokeObjectURL(idImageUrl);
+      if (videoUrl) URL.revokeObjectURL(videoUrl);
+      streamRef.current?.getTracks().forEach((t) => t.stop());
+    };
+  }, []);
 
   const handleFinalSubmit = async () => {
     if (!selectedCard) return;
@@ -196,8 +284,14 @@ function RequestCard() {
 
   const getHeaderTitle = () => {
     switch (currentStep) {
-      case "select":
+      case "intro":
         return "درخواست کارت خرید";
+      case "id-upload":
+        return "صفحه اول شناسنامه";
+      case "video":
+        return "ارسال ویدیو و صدا";
+      case "select":
+        return "انتخاب طرح کارت";
       case "preview":
         return "پیش‌نمایش کارت";
       case "success":
@@ -207,6 +301,12 @@ function RequestCard() {
 
   const getHeaderSubtitle = () => {
     switch (currentStep) {
+      case "intro":
+        return "مراحل درخواست کارت";
+      case "id-upload":
+        return "عکس صفحه اول شناسنامه";
+      case "video":
+        return "ضبط ویدیو تأیید هویت";
       case "select":
         return "";
       case "preview":
@@ -218,16 +318,293 @@ function RequestCard() {
 
   return (
     <div className="min-h-screen bg-gray-50" dir="rtl">
+      {/* Header */}
+      <div className="bg-[#7e4bd0] text-white px-4 md:px-6 lg:px-8 py-6">
+        <div className="flex items-center gap-3 mb-2 max-w-6xl mx-auto">
+          <button
+            onClick={handleBack}
+            className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center"
+          >
+            <ArrowRightIcon className="w-5 h-5" />
+          </button>
+          <h1 className="text-xl md:text-2xl font-bold">{getHeaderTitle()}</h1>
+        </div>
+        {getHeaderSubtitle() && (
+          <p className="text-white/70 text-sm md:text-base mr-13 max-w-6xl mx-auto">
+            {getHeaderSubtitle()}
+          </p>
+        )}
+      </div>
+
       <div className="px-4 md:px-6 lg:px-8 py-6 md:py-8 lg:py-10 mx-auto pb-32 md:pb-24 max-w-6xl min-h-screen flex md:items-center">
-        {/* Back Button - Top Left */}
-        <button
-          onClick={handleBack}
-          className="fixed top-4 right-4 md:top-6 md:right-6 w-10 h-10 md:w-12 md:h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors z-50"
-        >
-          <ArrowRightIcon className="w-5 h-5 md:w-6 md:h-6 text-gray-700" />
-        </button>
         <AnimatePresence mode="wait">
-          {/* Step 1: Select Card */}
+          {/* Step 1: Intro - Description & Continue */}
+          {currentStep === "intro" && (
+            <motion.div
+              key="intro"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+              className="w-full max-w-2xl mx-auto"
+            >
+              <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm">
+                <div className="flex items-start gap-4 mb-6">
+                  <div className="w-12 h-12 bg-[#7e4bd0]/10 rounded-full flex items-center justify-center flex-shrink-0">
+                    <DocumentTextIcon className="w-6 h-6 text-[#7e4bd0]" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-bold text-gray-800 mb-2">مراحل درخواست کارت</h2>
+                    <p className="text-gray-600 text-sm leading-6">
+                      برای دریافت کارت خرید دیجی‌تین، سه مرحله رو باید انجام بدی:
+                    </p>
+                  </div>
+                </div>
+                <ol className="space-y-4 text-sm text-gray-700">
+                  <li className="flex gap-3 items-start">
+                    <span className="w-7 h-7 rounded-full bg-[#7e4bd0] text-white flex items-center justify-center flex-shrink-0 text-xs font-bold">۱</span>
+                    <span><strong className="text-gray-800">صفحه اول شناسنامه:</strong> عکس از صفحه اول شناسنامه (با خوانا بودن همه اطلاعات) آپلود یا با دوربین بگیر.</span>
+                  </li>
+                  <li className="flex gap-3 items-start">
+                    <span className="w-7 h-7 rounded-full bg-[#7e4bd0] text-white flex items-center justify-center flex-shrink-0 text-xs font-bold">۲</span>
+                    <span><strong className="text-gray-800">ارسال ویدیو و صدا:</strong> یک ویدیو در محیط آرام و با نور کافی ضبط کن و متن داده‌شده رو بخون.</span>
+                  </li>
+                  <li className="flex gap-3 items-start">
+                    <span className="w-7 h-7 rounded-full bg-[#7e4bd0] text-white flex items-center justify-center flex-shrink-0 text-xs font-bold">۳</span>
+                    <span><strong className="text-gray-800">انتخاب طرح کارت:</strong> طرح مورد علاقه‌ات رو انتخاب کن و درخواست رو نهایی کن.</span>
+                  </li>
+                </ol>
+                <p className="text-gray-500 text-xs mt-6 pt-4 border-t border-gray-100">
+                  بعد از تأیید، کارت طی ۳ تا ۵ روز کاری به دستت می‌رسه.
+                </p>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Step 2: ID Upload - صفحه اول شناسنامه */}
+          {currentStep === "id-upload" && (
+            <motion.div
+              key="id-upload"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.3 }}
+              className="w-full max-w-2xl mx-auto"
+            >
+              <div className="bg-purple-50 border border-purple-200 rounded-2xl p-4 md:p-6 mb-6">
+                <p className="text-gray-800 text-sm leading-6">
+                  برای داشتن کارت باید عکس از صفحه اول شناسنامه جوری که همه اطلاعات خوانا باشن برامون بفرستی.
+                </p>
+              </div>
+
+              <input
+                ref={idImageInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleIdImageChange}
+              />
+              <input
+                ref={idCameraInputRef}
+                type="file"
+                accept="image/*"
+                capture="environment"
+                className="hidden"
+                onChange={handleIdImageChange}
+              />
+
+              {!idImageUrl ? (
+                <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm">
+                  <div className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center mb-6">
+                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <PhotoIcon className="w-8 h-8 text-gray-400" />
+                    </div>
+                    <p className="text-gray-500 text-sm mb-6">عکس صفحه اول شناسنامه رو آپلود کن یا با دوربین بگیر</p>
+                    <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                      <button
+                        type="button"
+                        onClick={triggerIdUpload}
+                        className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl border-2 border-[#7e4bd0] text-[#7e4bd0] font-semibold text-sm hover:bg-[#7e4bd0]/5 transition-colors"
+                      >
+                        <PhotoIcon className="w-5 h-5" />
+                        آپلود عکس
+                      </button>
+                      <button
+                        type="button"
+                        onClick={triggerIdCamera}
+                        className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[#7e4bd0] text-white font-semibold text-sm hover:bg-[#6b3fbf] transition-colors"
+                      >
+                        <CameraIcon className="w-5 h-5" />
+                        عکس بگیر
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="bg-white rounded-2xl p-6 shadow-sm"
+                >
+                  <p className="text-sm font-medium text-gray-700 mb-3">عکس شناسنامه</p>
+                  <div className="relative rounded-xl overflow-hidden border border-gray-200 aspect-[4/3] max-h-64 bg-gray-100">
+                    <img
+                      src={idImageUrl}
+                      alt="صفحه اول شناسنامه"
+                      className="w-full h-full object-contain"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => { setIdImageUrl(null); }}
+                      className="absolute top-2 left-2 w-8 h-8 bg-black/50 rounded-full flex items-center justify-center text-white text-sm hover:bg-black/70"
+                    >
+                      ×
+                    </button>
+                  </div>
+                  <div className="flex gap-3 mt-4">
+                    <button
+                      type="button"
+                      onClick={triggerIdUpload}
+                      className="flex-1 inline-flex items-center justify-center gap-2 py-2.5 rounded-xl border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50"
+                    >
+                      <PhotoIcon className="w-4 h-4" />
+                      تغییر عکس (آپلود)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={triggerIdCamera}
+                      className="flex-1 inline-flex items-center justify-center gap-2 py-2.5 rounded-xl border border-[#7e4bd0] text-[#7e4bd0] text-sm font-medium hover:bg-[#7e4bd0]/5"
+                    >
+                      <CameraIcon className="w-4 h-4" />
+                      عکس بگیر
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </motion.div>
+          )}
+
+          {/* Step 3: Video - ارسال ویدیو و صدا */}
+          {currentStep === "video" && (
+            <motion.div
+              key="video"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.3 }}
+              className="w-full max-w-2xl mx-auto"
+            >
+              <div className="bg-purple-50 border border-purple-200 rounded-2xl p-4 md:p-6 mb-6">
+                <p className="text-gray-800 text-sm leading-6">
+                  تو این مرحله باید یجا باشی که آروم باشه، نور کافی داشته باشه و یه ویدیو در حالی که متن زیر کادر دوربین رو می‌خونی برامون بفرستی. مطمئن باش که توی کادر هستی.
+                </p>
+              </div>
+
+              <div className="bg-white rounded-2xl p-6 shadow-sm">
+                {!hasRecordedVideo ? (
+                  <>
+                    <div className="relative rounded-xl overflow-hidden bg-black aspect-[4/3] mb-4">
+                      <video
+                        ref={videoPreviewRef}
+                        autoPlay
+                        muted
+                        playsInline
+                        className="w-full h-full object-cover mirror-video"
+                        style={{ transform: "scaleX(-1)" }}
+                      />
+                      {!isRecording && !streamRef.current && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-gray-900/40">
+                          <VideoCameraIcon className="w-16 h-16 text-white/60" />
+                        </div>
+                      )}
+                      {/* Face guide overlay: only when recording — human-head shape (taller than wide), centered */}
+                      {isRecording && (
+                        <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+                          {/* Dimmed area with oval cutout — taller-than-wide ellipse, centered */}
+                          <div
+                            className="absolute inset-0 bg-black/50"
+                            style={{
+                              maskImage: "radial-gradient(ellipse 38% 58% at 50% 50%, transparent 0%, transparent 99%, black 99%)",
+                              WebkitMaskImage: "radial-gradient(ellipse 38% 58% at 50% 50%, transparent 0%, transparent 99%, black 99%)",
+                              maskSize: "100% 100%",
+                              WebkitMaskSize: "100% 100%",
+                            }}
+                          />
+                          {/* Face frame: oval taller than wide (human head shape), centered */}
+                          <div
+                            className="absolute left-1/2 top-1/2 w-[44%] h-[70%] -translate-x-1/2 -translate-y-1/2 border-2 border-white rounded-full shadow-[0_0_0_2px_rgba(255,255,255,0.4),inset_0_0_0_1px_rgba(255,255,255,0.2)]"
+                          />
+                          {/* Optional hint — subtle so it doesn't block face */}
+                          <span
+                            className="absolute bottom-3 left-1/2 -translate-x-1/2 text-white/90 text-xs font-medium drop-shadow-md whitespace-nowrap"
+                            style={{ textShadow: "0 1px 2px rgba(0,0,0,0.8)" }}
+                          >
+                            صورت خود را در کادر قرار دهید
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="rounded-xl bg-gray-50 border border-gray-200 p-4 mb-4">
+                      <p className="text-xs text-gray-500 mb-2">متن زیر رو در ویدیو بخون:</p>
+                      <p className="text-gray-800 text-sm font-medium leading-6" dir="rtl">
+                        {VIDEO_READ_SENTENCE}
+                      </p>
+                    </div>
+                    {!isRecording ? (
+                      <button
+                        type="button"
+                        onClick={startVideoRecording}
+                        className="w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-xl bg-[#7e4bd0] text-white font-semibold text-sm hover:bg-[#6b3fbf] transition-colors"
+                      >
+                        <VideoCameraIcon className="w-5 h-5" />
+                        شروع به فیلم‌برداری
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={stopVideoRecording}
+                        className="w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-xl bg-red-500 text-white font-semibold text-sm hover:bg-red-600 transition-colors"
+                      >
+                        <StopIcon className="w-5 h-5" />
+                        توقف ضبط
+                      </button>
+                    )}
+                  </>
+                ) : (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                  >
+                    <p className="text-sm font-medium text-gray-700 mb-3">ویدیوی ضبط‌شده</p>
+                    <div className="rounded-xl overflow-hidden bg-black aspect-[4/3] mb-4">
+                      {videoUrl && (
+                        <video
+                          src={videoUrl}
+                          controls
+                          className="w-full h-full object-contain"
+                          playsInline
+                        />
+                      )}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (videoUrl) URL.revokeObjectURL(videoUrl);
+                        setVideoUrl(null);
+                        setVideoBlob(null);
+                        setHasRecordedVideo(false);
+                      }}
+                      className="w-full py-2.5 rounded-xl border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50"
+                    >
+                      ضبط مجدد
+                    </button>
+                  </motion.div>
+                )}
+              </div>
+            </motion.div>
+          )}
+
+          {/* Step 4: Select Card */}
           {currentStep === "select" && (
             <motion.div
               key="select"
@@ -245,14 +622,6 @@ function RequestCard() {
               }}
               className="w-full"
             >
-              {/* Card Selection Title */}
-              <div className="flex items-center justify-between mb-4 md:mb-6 lg:mb-8">
-                <h2 className="text-gray-800 font-bold text-lg md:text-xl lg:text-2xl">انتخاب طرح کارت</h2>
-                <span className="text-gray-400 text-sm md:text-base lg:text-lg">
-                  {cardDesigns.length} طرح
-                </span>
-              </div>
-
               {/* Card Grid */}
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5 lg:gap-6 mb-6">
                 {cardDesigns.map((card, index) => (
@@ -616,22 +985,53 @@ function RequestCard() {
       {/* Fixed Submit Button */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-4 md:p-6">
         <div className="mx-auto max-w-6xl">
-          {currentStep === "select" ? (
-            <>
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={handleNextStep}
-                disabled={!selectedCard}
-                className="w-full text-white py-4 rounded-xl font-bold text-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                style={{ 
-                  backgroundColor: "#7e4bd0"
-                }}
-              >
-                <span>ادامه</span>
-                <ArrowLeftIcon className="w-5 h-5" />
-              </motion.button>
-            </>
+          {currentStep === "intro" ? (
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={handleNextStep}
+              className="w-full text-white py-4 rounded-xl font-bold text-lg shadow-lg flex items-center justify-center gap-2"
+              style={{ backgroundColor: "#7e4bd0" }}
+            >
+              <span>ادامه</span>
+              <ArrowLeftIcon className="w-5 h-5" />
+            </motion.button>
+          ) : currentStep === "id-upload" ? (
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={handleNextStep}
+              disabled={!idImageUrl}
+              className="w-full text-white py-4 rounded-xl font-bold text-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              style={{ backgroundColor: "#7e4bd0" }}
+            >
+              <span>ادامه</span>
+              <ArrowLeftIcon className="w-5 h-5" />
+            </motion.button>
+          ) : currentStep === "video" ? (
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={handleNextStep}
+              disabled={!hasRecordedVideo && !videoUrl}
+              className="w-full text-white py-4 rounded-xl font-bold text-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              style={{ backgroundColor: "#7e4bd0" }}
+            >
+              <span>ادامه</span>
+              <ArrowLeftIcon className="w-5 h-5" />
+            </motion.button>
+          ) : currentStep === "select" ? (
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={handleNextStep}
+              disabled={!selectedCard}
+              className="w-full text-white py-4 rounded-xl font-bold text-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              style={{ backgroundColor: "#7e4bd0" }}
+            >
+              <span>ادامه</span>
+              <ArrowLeftIcon className="w-5 h-5" />
+            </motion.button>
           ) : currentStep === "preview" ? (
             <motion.button
               whileHover={{ 

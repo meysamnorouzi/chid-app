@@ -2,6 +2,7 @@ import { ReactNode, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../../../hooks/useCart";
 import Modal from "../Modal";
+import { lineIconPaths } from "../../../utils/lineIcons";
 
 interface WalletHeaderProps {
   greeting?: string;
@@ -45,11 +46,8 @@ function WalletHeader({
       case "favorites":
         navigate("/favorites");
         break;
-      case "userInfo":
-        navigate("/user-info");
-        break;
       case "profile":
-        // navigate("/profile");
+        navigate("/user-info");
         break;
       case "settings":
         // navigate("/settings");
@@ -101,7 +99,7 @@ function WalletHeader({
           <div  
       onClick={() => navigate(`/messages`)}
       >
-             <img src="/icons/noti.svg" className="w-5 `h-5`" alt="notifications" />
+             <img src={lineIconPaths.notif} className="w-5 h-5" alt="notifications" />
         </div>
           }
         </div>
@@ -144,7 +142,7 @@ function WalletHeader({
               onClick={() => handleMenuClick("orders")}
               className="flex items-center gap-4 p-4 rounded-lg hover:bg-gray-50 transition-colors text-right"
             >
-              <img src="/icons/list.svg" className="w-6 h-6 shrink-0" alt="orders" />
+              <img src={lineIconPaths.list} className="w-6 h-6 shrink-0" alt="orders" />
               <span className="flex-1 text-gray-800 font-medium">لیست سفارشات</span>
               <svg className="w-5 h-5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -155,19 +153,8 @@ function WalletHeader({
               onClick={() => handleMenuClick("favorites")}
               className="flex items-center gap-4 p-4 rounded-lg hover:bg-gray-50 transition-colors text-right"
             >
-              <img src="/icons/fav.svg" className="w-6 h-6 shrink-0" alt="favorites" />
+              <img src={lineIconPaths.like} className="w-6 h-6 shrink-0" alt="favorites" />
               <span className="flex-1 text-gray-800 font-medium">علاقه‌مندی‌ها</span>
-              <svg className="w-5 h-5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
-
-            <button
-              onClick={() => handleMenuClick("userInfo")}
-              className="flex items-center gap-4 p-4 rounded-lg hover:bg-gray-50 transition-colors text-right"
-            >
-              <img src="/icons/profile.svg" className="w-6 h-6 shrink-0" alt="user info" />
-              <span className="flex-1 text-gray-800 font-medium">ویرایش اطلاعات کاربری</span>
               <svg className="w-5 h-5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
@@ -177,7 +164,7 @@ function WalletHeader({
               onClick={() => handleMenuClick("profile")}
               className="flex items-center gap-4 p-4 rounded-lg hover:bg-gray-50 transition-colors text-right"
             >
-              <img src="/icons/profile.svg" className="w-6 h-6 shrink-0" alt="profile" />
+              <img src={lineIconPaths.profile} className="w-6 h-6 shrink-0" alt="profile" />
               <span className="flex-1 text-gray-800 font-medium">پروفایل</span>
               <svg className="w-5 h-5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -201,7 +188,7 @@ function WalletHeader({
               onClick={() => handleMenuClick("logout")}
               className="flex items-center gap-4 p-4 rounded-lg hover:bg-red-50 transition-colors text-right"
             >
-              <img src="/icons/logout.svg" className="w-6 h-6 shrink-0" alt="logout" style={{ filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }} />
+              <img src={lineIconPaths.logout} className="w-6 h-6 shrink-0" alt="logout" style={{ filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }} />
               <span className="flex-1 text-red-500 font-medium">خروج از حساب</span>
               <svg className="w-5 h-5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />

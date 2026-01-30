@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { WalletHeader } from "../../../components/shared/Wallet";
 import { DigiteenTabs } from "../../../components/shared/DigiteenTabs";
+import { lineIconPaths } from "../../../utils/lineIcons";
 
 interface Challenge {
   id: string;
@@ -275,7 +276,7 @@ const Challenges = () => {
 
               <div className="flex flex-col items-end gap-2 shrink-0">
                 <div className="flex items-center gap-2">
-                  <img src="/icons/digitcoin.svg" className="w-6 h-6" alt="دیجیت" />
+                  <img src={lineIconPaths.digit} className="w-6 h-6" alt="دیجیت" />
                   <span className="text-sm font-bold text-[#7e4bd0]">
                     {formatBalance(challenge.digitReward)}
                   </span>

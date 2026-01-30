@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { lineIconPaths } from "../../../utils/lineIcons";
 
 interface Activity {
   id: string;
@@ -27,11 +28,11 @@ function RecentTransactions({
   const getActivityIcon = (iconType: string) => {
     switch (iconType) {
       case "game":
-        return <img src="/icons/store.svg" className="w-5 h-5" alt="game" />;
+        return <img src={lineIconPaths.store} className="w-5 h-5" alt="game" />;
       case "food":
-        return <img src="/icons/cafe.svg" className="w-5 h-5" alt="food" />;
+        return <img src={lineIconPaths.cafe} className="w-5 h-5" alt="food" />;
       default:
-        return <img src="/icons/wallet.svg" className="w-5 h-5" alt="wallet" />;
+        return <img src={lineIconPaths.wallet} className="w-5 h-5" alt="wallet" />;
     }
   };
 
@@ -67,7 +68,7 @@ function RecentTransactions({
                 }`}
               >
                 {activity.type === "income" ? (
-                  <img src="/icons/sendtopasandaz.svg" className="w-6 h-6" alt="income" />
+                  <img src={lineIconPaths.sendToPasandaz} className="w-6 h-6" alt="income" />
                 ) : (
                   getActivityIcon(activity.icon)
                 )}
@@ -103,7 +104,7 @@ function RecentTransactions({
       ) : (
         <div className="text-center py-12">
           <div className="bg-gray-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-            <img src="/icons/digitcoin.svg" className="w-8 h-8 opacity-40" alt="empty" />
+            <img src={lineIconPaths.digit} className="w-8 h-8 opacity-40" alt="empty" />
           </div>
           <p className="text-gray-500 text-sm">{emptyMessage}</p>
         </div>

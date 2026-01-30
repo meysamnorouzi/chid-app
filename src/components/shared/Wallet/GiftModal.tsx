@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckIcon } from "@heroicons/react/24/outline";
 import Modal from "../Modal";
+import { lineIconPaths } from "../../../utils/lineIcons";
 
 // Gift card config: amount, title, icon from public/icons/gift
 const GIFT_CARDS = [
@@ -270,7 +271,7 @@ function GiftModal({
               </div>
             ):(
               <div className="h-96 pt-10 flex w-full items-center justify-center">
-            <img src="/icons/search.svg" className="w-20 h-20" alt="search" />
+            <img src={lineIconPaths.searchRiz} className="w-20 h-20" alt="search" />
               </div>
             )}
 
@@ -437,7 +438,7 @@ function GiftModal({
             }
             className="flex-1 bg-gradient-to-r from-amber-500 to-amber-600 text-white py-3 rounded-xl w-full font-bold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 hover:shadow-xl transition-all"
           >
-            <img src="/icons/gift.svg" alt="gift" className="w-5 h-5 invert brightness-0" />
+            <img src={lineIconPaths.gift} alt="gift" className="w-5 h-5 invert brightness-0" />
             <span>ارسال هدیه</span>
           </motion.button>
         </div>

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import WalletHeader from "../../../components/shared/Wallet/WalletHeader";
 import { formatPrice } from "../../../utils/priceUtils";
+import { useModal } from "../../../contexts/ModalContext";
 
 interface OrderItem {
   productId: string;
@@ -26,6 +27,7 @@ interface Order {
 
 const Orders = () => {
   const navigate = useNavigate();
+  const { setModalOpen } = useModal();
 
   const [orders, setOrders] = useState<Order[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
@@ -43,6 +45,10 @@ const Orders = () => {
       );
     }
   }, []);
+
+  useEffect(() => {
+    setModalOpen(selectedOrder !== null);
+  }, [selectedOrder, setModalOpen]);
 
   const getStatusBadgeColor = (status: string) => {
     switch (status) {

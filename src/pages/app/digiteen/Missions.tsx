@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { WalletHeader } from "../../../components/shared/Wallet";
 import { DigiteenTabs } from "../../../components/shared/DigiteenTabs";
+import { lineIconPaths } from "../../../utils/lineIcons";
 
 interface Mission {
   id: string;
@@ -214,7 +215,7 @@ const Missions = () => {
                   <div className="flex items-center gap-2">
                     {mission.rewardType === "digit" ? (
                       <img
-                        src="/icons/digitcoin.svg"
+                        src={lineIconPaths.digit}
                         className="w-6 h-6"
                         alt="دیجیت"
                       />

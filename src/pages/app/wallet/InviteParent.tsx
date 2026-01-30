@@ -7,6 +7,7 @@ import {
   CheckCircleIcon,
   UserPlusIcon,
 } from "@heroicons/react/24/outline";
+import AuthInput from "../../../components/shared/AuthInput";
 
 function InviteParent() {
   const navigate = useNavigate();
@@ -110,60 +111,35 @@ function InviteParent() {
 
               {/* Phone Input */}
               <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm mb-6">
-                <label className="block text-sm font-bold text-gray-700 mb-3">
-                 تره موبایل پدر یا مادر
-                </label>
-                <div className="relative">
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                    <DevicePhoneMobileIcon className="w-5 h-5 text-gray-400" />
-                  </div>
-                  <input
-                    type="tel"
-                    value={phoneNumber}
-                    onChange={handlePhoneChange}
-                    placeholder="09123456789"
-                    className={`w-full pr-12 pl-4 py-4 rounded-xl border-2 ${
-                      error
-                        ? "border-red-300 focus:border-red-500"
-                        : "border-gray-200 focus:border-[#7e4bd0]"
-                    } outline-none transition-all text-left`}
-                    dir="ltr"
-                    maxLength={11}
-                  />
-                </div>
-                {error && (
-                  <motion.p
-                    initial={{ opacity: 0, y: -5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="text-red-500 text-xs mt-2"
-                  >
-                    {error}
-                  </motion.p>
-                )}
+                <AuthInput
+                  id="phoneNumber"
+                  label="شماره موبایل پدر یا مادر"
+                  type="tel"
+                  value={phoneNumber}
+                  onChange={(value) => {
+                    const formatted = formatPhoneNumber(value);
+                    setPhoneNumber(formatted);
+                    setError("");
+                  }}
+                  placeholder="09123456789"
+                  error={error}
+                  isNumberOrLink={true}
+                  required
+                />
                 <p className="text-gray-400 text-xs mt-2">
-                  یک پیامک دعوت برای اینتره ارسال می‌شود
+                  یک پیامک دعوت برای این شماره ارسال می‌شود
                 </p>
               </div>
 
               {/* Submit Button */}
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+              <button
+                type="button"
                 onClick={handleSubmit}
                 disabled={isLoading || phoneNumber.length < 11}
-                className="w-full bg-[#7e4bd0] text-white py-4 rounded-xl font-bold text-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full bg-[#7e4bd0] hover:bg-gray-800 disabled:bg-gray-400 border border-[#7e4bd0] disabled:cursor-not-allowed text-white font-semibold py-3.5 rounded-xl shadow-gray-300 transition-all active:scale-[0.98]"
               >
-                {isLoading ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                    <span>در حال ارسال...</span>
-                  </>
-                ) : (
-                  <>
-                    <span>ارسال دعوت‌نامه</span>
-                  </>
-                )}
-              </motion.button>
+                {isLoading ? 'در حال ارسال...' : 'ارسال دعوت‌نامه'}
+              </button>
             </motion.div>
           ) : (
             <motion.div

@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import AuthInput from '../../../components/shared/AuthInput';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -107,7 +108,7 @@ const Register = () => {
           <img
             src="/logo/Form.gif"
             alt=""
-            className="w-40"
+            className="w-40 -mt-14"
           />
         </div>
         <div className="flex flex-col w-full items-center justify-center flex-1 p-4 md:p-8">
@@ -118,130 +119,59 @@ const Register = () => {
                 {errors.submit}
               </div>
             )}
-            <div className="space-y-2 mt-3 w-full">
-              <label
-                htmlFor="username"
-                className="block text-sm font-medium text-gray-700"
-              >
-                نام کاربری (فقط حروف و اعداد انگلیسی)
-              </label>
-              <input
-                id="username"
-                type="text"
-                value={formData.username}
-                onChange={(e) => handleChange('username', e.target.value)}
-                className={`w-full px-4 py-3 rounded-xl border ${
-                  errors.username
-                    ? 'border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-200'
-                    : 'border-gray-200 focus:border-black focus:ring-2 focus:ring-gray-300'
-                } outline-none transition-all`}
-                placeholder="نام کاربری ..."
-                dir="rtl"
-                required
-              />
-              {errors.username && (
-                <p className="text-red-500 text-xs mt-1">{errors.username}</p>
-              )}
-            </div>
-            <div className="space-y-2 w-full">
-              <label
-                htmlFor="nickname"
-                className="block text-sm font-medium text-gray-700"
-              >
-                نام مستعار
-              </label>
-              <input
-                id="nickname"
-                type="text"
-                value={formData.nickname}
-                onChange={(e) => handleChange('nickname', e.target.value)}
-                className={`w-full px-4 py-3 rounded-xl border ${
-                  errors.nickname
-                    ? 'border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-200'
-                    : 'border-gray-200 focus:border-black focus:ring-2 focus:ring-gray-300'
-                } outline-none transition-all`}
-                placeholder=" نام مستعار ..."
-                dir="rtl"
-                required
-              />
-              {errors.nickname && (
-                <p className="text-red-500 text-xs mt-1">{errors.nickname}</p>
-              )}
-            </div>
-            <div className="space-y-2 w-full">
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700"
-              >
-                رمز عبور
-              </label>
-              <input
-                id="password"
-                type="password"
-                value={formData.password}
-                onChange={(e) => handleChange('password', e.target.value)}
-                className={`w-full px-4 py-3 rounded-xl border ${
-                  errors.password
-                    ? 'border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-200'
-                    : 'border-gray-200 focus:border-black focus:ring-2 focus:ring-gray-300'
-                } outline-none transition-all`}
-                placeholder="رمز عبور ..."
-                dir="rtl"
-                required
-              />
-              {errors.password && (
-                <p className="text-red-500 text-xs mt-1">{errors.password}</p>
-              )}
-            </div>
-            <div className="space-y-2 w-full">
-              <label
-                htmlFor="confirmPassword"
-                className="block text-sm font-medium text-gray-700"
-              >
-                تکرار رمز عبور
-              </label>
-              <input
-                id="confirmPassword"
-                type="password"
-                value={formData.confirmPassword}
-                onChange={(e) => handleChange('confirmPassword', e.target.value)}
-                className={`w-full px-4 py-3 rounded-xl border ${
-                  errors.confirmPassword
-                    ? 'border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-200'
-                    : 'border-gray-200 focus:border-black focus:ring-2 focus:ring-gray-300'
-                } outline-none transition-all`}
-                placeholder=" تکرار رمز عبور ..."
-                dir="rtl"
-                required
-              />
-              {errors.confirmPassword && (
-                <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>
-              )}
-            </div>
-            <div className="space-y-2 w-full">
-              <label
-                htmlFor="referrerUsername"
-                className="block text-sm font-medium text-gray-700"
-              >
-                نام کاربری معرف (اختیاری)
-              </label>
-              <input
-                id="referrerUsername"
-                type="text"
-                value={formData.referrerUsername}
-                onChange={(e) => handleChange('referrerUsername', e.target.value)}
-                className={`w-full px-4 py-3 rounded-xl border ${
-                  errors.referrerUsername
-                    ? 'border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-200'
-                    : 'border-gray-200 focus:border-black focus:ring-2 focus:ring-gray-300'
-                } outline-none transition-all`}
-                placeholder="نام کاربری معرف ..."
-                dir="rtl"
-              />
-              {errors.referrerUsername && (
-                <p className="text-red-500 text-xs mt-1">{errors.referrerUsername}</p>
-              )}
-            </div>
+            <AuthInput
+              id="username"
+              label="نام کاربری (فقط حروف و اعداد انگلیسی)"
+              type="text"
+              value={formData.username}
+              onChange={(value) => handleChange('username', value)}
+              placeholder="username123"
+              error={errors.username}
+              isNumberOrLink={true}
+              required
+            />
+            <AuthInput
+              id="nickname"
+              label="نام مستعار"
+              type="text"
+              value={formData.nickname}
+              onChange={(value) => handleChange('nickname', value)}
+              placeholder=" نام مستعار ..."
+              error={errors.nickname}
+              required
+            />
+            <AuthInput
+              id="password"
+              label="رمز عبور"
+              type="password"
+              value={formData.password}
+              onChange={(value) => handleChange('password', value)}
+              placeholder="********"
+              error={errors.password}
+              isNumberOrLink={true}
+              required
+            />
+            <AuthInput
+              id="confirmPassword"
+              label="تکرار رمز عبور"
+              type="password"
+              value={formData.confirmPassword}
+              onChange={(value) => handleChange('confirmPassword', value)}
+              placeholder="********"
+              error={errors.confirmPassword}
+              isNumberOrLink={true}
+              required
+            />
+            <AuthInput
+              id="referrerUsername"
+              label="نام کاربری معرف (اختیاری)"
+              type="text"
+              value={formData.referrerUsername}
+              onChange={(value) => handleChange('referrerUsername', value)}
+              placeholder="username123"
+              error={errors.referrerUsername}
+              isNumberOrLink={true}
+            />
             <button
               type="submit"
               disabled={isLoading}

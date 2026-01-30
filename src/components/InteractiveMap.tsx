@@ -48,12 +48,18 @@ function screenToViewBox(svg: SVGSVGElement, clientX: number, clientY: number): 
   return { x: svgP.x, y: svgP.y };
 }
 
+/** Bounds in viewBox/content coordinates. Clicks outside this (e.g. clouds at edges) do not navigate. */
+export type ClickableBounds = { x: number; y: number; width: number; height: number };
+
 export function InteractiveMap({
   hotspots = DEFAULT_HOTSPOTS,
   onHotspotClick,
+  clickableBounds,
 }: {
   hotspots?: Hotspot[];
-  onHotspotClick?: (path: string) => void;
+  onHotspotClick?: (hotspot: { id: string; path: string }) => void;
+  /** Optional: only navigate when click is inside this rect (e.g. central town; edges = clouds = no click). */
+  clickableBounds?: ClickableBounds;
 }) {
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -65,6 +71,11 @@ export function InteractiveMap({
   const [isPanning, setIsPanning] = useState(false);
   const panStart = useRef<{ x: number; y: number; startX: number; startY: number } | null>(null);
   const pinchStart = useRef<{ distance: number; center: { x: number; y: number }; scale: number; x: number; y: number } | null>(null);
+  const transformRef = useRef(transform);
+  const mouseDownRef = useRef<{ x: number; y: number } | null>(null);
+  const hasPannedRef = useRef(false);
+
+  transformRef.current = transform;
 
   useEffect(() => {
     let cancelled = false;
@@ -83,25 +94,11 @@ export function InteractiveMap({
     };
   }, []);
 
-  const handleWheel = useCallback(
-    (e: React.WheelEvent<SVGSVGElement>) => {
-      const svg = svgRef.current;
-      if (!svg) return;
-      e.preventDefault();
-      const delta = 1 - e.deltaY * ZOOM_SENSITIVITY;
-      const { x, y, scale } = transform;
-      const pt = screenToViewBox(svg, e.clientX, e.clientY);
-      const newScale = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, scale * delta));
-      const newX = x + (pt.x - x) * (1 - newScale / scale);
-      const newY = y + (pt.y - y) * (1 - newScale / scale);
-      setTransform({ x: newX, y: newY, scale: newScale });
-    },
-    [transform]
-  );
-
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
       if (e.button !== 0) return;
+      mouseDownRef.current = { x: e.clientX, y: e.clientY };
+      hasPannedRef.current = false;
       setIsPanning(true);
       panStart.current = { x: transform.x, y: transform.y, startX: e.clientX, startY: e.clientY };
     },
@@ -111,10 +108,11 @@ export function InteractiveMap({
   const handleMouseMove = useCallback(
     (e: React.MouseEvent) => {
       if (!panStart.current || !svgRef.current) return;
-      const ctm = svgRef.current.getScreenCTM();
-      if (!ctm) return;
       const dx = e.clientX - panStart.current.startX;
       const dy = e.clientY - panStart.current.startY;
+      if (Math.hypot(dx, dy) > 8) hasPannedRef.current = true;
+      const ctm = svgRef.current.getScreenCTM();
+      if (!ctm) return;
       setTransform({
         ...transform,
         x: panStart.current.x + dx / ctm.a,
@@ -124,10 +122,47 @@ export function InteractiveMap({
     [transform]
   );
 
-  const handleMouseUp = useCallback(() => {
-    panStart.current = null;
-    setIsPanning(false);
-  }, []);
+  const handleMouseUp = useCallback(
+    (e: React.MouseEvent) => {
+      const start = mouseDownRef.current;
+      mouseDownRef.current = null;
+      if (start && !hasPannedRef.current && svgRef.current) {
+        const dist = Math.hypot(e.clientX - start.x, e.clientY - start.y);
+        if (dist <= 10) {
+          const pt = screenToViewBox(svgRef.current, e.clientX, e.clientY);
+          const { x, y, scale } = transformRef.current;
+          const cx = (pt.x - x) / scale;
+          const cy = (pt.y - y) / scale;
+          const insideCentral =
+            !clickableBounds ||
+            (cx >= clickableBounds.x &&
+              cx <= clickableBounds.x + clickableBounds.width &&
+              cy >= clickableBounds.y &&
+              cy <= clickableBounds.y + clickableBounds.height);
+          if (!insideCentral) {
+            panStart.current = null;
+            setIsPanning(false);
+            return;
+          }
+          const hit = hotspots.find((h) => {
+            if (h.type === "rect") {
+              return cx >= h.x && cx <= h.x + h.width && cy >= h.y && cy <= h.y + h.height;
+            }
+            const dx = cx - h.cx;
+            const dy = cy - h.cy;
+            return dx * dx + dy * dy <= h.r * h.r;
+          });
+          if (hit) {
+            if (onHotspotClick) onHotspotClick({ id: hit.id, path: hit.path });
+            else navigate(hit.path);
+          }
+        }
+      }
+      panStart.current = null;
+      setIsPanning(false);
+    },
+    [hotspots, navigate, onHotspotClick, clickableBounds]
+  );
 
   const handleMouseLeave = useCallback(() => {
     panStart.current = null;
@@ -205,6 +240,23 @@ export function InteractiveMap({
   }, []);
 
   useEffect(() => {
+    const el = svgRef.current;
+    if (!el || !mapInner) return;
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      const delta = 1 - e.deltaY * ZOOM_SENSITIVITY;
+      const { x, y, scale } = transformRef.current;
+      const pt = screenToViewBox(el, e.clientX, e.clientY);
+      const newScale = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, scale * delta));
+      const newX = x + (pt.x - x) * (1 - newScale / scale);
+      const newY = y + (pt.y - y) * (1 - newScale / scale);
+      setTransform({ x: newX, y: newY, scale: newScale });
+    };
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, [mapInner]);
+
+  useEffect(() => {
     const onUp = () => {
       panStart.current = null;
       setIsPanning(false);
@@ -216,11 +268,6 @@ export function InteractiveMap({
       window.removeEventListener("touchend", onUp);
     };
   }, []);
-
-  const handleHotspotClick = (path: string) => {
-    if (onHotspotClick) onHotspotClick(path);
-    else navigate(path);
-  };
 
   const { x, y, scale } = transform;
   const viewportTransform = `translate(${x},${y}) scale(${scale})`;
@@ -236,7 +283,7 @@ export function InteractiveMap({
   if (!mapInner) {
     return (
       <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-600">
-        Loading map…
+        در حال بارگزاری
       </div>
     );
   }
@@ -248,13 +295,12 @@ export function InteractiveMap({
         viewBox={`0 0 ${MAP_VIEWBOX.width} ${MAP_VIEWBOX.height}`}
         width="100%"
         height="100%"
-        preserveAspectRatio="xMidYMid meet"
+        preserveAspectRatio="xMidYMid slice"
         className="block touch-none"
         style={{ cursor: isPanning ? "grabbing" : "grab" }}
-        onWheel={handleWheel}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
+        onMouseUp={(e) => handleMouseUp(e)}
         onMouseLeave={handleMouseLeave}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
@@ -273,7 +319,6 @@ export function InteractiveMap({
                   height={h.height}
                   fill="transparent"
                   style={{ cursor: "pointer" }}
-                  onClick={() => handleHotspotClick(h.path)}
                 />
               ) : (
                 <circle
@@ -283,7 +328,6 @@ export function InteractiveMap({
                   r={h.r}
                   fill="transparent"
                   style={{ cursor: "pointer" }}
-                  onClick={() => handleHotspotClick(h.path)}
                 />
               )
             )}

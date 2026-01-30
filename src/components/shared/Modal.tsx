@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { XMarkIcon } from '@heroicons/react/24/solid'
 import type { ReactNode } from 'react'
 import { useEffect, useState } from 'react'
+import { useModal } from '../../contexts/ModalContext'
 
 interface ModalProps {
   isOpen: boolean
@@ -37,6 +38,7 @@ function Modal({
   maxWidth = 'md:max-w-2xl'
 }: ModalProps) {
   const [isMobile, setIsMobile] = useState(false)
+  const { setModalOpen } = useModal()
 
   useEffect(() => {
     const checkMobile = () => {
@@ -47,6 +49,10 @@ function Modal({
     window.addEventListener('resize', checkMobile)
     return () => window.removeEventListener('resize', checkMobile)
   }, [])
+
+  useEffect(() => {
+    setModalOpen(isOpen)
+  }, [isOpen, setModalOpen])
 
   // Animation variants for mobile (bottom sheet) and desktop (center modal)
   const mobileVariants = {

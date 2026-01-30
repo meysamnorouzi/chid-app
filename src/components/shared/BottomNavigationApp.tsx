@@ -1,31 +1,35 @@
 import { useNavigate, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { 
-  HomeIcon, 
-  WalletIcon, 
-  ShoppingBagIcon,
-  UserGroupIcon,
-  SpeakerWaveIcon
-} from '@heroicons/react/24/outline'
+import { useModal } from '../../contexts/ModalContext'
+import { lineIconPaths } from '../../utils/lineIcons'
+import { LineHomeIcon } from './LineHomeIcon'
 
-interface NavItem {
+interface NavItemWithIcon {
   path: string
   label: string
   icon: React.ComponentType<{ className?: string }>
+  iconSrc?: never
 }
+interface NavItemWithSrc {
+  path: string
+  label: string
+  icon?: never
+  iconSrc: string
+}
+type NavItem = NavItemWithIcon | NavItemWithSrc
 
 const navItems: NavItem[] = [
- 
-  { path: '/wallet-money', label: 'کیف پول', icon: WalletIcon },
-  { path: '/shop', label: 'فروشگاه', icon: ShoppingBagIcon },
-  { path: '/', label: 'خانه', icon: HomeIcon },
-  { path: '/radioteen', label: 'رادیو تین', icon: SpeakerWaveIcon },
-  { path: '/friends', label: 'دوستان', icon: UserGroupIcon },
+  { path: '/wallet-money', label: 'کیف پول', iconSrc: lineIconPaths.wallet },
+  { path: '/shop', label: 'فروشگاه', iconSrc: lineIconPaths.store },
+  { path: '/', label: 'خانه', icon: LineHomeIcon },
+  { path: '/radioteen', label: 'رادیو تین', iconSrc: lineIconPaths.podcast },
+  { path: '/friends', label: 'دوستان', iconSrc: lineIconPaths.like },
 ]
 
 function BottomNavigationApp() {
   const navigate = useNavigate()
   const location = useLocation()
+  const { isModalOpen } = useModal()
 
   const isActive = (path: string) => {
     // If it's wallet path, check if current location is any wallet page
@@ -37,11 +41,14 @@ function BottomNavigationApp() {
     return location.pathname === path
   }
 
+  if (isModalOpen) {
+    return null
+  }
+
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 w-full bg-white border-t border-gray-200 px-4 pb-6 pt-3" dir="rtl">
       <div className="flex justify-around items-center max-w-md mx-auto">
         {navItems.map((item) => {
-          const Icon = item.icon
           const active = isActive(item.path)
           
           return (
@@ -73,9 +80,17 @@ function BottomNavigationApp() {
                   duration: 0.5,
                   ease: "easeInOut"
                 }}
-                className="relative z-10"
+                className="relative z-10 flex items-center justify-center"
               >
-                <Icon className={`w-6 h-6 ${active ? 'text-white' : 'text-gray-500'}`} />
+                {'iconSrc' in item ? (
+                  <img
+                    src={item.iconSrc}
+                    alt=""
+                    className={`w-6 h-6 object-contain ${active ? 'brightness-0 invert' : 'opacity-60'}`}
+                  />
+                ) : (
+                  <item.icon className={`${item.path === '/' ? 'w-8 h-8' : 'w-6 h-6'} ${active ? 'text-white' : 'text-gray-500'}`} />
+                )}
               </motion.div>
               {active && (
                 <motion.span 

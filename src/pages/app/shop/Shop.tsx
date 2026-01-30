@@ -3,6 +3,7 @@ import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 import { ReactNode, useState, useMemo, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import WalletHeader from "../../../components/shared/Wallet/WalletHeader";
+import { lineIconPaths } from "../../../utils/lineIcons";
 
 interface Category {
   id: string;
@@ -90,47 +91,30 @@ const Shop = () => {
     touchEndX.current = null;
   };
 
-  const categories: Category[] = [
-    {
-      id: "all",
-      name: "همه",
-      icon: (
-        <div className="w-full h-full bg-gradient-to-br from-[#7e4bd0] to-[#a855f7] flex items-center justify-center">
-          <span className="text-white font-bold text-lg">همه</span>
-        </div>
-      ),
-    },
-    {
-      id: "digital",
-      name: "کالای دیجیتال",
-      icon: <img src="/icons/store/Curves.svg" alt="کالای دیجیتال" className="w-[100%] h-full object-cover p-4" />,
-    },
-    {
-      id: "entertainment",
-      name: "سرگرمی",
-      icon: <img src="/icons/store/game.svg" alt="سرگرمی" className="w-full h-full object-cover p-4" />,
-    },
-    {
-      id: "books",
-      name: "کتاب و فرهنگ",
-      icon: <img src="/icons/store/ketab.svg" alt="کتاب و فرهنگ" className="w-full h-full object-cover p-4" />,
-    },
-    {
-      id: "clothing",
-      name: "پوشاک",
-      icon: <img src="/icons/store/lebas.svg" alt="پوشاک" className="w-full h-full object-cover p-4" />,
-    },
-    {
-      id: "sports",
-      name: "ورزش و سفر",
-      icon: <img src="/icons/store/safar.svg" alt="ورزش و سفر" className="w-full h-full object-cover p-4" />,
-    },
-    {
-      id: "pets",
-      name: "حیوانات خانگی",
-      icon: <img src="/iconstore/pets.svg" alt="حیوانات خانگی" className="w-full h-full object-cover" />,
-    },
+  // Categories synced with public/icons/store/ file names
+  const storeCategories: { id: string; name: string; iconFile: string }[] = [
+    { id: "all", name: "همه", iconFile: "all.svg" },
+    { id: "kala-digital", name: "کالای دیجیتال", iconFile: "kala digital.svg" },
+    { id: "baazi-o-sargarmi", name: "بازی و سرگرمی", iconFile: "baazi o sargarmi.svg" },
+    { id: "book-lavazem-tahrir", name: "کتاب و لوازم تحریر", iconFile: "book lavazem tahrir.svg" },
+    { id: "mod-o-lebas", name: "مد و لباس", iconFile: "mod o lebas.svg" },
+    { id: "safar", name: "سفر", iconFile: "safar.svg" },
+    { id: "pet", name: "حیوانات خانگی", iconFile: "pet.svg" },
+    { id: "labtop", name: "لپ تاپ", iconFile: "labtop.svg" },
+    { id: "mobile", name: "موبایل", iconFile: "mobile.svg" },
   ];
+
+  const categories: Category[] = storeCategories.map(({ id, name, iconFile }) => ({
+    id,
+    name,
+    icon: (
+      <img
+        src={`/icons/store/${encodeURIComponent(iconFile)}`}
+        alt={name}
+        className="w-full h-full object-cover p-4"
+      />
+    ),
+  }));
 
   const productSections: ProductSection[] = [
     {
@@ -144,7 +128,7 @@ const Shop = () => {
           title: "کنسول بازی (همراه بازی انلاین و دو دسته اضافه )",
           price: "۱۲۰,۰۰۰,۰۰۰",
           isFavorite: true,
-          categoryId: "entertainment",
+          categoryId: "baazi-o-sargarmi",
         },
         {
           id: "2",
@@ -153,7 +137,7 @@ const Shop = () => {
           title: "لپ تاپ گیمینگ ایسوس",
           price: "۱۳۰,۰۰۰,۰۰۰",
           isFavorite: true,
-          categoryId: "laptops",
+          categoryId: "labtop",
         },
         {
           id: "3",
@@ -162,7 +146,7 @@ const Shop = () => {
           title: "کنسول بازی (همراه بازی انلاین و دو دسته اضافه )",
           price: "۱۴۰,۰۰۰,۰۰۰",
           isFavorite: true,
-          categoryId: "entertainment",
+          categoryId: "baazi-o-sargarmi",
         },
         {
           id: "4",
@@ -171,7 +155,7 @@ const Shop = () => {
           title: "میز اتاق بازی",
           price: "۱۵۰,۰۰۰,۰۰۰",
           isFavorite: true,
-          categoryId: "room",
+          categoryId: "baazi-o-sargarmi",
         },
         {
           id: "5",
@@ -180,7 +164,7 @@ const Shop = () => {
           title: "کنسول بازی (همراه بازی انلاین و دو دسته اضافه )",
           price: "۱۶۰,۰۰۰,۰۰۰",
           isFavorite: true,
-          categoryId: "entertainment",
+          categoryId: "baazi-o-sargarmi",
         },
         {
           id: "6",
@@ -189,7 +173,7 @@ const Shop = () => {
           title: "لپ تاپ لنوو",
           price: "۱۷۰,۰۰۰,۰۰۰",
           isFavorite: true,
-          categoryId: "laptops",
+          categoryId: "labtop",
         },
         {
           id: "7",
@@ -198,7 +182,7 @@ const Shop = () => {
           title: "کنسول بازی (همراه بازی انلاین و دو دسته اضافه )",
           price: "۱۸۰,۰۰۰,۰۰۰",
           isFavorite: true,
-          categoryId: "entertainment",
+          categoryId: "baazi-o-sargarmi",
         },
         {
           id: "8",
@@ -207,7 +191,7 @@ const Shop = () => {
           title: "صندلی اتاق بازی",
           price: "۱۹۰,۰۰۰,۰۰۰",
           isFavorite: true,
-          categoryId: "room",
+          categoryId: "baazi-o-sargarmi",
         },
       ],
     },
@@ -222,7 +206,7 @@ const Shop = () => {
           title: "کنسول بازی (همراه بازی انلاین و دو دسته اضافه )",
           price: "۲۰۰,۰۰۰,۰۰۰",
           isFavorite: true,
-          categoryId: "entertainment",
+          categoryId: "baazi-o-sargarmi",
         },
         {
           id: "10",
@@ -231,7 +215,7 @@ const Shop = () => {
           title: "لپ تاپ ایسوس",
           price: "۲۱۰,۰۰۰,۰۰۰",
           isFavorite: true,
-          categoryId: "laptops",
+          categoryId: "labtop",
         },
         {
           id: "11",
@@ -240,7 +224,7 @@ const Shop = () => {
           title: "کنسول بازی (همراه بازی انلاین و دو دسته اضافه )",
           price: "۲۲۰,۰۰۰,۰۰۰",
           isFavorite: true,
-          categoryId: "entertainment",
+          categoryId: "baazi-o-sargarmi",
         },
         {
           id: "12",
@@ -249,7 +233,7 @@ const Shop = () => {
           title: "میز گیمینگ",
           price: "۲۳۰,۰۰۰,۰۰۰",
           isFavorite: true,
-          categoryId: "room",
+          categoryId: "baazi-o-sargarmi",
         },
         {
           id: "13",
@@ -258,7 +242,7 @@ const Shop = () => {
           title: "کنسول بازی (همراه بازی انلاین و دو دسته اضافه )",
           price: "۲۴۰,۰۰۰,۰۰۰",
           isFavorite: true,
-          categoryId: "entertainment",
+          categoryId: "baazi-o-sargarmi",
         },
         {
           id: "14",
@@ -267,7 +251,7 @@ const Shop = () => {
           title: "لپ تاپ اپل",
           price: "۲۵۰,۰۰۰,۰۰۰",
           isFavorite: true,
-          categoryId: "laptops",
+          categoryId: "labtop",
         },
         {
           id: "15",
@@ -276,7 +260,7 @@ const Shop = () => {
           title: "کنسول بازی (همراه بازی انلاین و دو دسته اضافه )",
           price: "۲۶۰,۰۰۰,۰۰۰",
           isFavorite: true,
-          categoryId: "entertainment",
+          categoryId: "baazi-o-sargarmi",
         },
         {
           id: "16",
@@ -285,7 +269,7 @@ const Shop = () => {
           title: "صندلی گیمینگ",
           price: "۲۷۰,۰۰۰,۰۰۰",
           isFavorite: true,
-          categoryId: "room",
+          categoryId: "baazi-o-sargarmi",
         },
       ],
     },
@@ -328,7 +312,7 @@ const Shop = () => {
       </div>
       <div className="p-2 md:p-3 lg:p-4 flex flex-col gap-2">
         <div className="flex items-center gap-1">
-          <img src="/icons/store.svg" className="w-4 h-4 md:w-5 md:h-5" alt="فروشگاه" />
+          <img src={lineIconPaths.store} className="w-4 h-4 md:w-5 md:h-5" alt="فروشگاه" />
           <p className="text-xs md:text-sm">فروشگاه دیجی تین</p>
         </div>
         <p className="text-sm md:text-base lg:text-lg text-black font-medium line-clamp-2">{product.title}</p>
@@ -347,7 +331,7 @@ const Shop = () => {
         <WalletHeader
           greeting="محمد مهرابی"
           subtitle="@mohammad-mehrabi"
-          icon={<img src="/icons/store.svg" className="w-5 h-5" alt="فروشگاه" />}
+          icon={<img src={lineIconPaths.store} className="w-5 h-5" alt="فروشگاه" />}
           showCartBadge={true}
         />
       </div>
@@ -390,7 +374,7 @@ const Shop = () => {
         className="mb-3 md:mb-4 lg:mb-6"
       >
         <div className="relative max-w-2xl md:mx-auto">
-          <img src="/icons/search.svg" className="absolute right-3 md:right-4 top-1/2 -translate-y-1/2 w-5 h-5 md:w-6 md:h-6 opacity-50" alt="جستجو" />
+          <img src={lineIconPaths.searchRiz} className="absolute right-3 md:right-4 top-1/2 -translate-y-1/2 w-5 h-5 md:w-6 md:h-6 opacity-50" alt="جستجو" />
           <input
             type="text"
             placeholder="جستجوی محصولات ..."

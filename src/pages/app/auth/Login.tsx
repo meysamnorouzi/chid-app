@@ -1,5 +1,6 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useState } from 'react';
+import AuthInput from '../../../components/shared/AuthInput';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -69,7 +70,7 @@ const Login = () => {
           <img
             src="/logo/cheshmak.gif"
             alt=""
-            className="w-40"
+            className="w-40 -mt-14"
           />
         </div>
         <div className="flex flex-col w-full items-center justify-start flex-1 pt-10 p-4 md:pt-0 md:p-8">
@@ -80,56 +81,34 @@ const Login = () => {
                 {error}
               </div>
             )}
-            <div className="space-y-2 mt-3 w-full">
-              <label
-              htmlFor="username"
-              className="block text-sm font-medium text-gray-700"
-            >
-              نام کاربری (فقط حروف و اعداد انگلیسی)
-            </label>
-            <input
+            <AuthInput
               id="username"
+              label="نام کاربری (فقط حروف و اعداد انگلیسی)"
               type="text"
               value={username}
-              onChange={(e) => {
-                setUsername(e.target.value);
+              onChange={(value) => {
+                setUsername(value);
                 if (error) setError('');
               }}
-              className={`w-full px-4 py-3 rounded-xl border ${
-                error && !username.trim()
-                  ? 'border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-200'
-                  : 'border-gray-200 focus:border-black focus:ring-2 focus:ring-gray-300'
-              } outline-none transition-all`}
-              placeholder="نام کاربری ..."
-              dir="rtl"
+              placeholder="username123"
+              error={error && !username.trim() ? error : undefined}
+              isNumberOrLink={true}
               required
             />
-            </div>
-            <div className="space-y-2 w-full">
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
-            >
-              رمز عبور
-            </label>
-            <input
+            <AuthInput
               id="password"
+              label="رمز عبور"
               type="password"
               value={password}
-              onChange={(e) => {
-                setPassword(e.target.value);
+              onChange={(value) => {
+                setPassword(value);
                 if (error) setError('');
               }}
-              className={`w-full px-4 py-3 rounded-xl border ${
-                error && !password.trim()
-                  ? 'border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-200'
-                  : 'border-gray-200 focus:border-black focus:ring-2 focus:ring-gray-300'
-              } outline-none transition-all`}
-              placeholder="رمز عبور ..."
-              dir="rtl"
+              placeholder="********"
+              error={error && !password.trim() ? error : undefined}
+              isNumberOrLink={true}
               required
             />
-          </div>
           <div className="flex gap-2 w-full mb-5">
             <p>رمزعبور رو فراموش کردی؟</p>
             <p 

@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { lineIconPaths } from "../../../utils/lineIcons";
 
 type TabType = "money" | "saving" | "digit";
 
@@ -15,21 +16,21 @@ function WalletTabs({ activeTab, onTabChange, isParentInvited = true }: WalletTa
     {
       id: "money" as TabType,
       label: "کیف پول",
-      icon: "/icons/wallet.svg",
+      icon: lineIconPaths.wallet,
       activeColor: "indigo-700",
       path: "/wallet-money",
     },
     {
       id: "saving" as TabType,
       label: "پس‌انداز",
-      icon: "/icons/pasandaz.svg",
+      icon: lineIconPaths.pasandaz,
       activeColor: "indigo-700",
       path: "/wallet-saving",
     },
     {
       id: "digit" as TabType,
       label: "دیجیت",
-      icon: "/icons/digitcoin.svg",
+      icon: lineIconPaths.digit,
       activeColor: "indigo-700",
       path: "/wallet-digit",
     },

@@ -1,85 +1,156 @@
-import { useState, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { lineIconPaths } from "../../utils/lineIcons";
+import { InteractiveMap, type Hotspot, type ClickableBounds } from "../../components/InteractiveMap";
+import { OnboardingDialogue } from "../../components/shared/OnboardingDialogue";
+
+const ONBOARDING_STORAGE_KEY = "chid_onboarding_seen";
+const ONBOARDING_HOTSPOTS = ["wallet-shape", "shop-shape"] as const;
+const HOTSPOT_LABELS: Record<string, string> = {
+  "wallet-shape": "کیف پول",
+  "shop-shape": "فروشگاه",
+};
+
+/** Map viewBox (1576×903). Central town only; edges are clouds — no navigation there. */
+const MAP_VIEWBOX = { width: 1576, height: 903 };
+const EDGE_MARGIN = 0.15;
+/** Only clicks inside this central rect (town) navigate; clicks on cloud edges do nothing. */
+const HOME_CLICKABLE_BOUNDS: ClickableBounds = {
+  x: MAP_VIEWBOX.width * EDGE_MARGIN,
+  y: MAP_VIEWBOX.height * EDGE_MARGIN,
+  width: MAP_VIEWBOX.width * (1 - 2 * EDGE_MARGIN),
+  height: MAP_VIEWBOX.height * (1 - 2 * EDGE_MARGIN),
+};
+
+/** Wallet building path (d=" M 726.10 475.15 C ... Z") — bbox only, no buffer. */
+const HOME_MAP_HOTSPOTS: Hotspot[] = [
+  {
+    id: "wallet-shape",
+    type: "rect",
+    x: 626,
+    y: 469,
+    width: 164,
+    height: 163,
+    path: "/wallet-money",
+  },
+  { id: "wallet", type: "rect", x: 0, y: 0, width: 526, height: 301, path: "/wallet-money" },
+  /** Shop building path (d=" M 850.26 476.92 C ... Z") — bbox only, no buffer. */
+  {
+    id: "shop-shape",
+    type: "rect",
+    x: 822,
+    y: 458,
+    width: 139,
+    height: 171,
+    path: "/shop",
+  },
+  { id: "shop", type: "rect", x: 526, y: 0, width: 525, height: 301, path: "/shop" },
+  /** Digibook path (d=" M 632.42 693.31 C ... Z") — bbox + a little buffer. */
+  {
+    id: "digibook-shape",
+    type: "rect",
+    x: 608,
+    y: 677,
+    width: 63,
+    height: 91,
+    path: "/digibook",
+  },
+  { id: "digibook", type: "rect", x: 1051, y: 0, width: 525, height: 301, path: "/digibook" },
+  /** Shahre farang path (d=" M 790.48 704.34 C ... Z") — bbox + a little buffer. */
+  {
+    id: "shahr-farang-shape",
+    type: "rect",
+    x: 777,
+    y: 689,
+    width: 55,
+    height: 44,
+    path: "/shahr-farang",
+  },
+  { id: "shahr-farang", type: "rect", x: 0, y: 301, width: 526, height: 301, path: "/shahr-farang" },
+  /** Radio teen path (d=" M 969.84 721.77 C ... Z") — bbox + a little buffer. */
+  {
+    id: "radioteen-shape",
+    type: "rect",
+    x: 883,
+    y: 709,
+    width: 115,
+    height: 64,
+    path: "/radioteen",
+  },
+  { id: "radioteen", type: "rect", x: 526, y: 301, width: 525, height: 301, path: "/radioteen" },
+  { id: "digiteen", type: "rect", x: 1051, y: 301, width: 525, height: 301, path: "/digiteen/goals" },
+  { id: "friends", type: "rect", x: 0, y: 602, width: 526, height: 301, path: "/friends" },
+  { id: "messages", type: "rect", x: 526, y: 602, width: 525, height: 301, path: "/messages" },
+  { id: "user-info", type: "rect", x: 1051, y: 602, width: 525, height: 301, path: "/user-info" },
+];
+
+function getOnboardingSeen(): Set<string> {
+  try {
+    const raw = localStorage.getItem(ONBOARDING_STORAGE_KEY);
+    if (raw) {
+      const arr = JSON.parse(raw) as string[];
+      return new Set(Array.isArray(arr) ? arr : []);
+    }
+  } catch {
+    /* ignore */
+  }
+  return new Set();
+}
+
+function setOnboardingSeen(id: string) {
+  const seen = getOnboardingSeen();
+  seen.add(id);
+  localStorage.setItem(ONBOARDING_STORAGE_KEY, JSON.stringify([...seen]));
+}
 
 const Home = () => {
   const navigate = useNavigate();
-  const [isDragging, setIsDragging] = useState(false);
-  const [position, setPosition] = useState({ x: 50, y: 50 });
-  const [startPos, setStartPos] = useState({ x: 0, y: 0 });
-  const [startPosition, setStartPosition] = useState({ x: 50, y: 50 });
-  
-  // Get user data from localStorage
+  const [onboarding, setOnboarding] = useState<{
+    hotspotId: string;
+    path: string;
+    label: string;
+  } | null>(null);
+
+  const handleHotspotClick = useCallback(
+    (hotspot: { id: string; path: string }) => {
+      const isOnboardingHotspot = ONBOARDING_HOTSPOTS.includes(
+        hotspot.id as (typeof ONBOARDING_HOTSPOTS)[number]
+      );
+      const seen = getOnboardingSeen();
+
+      if (isOnboardingHotspot && !seen.has(hotspot.id)) {
+        setOnboarding({
+          hotspotId: hotspot.id,
+          path: hotspot.path,
+          label: HOTSPOT_LABELS[hotspot.id] ?? "این بخش",
+        });
+      } else {
+        navigate(hotspot.path);
+      }
+    },
+    [navigate]
+  );
+
+  const handleOnboardingClose = useCallback(() => {
+    if (onboarding) {
+      setOnboardingSeen(onboarding.hotspotId);
+      setOnboarding(null);
+    }
+  }, [onboarding]);
+
   const getUserData = () => {
     try {
-      const userStr = localStorage.getItem('user');
-      if (userStr) {
-        return JSON.parse(userStr);
-      }
+      const userStr = localStorage.getItem("user");
+      if (userStr) return JSON.parse(userStr);
     } catch (error) {
-      console.error('Error parsing user data:', error);
+      console.error("Error parsing user data:", error);
     }
     return null;
   };
 
   const userData = getUserData();
-  const userName = userData?.name || userData?.first_name || "کاربر";
   const userAvatar = userData?.avatar || "/logo/teens profiles/karagah.svg";
-
-  const handleMouseDown = (e: React.MouseEvent) => {
-    setIsDragging(true);
-    setStartPos({ x: e.clientX, y: e.clientY });
-    setStartPosition({ ...position });
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging) return;
-    e.preventDefault();
-    
-    const deltaX = ((e.clientX - startPos.x) / window.innerWidth) * 100;
-    const deltaY = ((e.clientY - startPos.y) / window.innerHeight) * 100;
-    
-    setPosition({
-      x: Math.max(0, Math.min(100, startPosition.x - deltaX)),
-      y: Math.max(0, Math.min(100, startPosition.y - deltaY)),
-    });
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    setIsDragging(true);
-    setStartPos({ x: e.touches[0].clientX, y: e.touches[0].clientY });
-    setStartPosition({ ...position });
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging) return;
-    
-    const deltaX = ((e.touches[0].clientX - startPos.x) / window.innerWidth) * 100;
-    const deltaY = ((e.touches[0].clientY - startPos.y) / window.innerHeight) * 100;
-    
-    setPosition({
-      x: Math.max(0, Math.min(100, startPosition.x - deltaX)),
-      y: Math.max(0, Math.min(100, startPosition.y - deltaY)),
-    });
-  };
-
-  const handleTouchEnd = () => {
-    setIsDragging(false);
-  };
-
-  useEffect(() => {
-    const handleMouseUpGlobal = () => setIsDragging(false);
-    window.addEventListener("mouseup", handleMouseUpGlobal);
-    window.addEventListener("touchend", handleMouseUpGlobal);
-    return () => {
-      window.removeEventListener("mouseup", handleMouseUpGlobal);
-      window.removeEventListener("touchend", handleMouseUpGlobal);
-    };
-  }, []);
 
   return (
     <div className="w-full h-full min-h-0 flex flex-col overflow-hidden relative">
@@ -135,7 +206,7 @@ const Home = () => {
           >
             <div className="p-2.5 border-2 border-[#7e4bd0] rounded-full bg-white shadow-md hover:bg-purple-50 transition-colors">
               <img 
-                src="/icons/noti.svg" 
+                src={lineIconPaths.notif} 
                 className="w-6 h-6" 
                 alt="اعلان‌ها" 
               />
@@ -148,23 +219,27 @@ const Home = () => {
         </div>
       </motion.div>
 
-      {/* Map Background - fills remaining space */}
-      <div
-        className="flex-1 min-h-0 w-full cursor-grab active:cursor-grabbing"
-        onMouseDown={handleMouseDown}
-        onMouseUp={handleMouseUp}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseUp}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-        style={{
-          backgroundImage: "url('/svg/map.svg')",
-          backgroundSize: "cover",
-          backgroundPosition: `${position.x}% ${position.y}%`,
-          backgroundRepeat: "no-repeat",
-        }}
-      />
+      {/* Map: full height, cover; zoom/pan; only central town is clickable (edges = clouds) */}
+      <div className="flex-1 min-h-0 w-full relative flex flex-col">
+        <InteractiveMap
+          hotspots={HOME_MAP_HOTSPOTS}
+          clickableBounds={HOME_CLICKABLE_BOUNDS}
+          onHotspotClick={handleHotspotClick}
+        />
+      </div>
+
+      {/* Onboarding dialogue - between Boz (bottom-left) and menu (bottom-right) */}
+      <AnimatePresence>
+        {onboarding && (
+          <OnboardingDialogue
+            key={onboarding.hotspotId}
+            hotspotId={onboarding.hotspotId}
+            path={onboarding.path}
+            label={onboarding.label}
+            onClose={handleOnboardingClose}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };

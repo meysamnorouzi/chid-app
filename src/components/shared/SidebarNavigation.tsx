@@ -1,25 +1,28 @@
 import { useNavigate, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { 
-  HomeIcon, 
-  WalletIcon, 
-  ShoppingBagIcon,
-  UserGroupIcon,
-  SpeakerWaveIcon
-} from '@heroicons/react/24/outline'
+import { lineIconPaths } from '../../utils/lineIcons'
+import { LineHomeIcon } from './LineHomeIcon'
 
-interface NavItem {
+interface NavItemWithIcon {
   path: string
   label: string
   icon: React.ComponentType<{ className?: string }>
+  iconSrc?: never
 }
+interface NavItemWithSrc {
+  path: string
+  label: string
+  icon?: never
+  iconSrc: string
+}
+type NavItem = NavItemWithIcon | NavItemWithSrc
 
 const navItems: NavItem[] = [
-  { path: '/', label: 'خانه', icon: HomeIcon },
-  { path: '/wallet-money', label: 'کیف پول', icon: WalletIcon },
-  { path: '/shop', label: 'فروشگاه', icon: ShoppingBagIcon },
-  { path: '/radioteen', label: 'رادیو تین', icon: SpeakerWaveIcon },
-  { path: '/friends', label: 'دوستان', icon: UserGroupIcon },
+  { path: '/', label: 'خانه', icon: LineHomeIcon },
+  { path: '/wallet-money', label: 'کیف پول', iconSrc: lineIconPaths.wallet },
+  { path: '/shop', label: 'فروشگاه', iconSrc: lineIconPaths.store },
+  { path: '/radioteen', label: 'رادیو تین', iconSrc: lineIconPaths.podcast },
+  { path: '/friends', label: 'دوستان', iconSrc: lineIconPaths.like },
 ]
 
 function SidebarNavigation() {
@@ -45,7 +48,6 @@ function SidebarNavigation() {
         
         <nav className="flex-1 px-4 space-y-2">
           {navItems.map((item) => {
-            const Icon = item.icon
             const active = isActive(item.path)
             
             return (
@@ -81,9 +83,17 @@ function SidebarNavigation() {
                     duration: 0.3,
                     ease: "easeInOut"
                   }}
-                  className="relative z-10"
+                  className="relative z-10 flex items-center justify-center"
                 >
-                  <Icon className={`w-6 h-6 ${active ? 'text-white' : 'text-gray-500'}`} />
+                  {'iconSrc' in item ? (
+                    <img
+                      src={item.iconSrc}
+                      alt=""
+                      className={`w-6 h-6 object-contain ${active ? 'brightness-0 invert' : 'opacity-60'}`}
+                    />
+                  ) : (
+                    <item.icon className={`w-6 h-6 ${active ? 'text-white' : 'text-gray-500'}`} />
+                  )}
                 </motion.div>
                 <span className={`text-sm font-medium relative z-10 ${active ? 'text-white' : 'text-gray-700'}`}>
                   {item.label}
