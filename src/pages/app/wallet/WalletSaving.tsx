@@ -10,7 +10,6 @@ import {
 } from "@heroicons/react/24/outline";
 import Modal from "../../../components/shared/Modal";
 import {
-  WalletHeader,
   WalletTabs,
   StatsCards,
   RecentTransactions,
@@ -327,11 +326,6 @@ function WalletSaving() {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20 md:pb-4" dir="rtl">
-      <WalletHeader
-        subtitle="@mohammad-mehrabi"
-        showBalance={true}
-        balance=""
-      />
       <WalletTabs activeTab="saving" isParentInvited={isParentInvited} />
 
       <div className="bg-white min-h-screen px-4 md:px-6 lg:px-8 py-6 md:py-8 max-w-6xl mx-auto">

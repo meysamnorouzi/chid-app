@@ -6,6 +6,8 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { lineIconPaths } from "../utils/lineIcons";
+import { LineHomeIcon } from "../components/shared/LineHomeIcon";
+import ProfileMenuModal from "../components/shared/Wallet/ProfileMenuModal";
 
 interface HomeLayoutProps {
   children?: ReactNode;
@@ -19,18 +21,16 @@ interface HomeLayoutProps {
  */
 const HomeLayout = ({ children }: HomeLayoutProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const navigate = useNavigate();
 
+  /* Same icons and order as bottom nav (wallet, store, goals, cafe) + profile */
   const menuItems = [
-    { path: '/wallet-money', label: 'کیف پول', icon: lineIconPaths.wallet },
-    { path: '/shop', label: 'فروشگاه', icon: lineIconPaths.store },
-    { path: '/digibook', label: 'دیجی بوک', icon: lineIconPaths.book },
-    { path: '/shahr-farang', label: 'شهر فرنگ', icon: lineIconPaths.shahreFarang },
-    { path: '/radioteen', label: 'رادیو تین', icon: lineIconPaths.podcast },
-    { path: '/digiteen/goals', label: 'اهداف', icon: lineIconPaths.like },
-    { path: '/friends', label: 'دوستان', icon: lineIconPaths.gift },
-    { path: '/messages', label: 'پیام‌ها', icon: lineIconPaths.notif },
-    { path: '/user-info', label: 'پروفایل', icon: lineIconPaths.profile },
+    { path: '/wallet-money', label: 'کیف پول', iconSrc: lineIconPaths.wallet },
+    { path: '/shop', label: 'فروشگاه', iconSrc: lineIconPaths.store },
+    { path: '/digiteen/goals', label: 'اهداف', iconSrc: lineIconPaths.ahduff },
+    { path: '/friends', label: 'کافه', iconSrc: lineIconPaths.cafe },
+    { path: '/user-info', label: 'پروفایل', iconSrc: lineIconPaths.profile },
   ];
 
   return (
@@ -108,8 +108,13 @@ const HomeLayout = ({ children }: HomeLayoutProps) => {
                               mass: 0.8
                             }}
                             onClick={() => {
-                              navigate(item.path);
-                              setIsMenuOpen(false);
+                              if (item.path === "/user-info") {
+                                setIsProfileModalOpen(true);
+                                setIsMenuOpen(false);
+                              } else {
+                                navigate(item.path);
+                                setIsMenuOpen(false);
+                              }
                             }}
                             className="relative w-14 h-14 bg-white rounded-xl shadow-xl flex items-center justify-center overflow-visible"
                             aria-label={item.label}
@@ -131,11 +136,11 @@ const HomeLayout = ({ children }: HomeLayoutProps) => {
                               transition={{ duration: 0.3 }}
                             />
                             
-                            {/* Icon */}
+                            {/* Icon - same as bottom nav */}
                             <motion.img
-                              src={item.icon}
+                              src={item.iconSrc}
                               alt={item.label}
-                              className="w-7 h-7 relative z-10"
+                              className="w-7 h-7 relative z-10 object-contain"
                               style={{ 
                                 filter: 'brightness(0) saturate(100%) invert(32%) sepia(95%) saturate(3000%) hue-rotate(245deg) brightness(0.95) contrast(1.1)',
                                 WebkitFilter: 'brightness(0) saturate(100%) invert(32%) sepia(95%) saturate(3000%) hue-rotate(245deg) brightness(0.95) contrast(1.1)'
@@ -190,11 +195,9 @@ const HomeLayout = ({ children }: HomeLayoutProps) => {
                 transition={{ duration: 0.3 }}
               />
               
-              {/* Icon */}
-              <motion.img
-                src={lineIconPaths.menu}
-                alt="منو"
-                className="w-7 h-7 relative z-10 brightness-0 invert"
+              {/* Icon - same as bottom nav "خانه" */}
+              <motion.div
+                className="w-8 h-8 relative z-10 text-white flex items-center justify-center"
                 animate={isMenuOpen ? { 
                   rotate: 90,
                   scale: [1, 1.2, 1]
@@ -208,7 +211,9 @@ const HomeLayout = ({ children }: HomeLayoutProps) => {
                   damping: 20,
                   duration: 0.4
                 }}
-              />
+              >
+                <LineHomeIcon className="w-8 h-8" />
+              </motion.div>
               
               {/* Ripple effect on click */}
               <AnimatePresence>
@@ -225,6 +230,12 @@ const HomeLayout = ({ children }: HomeLayoutProps) => {
             </motion.button>
           </div>
         </div>
+
+        {/* Profile popover - same as profile avatar on other pages */}
+        <ProfileMenuModal
+          isOpen={isProfileModalOpen}
+          onClose={() => setIsProfileModalOpen(false)}
+        />
       </ToastProvider>
     </ThemeLayout>
   );

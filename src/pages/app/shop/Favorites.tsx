@@ -1,7 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { HeartIcon, ShoppingBagIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { HeartIcon as HeartIconSolid } from "@heroicons/react/24/solid";
-import WalletHeader from "../../../components/shared/Wallet/WalletHeader";
+import { ShoppingBagIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useFavorites } from "../../../hooks/useFavorites";
 import { useToast } from "../../../components/shared";
 
@@ -23,13 +21,6 @@ const Favorites = () => {
 
   return (
     <div className="flex flex-col bg-white min-h-screen pb-24">
-      <WalletHeader
-        greeting="محمد مهرابی"
-        subtitle="@mohammad-mehrabi"
-        icon={<HeartIconSolid className="w-5 h-5 text-[#7e4bd0]" />}
-        showCartBadge={true}
-      />
-
       <div className="px-4 flex flex-col gap-4 mt-2">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -90,9 +81,11 @@ const Favorites = () => {
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center py-16 gap-4">
-            <div className="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center">
-              <HeartIcon className="w-12 h-12 text-gray-400" />
-            </div>
+            <img
+              src="/gif/List alaghe mandia.gif"
+              alt=""
+              className="w-48 h-48 object-contain"
+            />
             <div className="flex flex-col items-center gap-2">
               <h2 className="text-lg font-semibold text-black">لیست علاقه‌مندی‌های شما خالی است</h2>
               <p className="text-sm text-gray-500 text-center">

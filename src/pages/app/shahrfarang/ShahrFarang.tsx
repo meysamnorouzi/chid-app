@@ -1,11 +1,15 @@
 import { useState, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { ChevronRightIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { WalletHeader } from "../../../components/shared/Wallet";
+import { motion } from "framer-motion";
+import { PlayIcon } from "@heroicons/react/24/solid";
+import { lineIconPaths } from "../../../utils/lineIcons";
+import ShahrFarangReelsViewer, {
+  type ReelsVideo,
+} from "./ShahrFarangReelsViewer";
 
 const SHAHRFARANG_IMAGE_BASE = "/image";
+const VIDEOS_BASE = "/videos";
 
-/** دسته‌بندی‌های شهر فرنگ — با تصویر برای کارت‌ها */
+/** دسته‌بندی‌های شهر فرنگ */
 export interface ShahrfarangCategory {
   id: string;
   name: string;
@@ -14,168 +18,182 @@ export interface ShahrfarangCategory {
 }
 
 const CATEGORIES: ShahrfarangCategory[] = [
-  { id: "funtime", name: "فان تایم", desc: "سرگرمی و لحظات شاد", imageUrl: `${SHAHRFARANG_IMAGE_BASE}/c30443dd88560f56a71aef4bc60965b7.jpg` },
-  { id: "tech", name: "تکنولوژی و دیجیتال", desc: "نکات و ترفندهای دیجیتال", imageUrl: `${SHAHRFARANG_IMAGE_BASE}/69c68ee04e3f0f73009ee241d8716406.jpg` },
-  { id: "fashion", name: "مد و فشن", desc: "استایل و مد نوجوان", imageUrl: `${SHAHRFARANG_IMAGE_BASE}/af0a4321-a97c-4f47-82c1-1507d9c2ca61.png` },
-  { id: "cooking", name: "آشپزی", desc: "دستور پخت و تنقلات", imageUrl: `${SHAHRFARANG_IMAGE_BASE}/a4f66065367b0a02199f1991d0eaf38b.jpg` },
-  { id: "body-soul", name: "جسم و روح", desc: "سلامت و آرامش", imageUrl: `${SHAHRFARANG_IMAGE_BASE}/b0ae40ff-a6cd-4056-b726-fee0e49e7c4f.png` },
-  { id: "short-tricks", name: "ترفندهای کوتاه", desc: "نکات کوتاه و کاربردی", imageUrl: `${SHAHRFARANG_IMAGE_BASE}/68c1c772093c3c54af39e41cfbec79de.jpg` },
-  { id: "science-edu", name: "علمی و آموزشی", desc: "علم به زبان ساده", imageUrl: `${SHAHRFARANG_IMAGE_BASE}/5004bb46-663e-459e-90de-7ba155a866b0.png` },
-  { id: "travel", name: "سیر و سفر", desc: "مناظر و ماجراجویی", imageUrl: `${SHAHRFARANG_IMAGE_BASE}/b92984d3cf394fb4421bd48e9641c964.jpg` },
-  { id: "bizteen", name: "بیزینس تین", desc: "کسب‌وکار نوجوان", imageUrl: `${SHAHRFARANG_IMAGE_BASE}/ChatGPTd.png` },
+  // { id: "all", name: "همه", desc: "", imageUrl: `${SHAHRFARANG_IMAGE_BASE}/فان تایم.jpg` },
+  { id: "funtime", name: "فان تایم", desc: "سرگرمی و لحظات شاد", imageUrl: `${SHAHRFARANG_IMAGE_BASE}/فان تایم.jpg` },
+  { id: "tech", name: "تکنولوژی و دیجیتال", desc: "نکات و ترفندهای دیجیتال", imageUrl: `${SHAHRFARANG_IMAGE_BASE}/تکنولوژی.jpg` },
+  { id: "fashion", name: "مد و فشن", desc: "استایل و مد نوجوان", imageUrl: `${SHAHRFARANG_IMAGE_BASE}/مد.jpg` },
+  { id: "cooking", name: "آشپزی", desc: "دستور پخت و تنقلات", imageUrl: `${SHAHRFARANG_IMAGE_BASE}/آشپزی.jpg` },
+  { id: "body-soul", name: "جسم و روح", desc: "سلامت و آرامش", imageUrl: `${SHAHRFARANG_IMAGE_BASE}/جسم و روح.jpg` },
+  { id: "short-tricks", name: "ترفندهای کوتاه", desc: "نکات کوتاه و کاربردی", imageUrl: `${SHAHRFARANG_IMAGE_BASE}/ترفندهای کوتاه.jpg` },
+  { id: "science-edu", name: "علمی و آموزشی", desc: "علم به زبان ساده", imageUrl: `${SHAHRFARANG_IMAGE_BASE}/علمی و آموزشی.jpg` },
+  { id: "travel", name: "سیر و سفر", desc: "مناظر و ماجراجویی", imageUrl: `${SHAHRFARANG_IMAGE_BASE}/سیر و سفر.jpg` },
+  { id: "bizteen", name: "بیزینس تین", desc: "کسب‌وکار نوجوان", imageUrl: `${SHAHRFARANG_IMAGE_BASE}/بیزینس تین.jpg` },
 ];
 
+/** Videos from public/videos/ — used in explore grid and reels */
+const VIDEOS: ReelsVideo[] = [
+  { id: "1", src: `${VIDEOS_BASE}/IMG_0798.MP4`, categoryId: "funtime", views: "۱۲K", title: "ویدیو سرگرمی" },
+  { id: "2", src: `${VIDEOS_BASE}/IMG_0810.MP4`, categoryId: "tech", views: "۸.۵K", title: "تکنولوژی" },
+  { id: "3", src: `${VIDEOS_BASE}/video_2026-01-31_19-06-29.mp4`, categoryId: "fashion", views: "۲۳K", title: "مد و فشن" },
+  { id: "4", src: `${VIDEOS_BASE}/video_2026-01-31_19-06-33.mp4`, categoryId: "cooking", views: "۱۵K", title: "آشپزی" },
+];
+
+/** Aspect ratio classes for varied tile sizes — Instagram Explore style */
+const ASPECT_RATIOS = [
+  "aspect-square",       // 1:1
+  "aspect-video",        // 16:9
+  "aspect-[9/16]",       // portrait (reels)
+  "aspect-[4/5]",        // portrait
+  "aspect-[4/3]",        // landscape
+  "aspect-[3/4]",        // portrait
+] as const;
+
 const ShahrFarang = () => {
+  const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
+  const [reelsOpen, setReelsOpen] = useState(false);
+  const [reelsInitialIndex, setReelsInitialIndex] = useState(0);
 
-  const category = selectedCategoryId
-    ? CATEGORIES.find((c) => c.id === selectedCategoryId)
-    : null;
+  const filteredVideos = useMemo(() => {
+    let list = activeCategory === "all"
+      ? VIDEOS
+      : VIDEOS.filter((v) => v.categoryId === activeCategory);
+    if (searchQuery.trim()) {
+      const q = searchQuery.trim().toLowerCase();
+      const catNames: Record<string, string> = {
+        funtime: "فان تایم", tech: "تکنولوژی", fashion: "مد", cooking: "آشپزی",
+        "body-soul": "جسم", "short-tricks": "ترفند", "science-edu": "علمی",
+        travel: "سفر", bizteen: "بیزینس",
+      };
+      list = list.filter(
+        (v) =>
+          v.views.includes(q) ||
+          (v.title && v.title.toLowerCase().includes(q)) ||
+          (catNames[v.categoryId] && catNames[v.categoryId].includes(q))
+      );
+    }
+    return list;
+  }, [activeCategory, searchQuery]);
 
-  const filteredCategories = useMemo(() => {
-    if (!searchQuery.trim()) return CATEGORIES;
-    const q = searchQuery.trim().toLowerCase();
-    return CATEGORIES.filter(
-      (c) =>
-        c.name.toLowerCase().includes(q) || c.desc.toLowerCase().includes(q)
-    );
-  }, [searchQuery]);
-
-  const handleCategoryClick = (id: string) => {
-    setSelectedCategoryId(id);
-  };
-
-  const handleBack = () => {
-    setSelectedCategoryId(null);
-    setSearchQuery("");
+  const openReels = (index: number) => {
+    setReelsInitialIndex(index);
+    setReelsOpen(true);
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col pb-24 overflow-hidden" dir="rtl">
-      {/* Header — مثل دیجی‌بوک و رادیوتین */}
-      <div className="shrink-0 z-30 bg-white border-b border-gray-100">
-        <WalletHeader greeting="شهر فرنگ" subtitle="ویدیوهای کوتاه" />
-      </div>
-
-      <div className="px-4 flex-1 overflow-y-auto min-h-0 pt-4">
-        <AnimatePresence mode="wait">
-          {/* ——— نمای اول: فقط دسته‌بندی‌ها در کارت با تصویر ——— */}
-          {!selectedCategoryId && (
-            <motion.div
-              key="categories"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.25 }}
-              className="space-y-5"
+    <div className="flex flex-col bg-white pb-24 min-h-screen overflow-hidden" dir="rtl">
+      <div className="px-4 md:px-6 lg:px-8 flex-1 overflow-y-auto min-h-0 max-w-7xl py-4 mx-auto w-full">
+        {/* Categories row — like Shop */}
+        <div className="flex gap-3 md:gap-4 lg:gap-5 mb-3 md:mb-4 overflow-x-auto md:overflow-x-visible scrollbar-hide pb-2 md:pb-0 md:justify-center md:flex-wrap">
+          {CATEGORIES.map((cat) => (
+            <div
+              key={cat.id}
+              onClick={() => setActiveCategory(cat.id)}
+              className="flex flex-col items-center cursor-pointer shrink-0"
             >
-              <section>
-                <div className="relative">
-                  <MagnifyingGlassIcon className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder="جستجو در دسته‌بندی‌ها..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pr-10 pl-4 py-3 rounded-xl border border-gray-200 focus:border-[#7e4bd0] focus:ring-2 focus:ring-[#7e4bd0]/20 outline-none text-gray-800 placeholder-gray-400"
-                  />
-                </div>
-              </section>
-
-              <section>
-                <h3 className="text-lg font-bold text-gray-800 mb-3">
-                  دسته‌بندی‌های شهر فرنگ
-                </h3>
-                <div className="grid grid-cols-2 gap-3">
-                  {filteredCategories.map((cat) => (
-                    <motion.button
-                      key={cat.id}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => handleCategoryClick(cat.id)}
-                      className="rounded-xl overflow-hidden shadow-md hover:shadow-lg transition relative min-h-[100px] w-full text-right"
-                    >
-                      <img
-                        src={cat.imageUrl}
-                        alt=""
-                        className="absolute inset-0 w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                      <div className="relative p-3 flex flex-col justify-end min-h-[100px] text-white">
-                        <span className="font-bold text-base">{cat.name}</span>
-                        <span className="text-xs opacity-90 mt-0.5">
-                          {cat.desc}
-                        </span>
-                      </div>
-                    </motion.button>
-                  ))}
-                </div>
-                {filteredCategories.length === 0 && (
-                  <p className="text-center text-gray-500 py-6">
-                    دسته‌ای یافت نشد.
-                  </p>
-                )}
-              </section>
-            </motion.div>
-          )}
-
-          {/* ——— نمای دسته انتخاب‌شده: فقط placeholder (بدون ویدیو) ——— */}
-          {selectedCategoryId && category && (
-            <motion.div
-              key="category-detail"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.25 }}
-              className="space-y-4"
-            >
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={handleBack}
-                  className="p-2 rounded-full border border-gray-200 hover:bg-gray-50"
-                  aria-label="برگشت"
-                >
-                  <ChevronRightIcon className="w-5 h-5 text-gray-600" />
-                </button>
-                <h2 className="text-xl font-bold text-gray-800">
-                  {category.name}
-                </h2>
-              </div>
-
-              <div className="relative rounded-2xl overflow-hidden min-h-[180px]">
+              <div
+                className={`w-24 h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 border rounded-xl md:rounded-2xl transition-all overflow-hidden bg-white hover:shadow-md ${
+                  activeCategory === cat.id
+                    ? "border-[#7e4bd0] border-2 md:border-[3px]"
+                    : "border-gray-200 hover:border-gray-300"
+                }`}
+              >
                 <img
-                  src={category.imageUrl}
-                  alt=""
-                  className="absolute inset-0 w-full h-full object-cover"
+                  src={cat.imageUrl}
+                  alt={cat.name}
+                  className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                <div className="relative p-4 flex flex-col justify-end min-h-[180px] text-white">
-                  <span className="font-bold text-xl drop-shadow-md">
-                    {category.name}
-                  </span>
-                  <span className="text-sm opacity-90 mt-0.5 drop-shadow-sm">
-                    {category.desc}
-                  </span>
-                </div>
               </div>
+              <p
+                className={`text-xs md:text-sm lg:text-base font-medium mt-2 md:mt-3 ${
+                  activeCategory === cat.id
+                    ? "text-[#7e4bd0] font-semibold"
+                    : "text-gray-700"
+                }`}
+              >
+                {cat.name}
+              </p>
+            </div>
+          ))}
+        </div>
 
-              <div className="flex flex-col items-center justify-center py-16 px-4 text-center bg-gray-50 rounded-2xl">
-                <div className="w-20 h-20 rounded-2xl bg-[#7e4bd0]/10 flex items-center justify-center mb-4">
-                  <span className="text-3xl" aria-hidden>
-                    🎬
-                  </span>
+        {/* Search input — below categories, like Shop */}
+        <div className="mb-3 md:mb-4 lg:mb-6">
+          <div className="relative max-w-2xl md:mx-auto">
+            <img
+              src={lineIconPaths.searchRiz}
+              className="absolute right-3 md:right-4 top-1/2 -translate-y-1/2 w-5 h-5 md:w-6 md:h-6 opacity-50"
+              alt="جستجو"
+            />
+            <input
+              type="text"
+              placeholder="جستجوی ویدیوها..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pr-10 md:pr-12 pl-4 md:pl-6 py-3 md:py-4 placeholder-gray-400 text-black bg-white border border-gray-400 rounded-lg md:rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent text-sm md:text-base"
+            />
+          </div>
+        </div>
+
+        {/* Explore grid — varied aspect ratios, Instagram style (columns = masonry) */}
+        <div className="columns-3 gap-1">
+          {filteredVideos.map((video, index) => {
+            const aspect = ASPECT_RATIOS[index % ASPECT_RATIOS.length];
+            return (
+              <motion.div
+                key={video.id}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.2, delay: index * 0.02 }}
+                onClick={() => openReels(index)}
+                className={`relative cursor-pointer group overflow-hidden bg-gray-100 break-inside-avoid mb-1 ${aspect}`}
+              >
+                <video
+                  src={video.src}
+                  muted
+                  playsInline
+                  preload="metadata"
+                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  onLoadedData={(e) => {
+                    const v = e.currentTarget;
+                    v.currentTime = 0.1;
+                  }}
+                />
+                <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
+                  <PlayIcon className="w-10 h-10 md:w-12 md:h-12 text-white opacity-0 group-hover:opacity-90 drop-shadow-lg transition-opacity" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-800 mb-2">
-                  ویدیوها به زودی
-                </h3>
-                <p className="text-gray-600 text-sm max-w-[280px]">
-                  محتوای ویدیویی این دسته به زودی در دسترس خواهد بود.
-                </p>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+                <div className="absolute bottom-1 right-1 flex items-center gap-0.5 text-white text-xs font-medium drop-shadow-md">
+                  <PlayIcon className="w-3.5 h-3.5" />
+                  <span>{video.views}</span>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+
+        {filteredVideos.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
+            <div className="w-20 h-20 rounded-2xl bg-[#7e4bd0]/10 flex items-center justify-center mb-4">
+              <span className="text-3xl" aria-hidden>🎬</span>
+            </div>
+            <h3 className="text-xl font-bold text-gray-800 mb-2">ویدیویی یافت نشد</h3>
+            <p className="text-gray-600 text-sm">
+              {searchQuery
+                ? "نتیجه‌ای برای جستجوی شما یافت نشد."
+                : "در این دسته هنوز ویدیویی قرار نگرفته است."}
+            </p>
+          </div>
+        )}
       </div>
+
+      {/* Reels fullscreen viewer */}
+      {reelsOpen && (
+        <ShahrFarangReelsViewer
+          videos={filteredVideos}
+          initialIndex={reelsInitialIndex}
+          onClose={() => setReelsOpen(false)}
+        />
+      )}
     </div>
   );
 };

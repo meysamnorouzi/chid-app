@@ -9,7 +9,6 @@ import {
   WalletIcon,
   ArrowDownTrayIcon,
 } from "@heroicons/react/24/outline";
-import WalletHeader from "../../../components/shared/Wallet/WalletHeader";
 import { useCart } from "../../../hooks/useCart";
 import { formatPrice } from "../../../utils/priceUtils";
 import { useToast } from "../../../components/shared/Toast/ToastProvider";
@@ -179,16 +178,6 @@ const Cart = () => {
   if (cartItems.length === 0) {
     return (
       <div className="flex flex-col bg-white min-h-screen pb-32">
-        <WalletHeader
-          greeting="محمد مهرابی"
-          subtitle="@mohammad-mehrabi"
-          icon={
-            <div onClick={() => navigate(-1)} className="cursor-pointer flex items-center justify-center">
-              <ChevronLeftIcon className="w-5 h-5 text-[#7e4bd0]" />
-            </div>
-          }
-        />
-
         <div className="flex flex-col items-center justify-center flex-1 px-4 md:px-6 lg:px-8 py-20 md:py-32">
           <div className="mb-4 md:mb-6">
             <img 
@@ -214,16 +203,6 @@ const Cart = () => {
 
   return (
     <div className="flex flex-col bg-white min-h-screen pb-40 md:pb-4">
-      <WalletHeader
-        greeting="محمد مهرابی"
-        subtitle="سبد خریدت"
-        icon={
-          <div onClick={() => navigate(-1)} className="cursor-pointer flex items-center justify-center">
-            <ChevronLeftIcon className="w-5 h-5 text-[#7e4bd0]" />
-          </div>
-        }
-      />
-
       <div className="px-4 md:px-6 lg:px-8 flex flex-col md:flex-row md:gap-6 lg:gap-8 gap-4 pb-40 md:pb-4 max-w-7xl mx-auto w-full">
         {/* Left Column: Cart Items */}
         <div className="md:w-2/3 lg:w-3/5 flex flex-col gap-4 md:gap-6">

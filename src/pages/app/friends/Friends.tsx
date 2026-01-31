@@ -5,7 +5,6 @@ import {
   CheckIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { WalletHeader } from "../../../components/shared/Wallet";
 
 const TEEN_AVATARS_BASE = "/logo/teens%20profiles";
 
@@ -150,12 +149,7 @@ const Friends = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col pb-32 overflow-hidden">
-      {/* Fixed header - stays on top when scrolling */}
-      <div className="shrink-0 z-30 bg-white border-b border-gray-100">
-        <WalletHeader subtitle="@mohammad-mehrabi" />
-      </div>
-
+    <div className="w-full bg-white flex flex-col pb-24 overflow-hidden">
       <div className="px-4 flex-1 overflow-y-auto min-h-0">
         {/* Invite Friend Banner */}
         <motion.div

@@ -3,14 +3,54 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
 const ONBOARDING_TEXTS: Record<string, string> = {
-  "wallet-shape": `اینجا کیف پول دیجیته!
-می‌تونی دیجیت‌ها رو ببینی، شارژ کنی و از والدین درخواست کارت بدی.
-همه تراکنش‌ها و هدایات اینجاست.
-یه نگاه بنداز، حتماً بدردت می‌خوره!`,
-  "shop-shape": `اینجا فروشگاه چیدیم!
-می‌تونی با دیجیت کالا بگیری، سفارش بدی و تحویل بگیری.
-از بازی و کتاب تا وسایل مدرسه، همه اینجاست!
-برو گشت بزن، کلی چیز قشنگ پیدا می‌کنی!`,
+  "wallet-shape": `اینجا مرکز فرماندهی پولته
+می‌تونی ببینی چقدر داری،
+کِی خرج کردی
+و همه‌چی رو تحت کنترل داشته باشی.
+
+با کارت خرید مخصوص خودت،
+هم حضوری هم آنلاین خرید کن
+سریع، راحت و همیشه در دسترس.
+
+بعدش همه‌چی دست خودته`,
+  "shop-shape": `فروشگاه بازه!
+اینجا جاییه که چیزای باحال مخصوص تو جمع شده.
+می‌تونی بگردی، انتخاب کنی و هر چی خوشت اومد سفارش بدی
+و راحت تحویلش بگیری.
+
+این فروشگاه برای وقتاییه که دنبال یه چیز جدیدی،
+یا فقط دلت می‌خواد یه چرخی بزنی و چیزای جذاب ببینی
+
+یه سر بزن،
+شاید همون چیزی که دنبالش هستی اینجاست!`,
+  "cafe-shape": `این کافه شهر دیجی‌تینه
+جایی برای آشنا شدن،
+دوست پیدا کردن
+و در ارتباط موندن.
+
+دوستاتو دعوت کن
+و جمع خودتو بساز`,
+  "profile-shape": `پروفایل
+اینجا جاییه که مسیرت دیده می‌شه.
+هر کاری که توی شهر دیجی‌تین انجام دادی،
+هر قدمی که جلو اومدی،
+و هر لِوِلی که رد کردی،
+اینجا جمع شده.
+
+این صفحه فقط عدد نیست؛
+داستانِ پیشرفت توئه`,
+  "saving-shape": `اینجا جاییه برای پس اندازهات!
+پولاتو برای روز مبادا یا خریدای بزرگ جمع کن!
+موجودی پس‌اندازت رو از خرج‌های روزانه جدا کن تا جاش امن باشه.`,
+  "onboarding-only-shape": `اینجا دیجی پلیه!
+بازی‌ها منتظرتن... از بازی‌های فکری تا هیجان‌انگیز و بامزه؛ برای هر سلیقه‌ای یه بازی جذاب داریم.`,
+  "cinema-onboarding-shape": `به سینمای اختصاصی دیجی‌تین خوش اومدی.
+اینجا ردیف اول همیشه مال توئه.
+هر چی که برای دیدن لازم داری، از انیمیشن‌های جدید تا سریال‌های ترند، همه رو توی سینمای دیجی‌تین پیدا می‌کنی.`,
+  "smartinez-onboarding-shape": `به دنیای اسمارتینز خوش اومدی!
+اینجا پاتوق هوشمندهای دیجی‌تینه؛
+جایی که با محتوای اختصاصی،
+اطلاعاتت رو در مورد دنیای دیجیتال و مالی به‌روز می‌کنی. راستی اینجا معدن دیجیته! استخراجش کن.`,
 };
 
 const TYPEWRITER_DELAY_MS = 45;
@@ -53,8 +93,10 @@ export function OnboardingDialogue({
 
   const handleGo = () => {
     onClose();
-    navigate(path);
+    if (path) navigate(path);
   };
+
+  const isOnboardingOnly = !path;
 
   if (!fullText) return null;
 
@@ -81,19 +123,17 @@ export function OnboardingDialogue({
           </p>
           <motion.button
             initial={{ opacity: 0 }}
-            animate={{ opacity: isComplete ? 1 : 0.5 }}
-            transition={{ delay: isComplete ? 0 : 0 }}
-            disabled={!isComplete}
+            animate={{ opacity: 1 }}
             onClick={handleGo}
-            className="mt-4 w-full py-3 px-4 rounded-xl bg-[#7e4bd0] text-white font-bold text-base shadow-lg hover:bg-[#6a3fb8] disabled:cursor-not-allowed disabled:opacity-70 transition-all active:scale-[0.98]"
+            className="mt-4 w-full py-3 px-4 rounded-xl bg-[#7e4bd0] text-white font-bold text-base shadow-lg hover:bg-[#6a3fb8] transition-all active:scale-[0.98]"
           >
-            برو به {label}
+            {isOnboardingOnly ? "متوجه شدم" : `برو به ${label}`}
           </motion.button>
           <button
             onClick={onClose}
             className="mt-2 w-full py-1.5 text-gray-500 text-sm hover:text-gray-700 transition-colors"
           >
-            بعداً
+            {isOnboardingOnly ? "رد کردن" : "بعداً"}
           </button>
         </div>
       </div>

@@ -1,5 +1,4 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import WalletHeader from "../../../components/shared/Wallet/WalletHeader";
 import { formatPrice } from "../../../utils/priceUtils";
 
 interface OrderItem {
@@ -42,11 +41,6 @@ const OrderReceipt = () => {
 
   return (
     <div className="flex flex-col bg-white min-h-screen pb-32">
-      <WalletHeader
-        greeting="محمد مهرابی"
-        subtitle="@mohammad-mehrabi"
-      />
-
       <div className="flex flex-col items-center px-4 py-8">
         {/* Success Icon */}
         <div className="w-24 h-24 flex items-center justify-center mb-6">

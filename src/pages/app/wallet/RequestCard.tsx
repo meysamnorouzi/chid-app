@@ -32,6 +32,11 @@ const cardDesigns: CardDesign[] = [
   { id: "10", name: "گود وایب", image: "/carts/11.svg" },
   { id: "11", name: "آتشین", image: "/carts/c7.svg" },
   { id: "12", name: "شگفت انگیزان", image: "/carts/c8.svg" },
+  { id: "c-special-1", name: "کیوتین", image: "/carts/c special 1.svg" },
+  { id: "c-special-2", name: "ناروتو", image: "/carts/c special 2.svg" },
+  { id: "c-special-3", name: "لیلی", image: "/carts/c special 3.svg" },
+  { id: "c-special-4", name: "شازده", image: "/carts/c special 4.svg" },
+  { id: "13", name: "کارت دیجی تین", image: "/carts/Screenshot 2026-01-31 at 1.16.16 AM.png" },
 ];
 
 // Step types: 3 verification steps before card selection
@@ -354,28 +359,28 @@ function RequestCard() {
                     <DocumentTextIcon className="w-6 h-6 text-[#7e4bd0]" />
                   </div>
                   <div>
-                    <h2 className="text-lg font-bold text-gray-800 mb-2">مراحل درخواست کارت</h2>
+                    <h2 className="text-lg font-bold text-gray-800 mb-2">کارت دیجی‌تینتو بگیر!</h2>
                     <p className="text-gray-600 text-sm leading-6">
-                      برای دریافت کارت خرید دیجی‌تین، سه مرحله رو باید انجام بدی:
+                      فقط این ۳ تا کارو انجام بده و تمومه:
                     </p>
                   </div>
                 </div>
                 <ol className="space-y-4 text-sm text-gray-700">
                   <li className="flex gap-3 items-start">
                     <span className="w-7 h-7 rounded-full bg-[#7e4bd0] text-white flex items-center justify-center flex-shrink-0 text-xs font-bold">۱</span>
-                    <span><strong className="text-gray-800">صفحه اول شناسنامه:</strong> عکس از صفحه اول شناسنامه (با خوانا بودن همه اطلاعات) آپلود یا با دوربین بگیر.</span>
+                    <span>یه عکس واضح از صفحه اول شناسنامه‌ت بگیر و آپلود کن.</span>
                   </li>
                   <li className="flex gap-3 items-start">
                     <span className="w-7 h-7 rounded-full bg-[#7e4bd0] text-white flex items-center justify-center flex-shrink-0 text-xs font-bold">۲</span>
-                    <span><strong className="text-gray-800">ارسال ویدیو و صدا:</strong> یک ویدیو در محیط آرام و با نور کافی ضبط کن و متن داده‌شده رو بخون.</span>
+                    <span>برو یه جای آروم با نور خوب، از خودت وقتی متن رو می‌خونی یه ویدیو بگیر و بفرست.</span>
                   </li>
                   <li className="flex gap-3 items-start">
                     <span className="w-7 h-7 rounded-full bg-[#7e4bd0] text-white flex items-center justify-center flex-shrink-0 text-xs font-bold">۳</span>
-                    <span><strong className="text-gray-800">انتخاب طرح کارت:</strong> طرح مورد علاقه‌ات رو انتخاب کن و درخواست رو نهایی کن.</span>
+                    <span>حالا طرح کارت موردعلاقتو انتخاب کن و درخواستتو نهایی کن!</span>
                   </li>
                 </ol>
                 <p className="text-gray-500 text-xs mt-6 pt-4 border-t border-gray-100">
-                  بعد از تأیید، کارت طی ۳ تا ۵ روز کاری به دستت می‌رسه.
+                  همین. بعد از تأیید، ۳ تا ۵ روز کاری بعدش کارت توی جیبته!
                 </p>
               </div>
             </motion.div>
@@ -416,8 +421,8 @@ function RequestCard() {
               {!idImageUrl ? (
                 <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm">
                   <div className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center mb-6">
-                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <PhotoIcon className="w-8 h-8 text-gray-400" />
+                    <div className="w-32 h-32 mx-auto mb-4 flex items-center justify-center">
+                      <img src="/image/Aks shenas name.png" alt="عکس صفحه اول شناسنامه" className="w-full h-full object-contain" />
                     </div>
                     <p className="text-gray-500 text-sm mb-6">عکس صفحه اول شناسنامه رو آپلود کن یا با دوربین بگیر</p>
                     <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -503,7 +508,7 @@ function RequestCard() {
               <div className="bg-white rounded-2xl p-6 shadow-sm">
                 {!hasRecordedVideo ? (
                   <>
-                    <div className="relative rounded-xl overflow-hidden bg-black aspect-[4/3] mb-4">
+                    <div className="relative rounded-xl overflow-hidden aspect-[4/3] mb-4">
                       <video
                         ref={videoPreviewRef}
                         autoPlay
@@ -514,7 +519,7 @@ function RequestCard() {
                       />
                       {!isRecording && !streamRef.current && (
                         <div className="absolute inset-0 flex items-center justify-center bg-gray-900/40">
-                          <VideoCameraIcon className="w-16 h-16 text-white/60" />
+                          <img src="/image/Video selfie.png" alt="ویدیو سلفی" className="w-32 h-32 object-contain opacity-60" />
                         </div>
                       )}
                       {/* Face guide overlay: only when recording — human-head shape (taller than wide), centered */}
@@ -789,42 +794,42 @@ function RequestCard() {
                         <div className="absolute bottom-0 left-0 w-24 h-24 bg-white rounded-full -ml-12 -mb-12"></div>
                       </div>
 
-                      {/* Back Content */}
-                      <div className="relative z-10 h-full flex flex-col justify-between p-6 gap-1">
-                        {/* Top Section */}
-                        <div className="flex items-center justify-between">
-                          <div className="text-white/70 text-xs font-medium">
-                            CVV
-                          </div>
-                          <div className="bg-white/20 backdrop-blur-sm rounded-lg px-4 py-2">
-                            <p className="text-white text-lg font-bold tracking-widest">
-                              123
-                            </p>
-                          </div>
-                        </div>
-
-                        {/* Middle Section - Magnetic Strip */}
-                        <div className="h-12 bg-black/30 rounded"></div>
-
-                        {/* Bottom Section */}
-                        <div className="space-y-3">
-                          <div className="flex items-center justify-between">
-                            <p className="text-white/70 text-xs">شماره کارت</p>
-                            <p className="text-white text-sm font-semibold tracking-wider">
-                              1234 5678 9012 3456
-                            </p>
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <p className="text-white/70 text-xs">تاریخ انقضا</p>
-                            <p className="text-white text-sm font-semibold">12/24</p>
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <p className="text-white/70 text-xs">صاحب کارت</p>
-                            <p className="text-white text-sm font-semibold">
+                      {/* Back Content - matches WalletMoney card back layout */}
+                      <div className="relative z-10 h-full flex flex-col justify-between p-6">
+                        <div className="flex-1 flex flex-col justify-start pt-1">
+                          {/* Full name on right (justify-start in RTL = right side) */}
+                          <div className="w-full flex justify-start mb-3">
+                            <p className="text-white text-base font-semibold drop-shadow-lg">
                               {userName}
                             </p>
                           </div>
+
+                          {/* Row: card number on right (bigger), CVV2/EXP on left with labels left of values */}
+                          <div className="flex justify-between items-start gap-4">
+                            <div className="flex flex-col items-start text-start">
+                              <p className="text-white text-xl font-semibold tracking-wider drop-shadow-lg">
+                                1234 5678 9012 3456
+                              </p>
+                            </div>
+                            <div className="flex flex-col shrink-0 items-end gap-2">
+                              {/* CVV2: label on left of value (in RTL: value first = right, label second = left) */}
+                              <div className="flex items-center gap-2">
+                                <div className="bg-white/20 backdrop-blur-sm rounded-lg px-3 py-1.5">
+                                  <p className="text-white text-sm font-bold tracking-widest drop-shadow-lg">123</p>
+                                </div>
+                                <span className="text-white/80 text-xs drop-shadow">CVV2</span>
+                              </div>
+                              {/* EXP: label on left of value */}
+                              <div className="flex items-center gap-2">
+                                <p className="text-white text-sm font-semibold drop-shadow-lg">12/24</p>
+                                <span className="text-white/80 text-xs drop-shadow">EXP</span>
+                              </div>
+                            </div>
+                          </div>
                         </div>
+
+                        {/* Magnet bar - below the card content (taller like WalletMoney) */}
+                        <div className="h-16 bg-black/30 rounded mt-2" />
                       </div>
                     </div>
                   </div>

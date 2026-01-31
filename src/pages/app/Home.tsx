@@ -6,10 +6,16 @@ import { InteractiveMap, type Hotspot, type ClickableBounds } from "../../compon
 import { OnboardingDialogue } from "../../components/shared/OnboardingDialogue";
 
 const ONBOARDING_STORAGE_KEY = "chid_onboarding_seen";
-const ONBOARDING_HOTSPOTS = ["wallet-shape", "shop-shape"] as const;
+const ONBOARDING_HOTSPOTS = ["wallet-shape", "shop-shape", "cafe-shape", "profile-shape", "saving-shape", "onboarding-only-shape", "cinema-onboarding-shape", "smartinez-onboarding-shape"] as const;
 const HOTSPOT_LABELS: Record<string, string> = {
   "wallet-shape": "کیف پول",
   "shop-shape": "فروشگاه",
+  "cafe-shape": "کافه",
+  "profile-shape": "پروفایل",
+  "saving-shape": "پس انداز",
+  "onboarding-only-shape": "",
+  "cinema-onboarding-shape": "",
+  "smartinez-onboarding-shape": "",
 };
 
 /** Map viewBox (1576×903). Central town only; edges are clouds — no navigation there. */
@@ -34,8 +40,18 @@ const HOME_MAP_HOTSPOTS: Hotspot[] = [
     height: 163,
     path: "/wallet-money",
   },
+  /** Beige path (fill #e2ddca) — پس انداز tab in wallet; bbox + larger buffer, extra at bottom. */
+  {
+    id: "saving-shape",
+    type: "rect",
+    x: 457,
+    y: 313,
+    width: 160,
+    height: 178,
+    path: "/wallet-saving",
+  },
   { id: "wallet", type: "rect", x: 0, y: 0, width: 526, height: 301, path: "/wallet-money" },
-  /** Shop building path (d=" M 850.26 476.92 C ... Z") — bbox only, no buffer. */
+  /** Shop building path (d=" M 850.26 476.92 C ... Z") — bbox only; only this shape goes to shop. */
   {
     id: "shop-shape",
     type: "rect",
@@ -45,7 +61,6 @@ const HOME_MAP_HOTSPOTS: Hotspot[] = [
     height: 171,
     path: "/shop",
   },
-  { id: "shop", type: "rect", x: 526, y: 0, width: 525, height: 301, path: "/shop" },
   /** Digibook path (d=" M 632.42 693.31 C ... Z") — bbox + a little buffer. */
   {
     id: "digibook-shape",
@@ -57,7 +72,7 @@ const HOME_MAP_HOTSPOTS: Hotspot[] = [
     path: "/digibook",
   },
   { id: "digibook", type: "rect", x: 1051, y: 0, width: 525, height: 301, path: "/digibook" },
-  /** Shahre farang path (d=" M 790.48 704.34 C ... Z") — bbox + a little buffer. */
+  /** Shahre farang path (d=" M 790.48 704.34 C ... Z") — bbox + a little buffer; only this shape goes to shahr-farang. */
   {
     id: "shahr-farang-shape",
     type: "rect",
@@ -67,8 +82,7 @@ const HOME_MAP_HOTSPOTS: Hotspot[] = [
     height: 44,
     path: "/shahr-farang",
   },
-  { id: "shahr-farang", type: "rect", x: 0, y: 301, width: 526, height: 301, path: "/shahr-farang" },
-  /** Radio teen path (d=" M 969.84 721.77 C ... Z") — bbox + a little buffer. */
+  /** Radio teen path (d=" M 969.84 721.77 C ... Z") — bbox + a little buffer; only this shape goes to radioteen. */
   {
     id: "radioteen-shape",
     type: "rect",
@@ -78,11 +92,76 @@ const HOME_MAP_HOTSPOTS: Hotspot[] = [
     height: 64,
     path: "/radioteen",
   },
-  { id: "radioteen", type: "rect", x: 526, y: 301, width: 525, height: 301, path: "/radioteen" },
-  { id: "digiteen", type: "rect", x: 1051, y: 301, width: 525, height: 301, path: "/digiteen/goals" },
-  { id: "friends", type: "rect", x: 0, y: 602, width: 526, height: 301, path: "/friends" },
-  { id: "messages", type: "rect", x: 526, y: 602, width: 525, height: 301, path: "/messages" },
-  { id: "user-info", type: "rect", x: 1051, y: 602, width: 525, height: 301, path: "/user-info" },
+  /** Digiteen/goals path (fill #010101, d=" M 1066.93 371.27 C ... Z") — bbox aligned to path; only this shape goes to digiteen/goals. */
+  {
+    id: "digiteen-shape",
+    type: "rect",
+    x: 1025,
+    y: 368,
+    width: 101,
+    height: 116,
+    path: "/digiteen/goals",
+  },
+  /** Cafe building path (d=" M 660.81 387.51 C ... Z") — bbox aligned to path; only this shape goes to cafe. */
+  {
+    id: "cafe-shape",
+    type: "rect",
+    x: 598,
+    y: 387,
+    width: 128,
+    height: 116,
+    path: "/friends",
+  },
+  /** Digit tab in wallet path (fill #962311, d=" M 791.00 631.03 C ... Z") — bbox + larger buffer. */
+  {
+    id: "wallet-digit-shape",
+    type: "rect",
+    x: 750,
+    y: 596,
+    width: 125,
+    height: 102,
+    path: "/wallet-digit",
+  },
+  /** Profile building path (fill #f38681, d=" M 791.12 355.31 C ... Z") — bbox only; only this shape goes to profile. */
+  {
+    id: "profile-shape",
+    type: "rect",
+    x: 772,
+    y: 353,
+    width: 46,
+    height: 35,
+    path: "/user-info",
+  },
+  /** Purple path (fill #ad3ac9) — onboarding only, no navigation; bbox + buffer for easier click. */
+  {
+    id: "onboarding-only-shape",
+    type: "rect",
+    x: 883,
+    y: 362,
+    width: 60,
+    height: 81,
+    path: "",
+  },
+  /** Cream path (fill #fef8d8) — cinema onboarding only, no navigation; bbox + buffer. */
+  {
+    id: "cinema-onboarding-shape",
+    type: "rect",
+    x: 959,
+    y: 462,
+    width: 198,
+    height: 174,
+    path: "",
+  },
+  /** Black path (fill #000000) — اسمارتینز onboarding only, no navigation; bbox + buffer. */
+  {
+    id: "smartinez-onboarding-shape",
+    type: "rect",
+    x: 371,
+    y: 463,
+    width: 246,
+    height: 197,
+    path: "",
+  },
 ];
 
 function getOnboardingSeen(): Set<string> {
@@ -125,7 +204,7 @@ const Home = () => {
           path: hotspot.path,
           label: HOTSPOT_LABELS[hotspot.id] ?? "این بخش",
         });
-      } else {
+      } else if (hotspot.path) {
         navigate(hotspot.path);
       }
     },

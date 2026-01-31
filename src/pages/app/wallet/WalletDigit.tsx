@@ -11,11 +11,9 @@ import {
 } from "@heroicons/react/24/outline";
 import Modal from "../../../components/shared/Modal";
 import {
-  WalletHeader,
   WalletTabs,
   RecentTransactions,
   BuyDigitModal,
-  GiftModal,
 } from "../../../components/shared/Wallet";
 
 interface Activity {
@@ -37,7 +35,6 @@ function WalletDigit() {
     transactionsCount: 0,
   });
   const [showDepositModal, setShowDepositModal] = useState(false);
-  const [showTransferModal, setShowTransferModal] = useState(false);
   const [isCardFlipped, setIsCardFlipped] = useState(false);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
@@ -312,11 +309,6 @@ function WalletDigit() {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20 md:pb-4" dir="rtl">
-      <WalletHeader
-        subtitle="@mohammad-mehrabi"
-        showBalance={true}
-        balance=""
-      />
       <WalletTabs activeTab="digit" isParentInvited={isParentInvited} />
 
       <div className="bg-white min-h-screen px-4 md:px-6 lg:px-8 py-6 md:py-8 max-w-6xl mx-auto">
@@ -406,7 +398,7 @@ function WalletDigit() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => setShowTransferModal(true)}
+              onClick={() => navigate("/wallet-digit/gift")}
               className="flex-1 flex items-center justify-center gap-2 bg-amber-600 text-white px-4 md:px-6 py-3 md:py-4 rounded-xl font-semibold transition-all text-sm md:text-base"
             >
               <GiftIcon className="w-5 h-5 md:w-6 md:h-6" />
@@ -463,20 +455,6 @@ function WalletDigit() {
         loadParentWallet={loadParentWallet}
       />
 
-      {/* Gift Modal */}
-      <GiftModal
-        isOpen={showTransferModal}
-        onClose={() => {
-          setShowTransferModal(false);
-        }}
-        formatBalance={formatBalance}
-        parentDigitBalance={parentDigitBalance}
-        onGiveGift={(username, amount, message) => {
-          // Activity already added in GiftModal component
-          loadWalletData();
-        }}
-        loadParentWallet={loadParentWallet}
-      />
     </div>
   );
 }

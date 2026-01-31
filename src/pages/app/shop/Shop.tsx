@@ -2,7 +2,6 @@ import { motion } from "framer-motion";
 import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 import { ReactNode, useState, useMemo, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import WalletHeader from "../../../components/shared/Wallet/WalletHeader";
 import { lineIconPaths } from "../../../utils/lineIcons";
 
 interface Category {
@@ -37,8 +36,8 @@ const Shop = () => {
   const touchEndX = useRef<number | null>(null);
 
   const banners = [
-    "https://dkstatics-public.digikala.com/digikala-adservice-banners/56a42a1e2d4961d575fc4d9917f46eb0258e3dbd_1761147699.jpg?x-oss-process=image/quality,q_95",
-
+    "/image/Poolet barmigarde.gif",
+    "/image/Digit bigir.jpg",
   ];
 
   const resetAutoPlay = useCallback(() => {
@@ -47,7 +46,7 @@ const Shop = () => {
     }
     slideIntervalRef.current = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % banners.length);
-    }, 3000);
+    }, 5000);
   }, [banners.length]);
 
   useEffect(() => {
@@ -95,13 +94,13 @@ const Shop = () => {
   const storeCategories: { id: string; name: string; iconFile: string }[] = [
     { id: "all", name: "همه", iconFile: "all.svg" },
     { id: "kala-digital", name: "کالای دیجیتال", iconFile: "kala digital.svg" },
+    { id: "labtop", name: "لپ تاپ", iconFile: "labtop.svg" },
+    { id: "mobile", name: "موبایل", iconFile: "mobile.svg" },
     { id: "baazi-o-sargarmi", name: "بازی و سرگرمی", iconFile: "baazi o sargarmi.svg" },
     { id: "book-lavazem-tahrir", name: "کتاب و لوازم تحریر", iconFile: "book lavazem tahrir.svg" },
     { id: "mod-o-lebas", name: "مد و لباس", iconFile: "mod o lebas.svg" },
     { id: "safar", name: "سفر", iconFile: "safar.svg" },
     { id: "pet", name: "حیوانات خانگی", iconFile: "pet.svg" },
-    { id: "labtop", name: "لپ تاپ", iconFile: "labtop.svg" },
-    { id: "mobile", name: "موبایل", iconFile: "mobile.svg" },
   ];
 
   const categories: Category[] = storeCategories.map(({ id, name, iconFile }) => ({
@@ -111,7 +110,7 @@ const Shop = () => {
       <img
         src={`/icons/store/${encodeURIComponent(iconFile)}`}
         alt={name}
-        className="w-full h-full object-cover p-4"
+        className="w-full h-full p-4"
       />
     ),
   }));
@@ -326,16 +325,7 @@ const Shop = () => {
 
   return (
     <div className="flex flex-col bg-white pb-24 md:pb-4 min-h-screen overflow-hidden">
-      {/* Fixed header - stays on top when scrolling */}
-      <div className="shrink-0 z-30 bg-white border-b border-gray-100">
-        <WalletHeader
-          greeting="محمد مهرابی"
-          subtitle="@mohammad-mehrabi"
-          icon={<img src={lineIconPaths.store} className="w-5 h-5" alt="فروشگاه" />}
-          showCartBadge={true}
-        />
-      </div>
-      <div className="px-4 md:px-6 lg:px-8 flex-1 overflow-y-auto min-h-0 max-w-7xl mx-auto w-full">
+      <div className="px-4 md:px-6 lg:px-8 flex-1 overflow-y-auto min-h-0 max-w-7xl py-4 mx-auto w-full">
 
       <div className="flex gap-3 md:gap-4 lg:gap-5 mb-3 md:mb-4 lg:mb-6 overflow-x-auto md:overflow-x-visible scrollbar-hide pb-2 md:pb-0 md:justify-center md:flex-wrap">
         {categories.map((category) => (
@@ -389,7 +379,7 @@ const Shop = () => {
         <div
           className="flex transition-transform duration-500 ease-in-out"
           style={{
-            transform: `translateX(-${currentSlide * 100}%)`,
+            transform: `translateX(${currentSlide * 100}%)`,
           }}
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}

@@ -11,7 +11,6 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartIconSolid } from "@heroicons/react/24/solid";
-import WalletHeader from "../../../components/shared/Wallet/WalletHeader";
 import { Breadcrumb, Chips, useToast } from "../../../components/shared";
 import { useCart } from "../../../hooks/useCart";
 import { useFavorites } from "../../../hooks/useFavorites";
@@ -709,13 +708,6 @@ const ProductDetail = () => {
 
   return (
     <div className="flex flex-col bg-white min-h-screen pb-40 md:pb-4">
-      <WalletHeader
-        greeting="محمد مهرابی"
-        subtitle="@mohammad-mehrabi"
-        icon={<ShoppingBagIcon className="w-5 h-5 text-[#7e4bd0]" />}
-        showCartBadge={true}
-      />
-
       <div className="px-4 md:px-6 lg:px-8 flex flex-col md:flex-row md:gap-8 lg:gap-12 gap-4 max-w-7xl mx-auto w-full">
         {/* Left Column: Images */}
         <div className="md:w-1/2 lg:w-2/5 shrink-0 md:sticky md:top-4 md:self-start">
@@ -1215,7 +1207,7 @@ const ProductDetail = () => {
       )}
 
       {/* Fixed Price and Action Buttons - Mobile Only */}
-      <div className="fixed md:hidden bottom-0 left-1/2 -translate-x-1/2 w-full bg-white border-t border-gray-200 px-4 py-4 shadow-lg">
+      <div className="fixed md:hidden bottom-20 left-1/2 -translate-x-1/2 w-full bg-white border-t border-gray-200 px-4 py-4 shadow-lg">
         {/* Price */}
         <div className="flex items-center w-full justify-between pb-4">
           <div className="flex items-center w-full justify-between gap-1">

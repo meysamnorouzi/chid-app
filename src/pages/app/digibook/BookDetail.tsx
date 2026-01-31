@@ -1,7 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ChevronLeftIcon, ArrowDownTrayIcon } from "@heroicons/react/24/outline";
-import WalletHeader from "../../../components/shared/Wallet/WalletHeader";
 import {
   getBookById,
   getCategoryName,
@@ -37,7 +36,6 @@ export default function BookDetail() {
   if (!book) {
     return (
       <div className="min-h-screen bg-white flex flex-col pb-24" dir="rtl">
-        <WalletHeader subtitle="دیجی بوک" />
         <div className="flex-1 flex items-center justify-center px-4">
           <p className="text-gray-500">کتاب یافت نشد.</p>
           <button
@@ -56,10 +54,6 @@ export default function BookDetail() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col pb-24" dir="rtl">
-      <div className="shrink-0 z-30 bg-white border-b border-gray-100">
-        <WalletHeader subtitle="شناسنامه کتاب" />
-      </div>
-
       <div className="px-4 flex-1 overflow-y-auto">
         {/* Cover + title (Aspect Ratio 2:3 for cover per spec) */}
         <motion.section

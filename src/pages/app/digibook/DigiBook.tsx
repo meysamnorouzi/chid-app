@@ -8,7 +8,6 @@ import {
   BookmarkIcon,
   ArrowDownTrayIcon,
 } from "@heroicons/react/24/outline";
-import { WalletHeader } from "../../../components/shared/Wallet";
 import {
   TRENDING_BOOKS,
   CONTINUE_READING,
@@ -22,7 +21,7 @@ type TabId = "home" | "explore" | "create" | "library";
 
 const TABS: { id: TabId; label: string }[] = [
   { id: "home", label: "ویترین" },
-  { id: "explore", label: "جستجو و کاوش" },
+  { id: "explore", label: "جستجو" },
   { id: "create", label: "ایجاد" },
   { id: "library", label: "کتابخانه" },
 ];
@@ -53,11 +52,6 @@ const DigiBook = () => {
 
   return (
     <div className="min-h-screen bg-white flex flex-col pb-24 overflow-hidden" dir="rtl">
-      {/* Fixed header - same as Friends page */}
-      <div className="shrink-0 z-30 bg-white border-b border-gray-100">
-        <WalletHeader subtitle="@mohammad-mehrabi" />
-      </div>
-
       {/* Segment: ویترین | جستجو و کاوش | ایجاد | کتابخانه */}
       <div className="px-4 py-3 border-b border-gray-100 shrink-0">
         <div className="flex gap-2 overflow-x-auto scrollbar-hide">
@@ -81,6 +75,7 @@ const DigiBook = () => {
       </div>
 
       <div className="px-4 flex-1 overflow-y-auto min-h-0 pt-4">
+        <img src="/image/IMG_5477.JPG" alt="" className="w-full rounded-2xl mb-6" />
         <AnimatePresence mode="wait">
           {activeTab === "home" && (
             <motion.div

@@ -334,19 +334,18 @@ const QrCode = () => {
             </div>
             <button
               type="button"
-              onClick={handleSubmit}
-              disabled={!validateLoginLink(loginLink)}
-              className="w-full bg-[#7e4bd0] hover:bg-gray-800 disabled:bg-gray-400 border border-[#7e4bd0] disabled:cursor-not-allowed text-white font-semibold py-3.5 rounded-xl  shadow-gray-300 transition-all active:scale-[0.98]"
-            >
-              ورود به دیجی تین
-            </button>
-    
-            <button
-              type="button"
               onClick={() => navigate('/login')}
               className="w-full border border-[#7e4bd0] hover:bg-gray-800 disabled:bg-gray-400 disabled:cursor-not-allowed text-[#7e4bd0] font-semibold py-3.5 rounded-xl  shadow-gray-300 transition-all active:scale-[0.98]"
             >
               برگشت به صفحه قبلی
+            </button>
+            <button
+              type="button"
+              onClick={handleSubmit}
+              disabled={!validateLoginLink(loginLink)}
+              className="w-full bg-[#7e4bd0] hover:bg-gray-800 disabled:bg-[#ad80f4] border border-[#7e4bd0] disabled:cursor-not-allowed text-white font-semibold py-3.5 rounded-xl  shadow-gray-300 transition-all active:scale-[0.98]"
+            >
+              ورود به دیجی تین
             </button>
           </div>
           </div>

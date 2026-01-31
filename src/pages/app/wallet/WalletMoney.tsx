@@ -22,7 +22,6 @@ import { ListBulletIcon } from "@heroicons/react/24/solid";
 import AuthInput from "../../../components/shared/AuthInput";
 import { lineIconPaths } from "../../../utils/lineIcons";
 import {
-  WalletHeader,
   WalletTabs,
   StatsCards,
   RecentTransactions,
@@ -91,6 +90,35 @@ function WalletMoney() {
   const [parentDigitBalance, setParentDigitBalance] = useState<number>(0);
 
 
+
+  // Map card design IDs to their actual image paths
+  const getCardImagePath = (cardDesignId: string | null): string => {
+    if (!cardDesignId) {
+      return "/digitandpasandcards/normal-cart-2.svg";
+    }
+
+    const cardImageMap: { [key: string]: string } = {
+      "1": "/carts/1.svg",
+      "2": "/carts/2.svg",
+      "3": "/carts/3.svg",
+      "4": "/carts/4.svg",
+      "5": "/carts/5.svg",
+      "6": "/carts/7.svg",
+      "7": "/carts/8.svg",
+      "8": "/carts/9.svg",
+      "9": "/carts/10.svg",
+      "10": "/carts/11.svg",
+      "11": "/carts/c7.svg",
+      "12": "/carts/c8.svg",
+      "c-special-1": "/carts/c special 1.svg",
+      "c-special-2": "/carts/c special 2.svg",
+      "c-special-3": "/carts/c special 3.svg",
+      "c-special-4": "/carts/c special 4.svg",
+      "13": "/carts/Screenshot 2026-01-31 at 1.16.16 AM.png",
+    };
+
+    return cardImageMap[cardDesignId] || `/carts/${cardDesignId}.svg`;
+  };
 
   // Extract dominant color from card image
   const extractDominantColor = (imageUrl: string) => {
@@ -199,7 +227,7 @@ function WalletMoney() {
 
       // Extract dominant color from selected card design
       if (cardRequest.cardDesignId) {
-        const cardImageUrl = `/carts/${cardRequest.cardDesignId}.svg`;
+        const cardImageUrl = getCardImagePath(cardRequest.cardDesignId);
         extractDominantColor(cardImageUrl);
       }
 
@@ -545,28 +573,17 @@ function WalletMoney() {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20 md:pb-4" dir="rtl">
-      <WalletHeader subtitle="@mohammad-mehrabi" />
-      <WalletTabs activeTab="money" isParentInvited={isParentInvited} />
+      <WalletTabs activeTab="money" />
 
-      <div className={`px-4 md:px-6 lg:px-8 py-4 md:py-6 lg:py-8 max-w-6xl mx-auto relative ${isParentInvited ? 'bg-white ' : 'bg-gradient-to-br from-white/95 via-purple-50/90 to-indigo-50/90 backdrop-blur-md '} `}>
-        {/* Blur Overlay with Invitation Form - When Parent Not Invited */}
+      <div className={`px-4 md:px-6 lg:px-8 py-4 md:py-6 lg:py-8 max-w-6xl mx-auto relative ${isParentInvited ? 'bg-white' : 'inset-0 bg-gradient-to-br from-white/95 via-purple-50/90 to-indigo-50/90 backdrop-blur-md'}`}>
         {isParentInvited ? (
           <div className="md:grid md:grid-cols-2 md:gap-6 lg:gap-8 md:items-start">
             {/* Left Column: Card + Buttons + Stats */}
             <div className="md:col-span-1">
               {/* Main Balance Card - Always Active */}
               <div className="mb-6 md:mb-8">
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5 }}
+                <div
                   className="relative w-full max-w-2xl md:max-w-3xl mx-auto"
-                  style={{
-                    perspective: "1000px",
-                    touchAction: "pan-x",
-                    userSelect: "none",
-                    WebkitUserSelect: "none",
-                  }}
                 >
                   <div
                     className="relative w-full cursor-pointer"
@@ -574,7 +591,6 @@ function WalletMoney() {
                       transformStyle: "preserve-3d",
                       transform: isCardFlipped ? "rotateY(180deg)" : "rotateY(0deg)",
                       transition: "transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)",
-                      pointerEvents: "auto",
                     }}
                     onTouchStart={(e) => {
                       e.stopPropagation();
@@ -632,9 +648,7 @@ function WalletMoney() {
                     >
                       {/* Card Background Image */}
                       <img
-                        src={selectedCardDesign
-                          ? `/carts/${selectedCardDesign}.svg`
-                          : `/digitandpasandcards/normal-cart-2.svg`}
+                        src={getCardImagePath(selectedCardDesign)}
                         alt="کارت بانکی"
                         className="w-full h-auto"
                         draggable={false}
@@ -679,44 +693,47 @@ function WalletMoney() {
                         <div className="absolute bottom-0 right-0 w-24 h-24 bg-white rounded-full -mr-12 -mb-12"></div>
                       </div>
 
-                      {/* Back Content */}
+                      {/* Back Content: full name top-right, below it card number; CVV2/EXP labels left of values; magnet bar at bottom */}
                       <div className="relative z-10 h-full flex flex-col justify-between">
 
-                        {/* Middle Section - CVV */}
-                        <div className="flex-1 flex flex-col mb-2 justify-center">
-                          <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4">
-                            <div className="flex items-center justify-between mb-2">
-                              <p className="text-white/70 text-xs drop-shadow">CVV</p>
-                              <p className="text-white text-lg font-bold tracking-widest drop-shadow-lg">
-                                123
+                        <div className="flex-1 flex flex-col justify-start pt-1">
+                          {/* Full name on right (justify-start in RTL = right side) */}
+                          <div className="w-full flex justify-start mb-3">
+                            <p className="text-white text-base font-semibold drop-shadow-lg">
+                              میثم نوروزی
+                            </p>
+                          </div>
+
+                          {/* Row: card number on right (bigger), CVV2/EXP on left with labels left of values */}
+                          <div className="flex justify-between items-start gap-4">
+                            <div className="flex flex-col items-start text-start">
+                              <p className="text-white text-xl font-semibold tracking-wider drop-shadow-lg">
+                                1214 5678 9012 3456
                               </p>
+                            </div>
+                            <div className="flex flex-col shrink-0 items-end gap-2">
+                              {/* CVV2: label on left of value (in RTL: value first = right, label second = left) */}
+                              <div className="flex items-center gap-2">
+                                <div className="bg-white/20 backdrop-blur-sm rounded-lg px-3 py-1.5">
+                                  <p className="text-white text-sm font-bold tracking-widest drop-shadow-lg">123</p>
+                                </div>
+                                <span className="text-white/80 text-xs drop-shadow">CVV2</span>
+                              </div>
+                              {/* EXP: label on left of value */}
+                              <div className="flex items-center gap-2">
+                                <p className="text-white text-sm font-semibold drop-shadow-lg">1409/09</p>
+                                <span className="text-white/80 text-xs drop-shadow">EXP</span>
+                              </div>
                             </div>
                           </div>
                         </div>
 
-                        {/* Bottom Section - Additional Info */}
-                        <div className="space-y-3">
-                          <div className="flex items-center justify-between">
-                            <p className="text-white/70 text-xs drop-shadow">شماره کارت</p>
-                            <p className="text-white text-sm font-semibold tracking-wider drop-shadow-lg">
-                              1214 5678 9012 3456
-                            </p>
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <p className="text-white/70 text-xs drop-shadow">تاریخ انقضا</p>
-                            <p className="text-white text-sm font-semibold drop-shadow-lg">12/24</p>
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <p className="text-white/70 text-xs drop-shadow">صاحب کارت</p>
-                            <p className="text-white text-sm font-semibold drop-shadow-lg">
-                              میثم نوروزی
-                            </p>
-                          </div>
-                        </div>
+                        {/* Magnet bar - below the card content */}
+                        <div className="h-16 bg-black/30 rounded mt-2" />
                       </div>
                     </div>
                   </div>
-                </motion.div>
+                </div>
 
                 {/* Physical Card & Parent Invitation Box */}
                 {(!hasPhysicalCard || !isParentInvited) && (
@@ -889,8 +906,8 @@ function WalletMoney() {
                           whileTap={{ scale: 0.98 }}
                           onClick={handleInviteParent}
                           className={`flex-1 flex items-center justify-center gap-2 ${!hasPhysicalCard
-                              ? "bg-white border-2 text-white"
-                              : "text-white"
+                            ? "bg-white border-2 text-white"
+                            : "text-white"
                             } px-4 py-2.5 rounded-xl font-semibold text-sm transition-all`}
                           style={!hasPhysicalCard
                             ? { borderColor: dominantColor, color: dominantColor }
@@ -1030,9 +1047,9 @@ function WalletMoney() {
             </div>
           </div>
         ) : (
-          <div className="flex items-start justify-center pt-8">
+          <div className=" flex items-start justify-center pt-8" style={{ bottom: '80px', top: 0, height: 'calc(100% - 80px)' }}>
             <div className="w-full max-w-md px-4">
-              <div className="flex flex-col items-center justify-start">
+              <div className="flex flex-col items-center justify-start pb-8">
                 {/* Lock GIF Animation */}
                 <motion.div
                   initial={{ scale: 0, rotate: -180 }}
@@ -1043,7 +1060,7 @@ function WalletMoney() {
                   <img
                     src="/gif/Lock.gif"
                     alt="Lock"
-                    className="w-44 object-contain drop-shadow-2xl"
+                    className="w-44  object-contain drop-shadow-2xl"
                   />
                 </motion.div>
 
@@ -1064,9 +1081,17 @@ function WalletMoney() {
                   transition={{ delay: 0.4, duration: 0.5 }}
                   className="text-gray-600 text-center text-xs leading-5 mb-1 max-w-sm"
                 >
-                  میخوای کیف پولت رو فعال کنی ؟ از والدت دعوت کن تا دیجی پرنت رو نصب کنه !
+                میخوای کیف پولت رو فعال کنی ؟
                 </motion.p>
-
+                {/* Description */}
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.4, duration: 0.5 }}
+                  className="text-gray-600 text-center text-xs leading-5 mb-1 max-w-sm"
+                >
+                  از والدت دعوت کن تا دیجی پرنت رو نصب کنه !
+                </motion.p>
                 <motion.p
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -1125,7 +1150,7 @@ function WalletMoney() {
                     type="button"
                     onClick={handleSendInvitation}
                     disabled={isSendingInvite || parentPhoneNumber.length < 11 || inviteSent}
-                    className="w-full bg-[#7e4bd0] hover:bg-gray-800 disabled:bg-gray-400 border border-[#7e4bd0] disabled:cursor-not-allowed text-white font-semibold py-3.5 rounded-xl shadow-gray-300 transition-all active:scale-[0.98]"
+                    className="w-full bg-[#7e4bd0] hover:bg-gray-800 disabled:bg-[ad80f4] border border-[#7e4bd0] disabled:cursor-not-allowed text-white font-semibold py-3.5 rounded-xl shadow-gray-300 transition-all active:scale-[0.98]"
                   >
                     {isSendingInvite ? 'در حال ارسال...' : 'ارسال دعوتنامه'}
                   </button>
@@ -1368,6 +1393,7 @@ function WalletMoney() {
           <p className="text-gray-600 text-sm mb-6 leading-6">
             برای دریافت کارت خرید، اول باید والدینت رو به اپلیکیشن دعوت کنی تا بتونن درخواست کارت رو تأیید کنن.
           </p>
+
           <div className="flex gap-3">
             <motion.button
               whileHover={{ scale: 1.02 }}
@@ -1437,8 +1463,8 @@ function WalletMoney() {
               }}
               placeholder="۱۲۳۴ ۵۶۷۸ ۹۰۱۲ ۳۴۵۶"
               className={`w-full px-4 py-4 rounded-xl border-2 text-center text-xl font-bold tracking-wider ${activationError
-                  ? "border-red-300 focus:border-red-500"
-                  : "border-gray-200 focus:border-[#7e4bd0]"
+                ? "border-red-300 focus:border-red-500"
+                : "border-gray-200 focus:border-[#7e4bd0]"
                 } outline-none transition-all`}
               dir="ltr"
             />

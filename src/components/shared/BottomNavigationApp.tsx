@@ -22,8 +22,8 @@ const navItems: NavItem[] = [
   { path: '/wallet-money', label: 'کیف پول', iconSrc: lineIconPaths.wallet },
   { path: '/shop', label: 'فروشگاه', iconSrc: lineIconPaths.store },
   { path: '/', label: 'خانه', icon: LineHomeIcon },
-  { path: '/radioteen', label: 'رادیو تین', iconSrc: lineIconPaths.podcast },
-  { path: '/friends', label: 'دوستان', iconSrc: lineIconPaths.like },
+  { path: '/digiteen/goals', label: 'اهداف', iconSrc: lineIconPaths.ahduff },
+  { path: '/friends', label: 'کافه', iconSrc: lineIconPaths.cafe },
 ]
 
 function BottomNavigationApp() {
@@ -32,11 +32,15 @@ function BottomNavigationApp() {
   const { isModalOpen } = useModal()
 
   const isActive = (path: string) => {
-    // If it's wallet path, check if current location is any wallet page
+    // Wallet path: active on any wallet page
     if (path === '/wallet-money') {
-      return location.pathname === '/wallet-money' || 
-             location.pathname === '/wallet-saving' || 
+      return location.pathname === '/wallet-money' ||
+             location.pathname === '/wallet-saving' ||
              location.pathname === '/wallet-digit'
+    }
+    // اهداف (Goals): active on any digiteen page
+    if (path === '/digiteen/goals') {
+      return location.pathname.startsWith('/digiteen')
     }
     return location.pathname === path
   }

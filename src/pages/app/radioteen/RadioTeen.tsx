@@ -12,7 +12,6 @@ import {
   ForwardIcon,
 } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartIconSolid } from "@heroicons/react/24/solid";
-import { WalletHeader } from "../../../components/shared/Wallet";
 
 const RADIOTEEN_IMG = "/image/radioteen";
 
@@ -133,11 +132,6 @@ const RadioTeen = () => {
 
   return (
     <div className="min-h-screen bg-white flex flex-col pb-24 overflow-hidden" dir="rtl">
-      {/* Fixed header - same as Friends page */}
-      <div className="shrink-0 z-30 bg-white border-b border-gray-100">
-        <WalletHeader subtitle="@mohammad-mehrabi" />
-      </div>
-
       <div className="p-4 flex-1 overflow-y-auto min-h-0">
         <AnimatePresence mode="wait">
           {viewMode === "home" && (
@@ -149,6 +143,25 @@ const RadioTeen = () => {
               transition={{ duration: 0.25 }}
               className="space-y-5"
             >
+                            {/* Search */}
+                            <motion.section
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.05 }}
+              >
+                <div className="relative">
+                  <MagnifyingGlassIcon className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="چی می‌خوای بشنوی؟"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pr-10 pl-4 py-3 rounded-xl border border-gray-200 focus:border-[#7e4bd0] focus:ring-2 focus:ring-[#7e4bd0]/20 outline-none text-gray-800 placeholder-gray-400 font-sans"
+                  />
+                </div>
+              </motion.section>
+              <img src="/image/رادیو تین.jpg" alt="" className="w-full rounded-2xl" />
+
               {/* Featured: ویژه امروز — کمدی */}
               {(() => {
                 const featCat = PILL_CATEGORIES.find((c) => c.id === FEATURED_CATEGORY_ID);
@@ -159,6 +172,7 @@ const RadioTeen = () => {
                     transition={{ duration: 0.4 }}
                     className="relative rounded-2xl overflow-hidden shadow-lg min-h-[180px]"
                   >
+
                     <img
                       src={featCat?.image ?? `${RADIOTEEN_IMG}/کمدی.png`}
                       alt=""
@@ -200,24 +214,6 @@ const RadioTeen = () => {
                   </motion.section>
                 );
               })()}
-
-              {/* Search */}
-              <motion.section
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.05 }}
-              >
-                <div className="relative">
-                  <MagnifyingGlassIcon className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder="چی می‌خوای بشنوی؟"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pr-10 pl-4 py-3 rounded-xl border border-gray-200 focus:border-[#7e4bd0] focus:ring-2 focus:ring-[#7e4bd0]/20 outline-none text-gray-800 placeholder-gray-400 font-sans"
-                  />
-                </div>
-              </motion.section>
 
               {/* دسته‌بندی پادکست‌ها - ۸ کتگوری */}
               <motion.section
@@ -307,7 +303,7 @@ const RadioTeen = () => {
                   className="absolute inset-0 w-full h-full object-cover object-right"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                <div className="absolute inset-0 flex flex-col items-end justify-end p-4 text-right">
+                <div className="absolute inset-0 flex flex-col items-start justify-end p-4 text-right">
                   {"nameLines" in category && category.nameLines ? (
                     <span className="text-white font-bold text-xl drop-shadow-md leading-tight">
                       {category.nameLines[0]}
@@ -489,9 +485,8 @@ const RadioTeen = () => {
                             setPlaybackSpeed(s);
                             setShowSpeedMenu(false);
                           }}
-                          className={`block w-full px-4 py-2 text-sm text-right hover:bg-gray-50 ${
-                            playbackSpeed === s ? "text-[#7e4bd0] font-semibold" : ""
-                          }`}
+                          className={`block w-full px-4 py-2 text-sm text-right hover:bg-gray-50 ${playbackSpeed === s ? "text-[#7e4bd0] font-semibold" : ""
+                            }`}
                         >
                           {s}x
                         </button>

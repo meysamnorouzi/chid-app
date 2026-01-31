@@ -11,7 +11,6 @@ import {
   HeartIcon,
   GiftIcon,
 } from "@heroicons/react/24/outline";
-import { WalletHeader } from "../../../components/shared/Wallet";
 
 const TEENS_PROFILE_AVATARS = [
   "/logo/teens profiles/darkoob.svg",
@@ -364,11 +363,6 @@ function MessagesPage() {
         </div>
       ) : (
         <div className="bg-white flex flex-col flex-1 min-h-0 max-w-4xl mx-auto w-full">
-          {/* Fixed header - same as Friends page */}
-          <div className="shrink-0 z-30 bg-white border-b border-gray-100">
-            <WalletHeader subtitle="@mohammad-mehrabi" />
-          </div>
-
           <div className="flex-1 overflow-y-auto min-h-0">
           {filterBuy && (
             <div className="px-4 pt-2">

@@ -22,7 +22,7 @@ const navItems: NavItem[] = [
   { path: '/wallet-money', label: 'کیف پول', iconSrc: lineIconPaths.wallet },
   { path: '/shop', label: 'فروشگاه', iconSrc: lineIconPaths.store },
   { path: '/radioteen', label: 'رادیو تین', iconSrc: lineIconPaths.podcast },
-  { path: '/friends', label: 'دوستان', iconSrc: lineIconPaths.like },
+  { path: '/friends', label: 'کافه', iconSrc: lineIconPaths.like },
 ]
 
 function SidebarNavigation() {

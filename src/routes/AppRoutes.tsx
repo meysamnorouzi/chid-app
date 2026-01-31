@@ -204,6 +204,7 @@ import OrderReceipt from '../pages/app/shop/OrderReceipt';
 import Orders from '../pages/app/shop/Orders';
 import WalletMoney from '../pages/app/wallet/WalletMoney';
 import WalletDigit from '../pages/app/wallet/WalletDigit';
+import GiveGiftDigit from '../pages/app/wallet/GiveGiftDigit';
 import WalletSaving from '../pages/app/wallet/WalletSaving';
 import InviteParent from '../pages/app/wallet/InviteParent';
 import RequestCard from '../pages/app/wallet/RequestCard';
@@ -255,7 +256,7 @@ const AppRoutes = () => {
           <Route path="/orders" element={<Orders />} />
           <Route path="/wallet-money" element={<WalletMoney />} />
           <Route path="/wallet-digit" element={<WalletDigit />} />
-       
+          <Route path="/wallet-digit/gift" element={<GiveGiftDigit />} />
           <Route path="/wallet-saving" element={<WalletSaving />} />
           <Route path="/invite-parent" element={<InviteParent />} />
          

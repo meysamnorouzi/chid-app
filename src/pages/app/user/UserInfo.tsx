@@ -24,6 +24,7 @@ import {
 import { WalletIcon } from "@heroicons/react/24/outline";
 import { Modal } from "../../../components/shared";
 import { lineIconPaths } from "../../../utils/lineIcons";
+import { FaStar, FaTrophy, FaCrown, FaGraduationCap } from "react-icons/fa";
 
 interface MonthlyBadge {
   id: string;
@@ -37,11 +38,19 @@ interface MonthlyBadge {
 interface Achievement {
   id: string;
   name: string;
-  icon: React.ComponentType<{ className?: string }>;
-  gradient: string;
-  bgColor: string;
-  iconColor: string;
+  icon: string;
   count: number;
+}
+
+interface Package {
+  id: string;
+  digits: number;
+  price: number;
+  label: string;
+  giftIcon: string;
+  gradient: string;
+  popular?: boolean;
+  bonus?: number;
 }
 
 const UserInfo = () => {
@@ -101,75 +110,74 @@ const UserInfo = () => {
   const monthlyBadges: MonthlyBadge[] = [
     { 
       id: "1", 
-      name: "Seashell", 
+      name: "مهر ماه", 
       icon: SparklesIcon, 
       gradient: "from-blue-400 to-cyan-300",
       bgColor: "bg-gradient-to-br",
       iconColor: "text-white"
-    },
-    { 
-      id: "2", 
-      name: "Cookie", 
-      icon: GiftIcon, 
-      gradient: "from-pink-500 to-rose-400",
-      bgColor: "bg-gradient-to-br",
-      iconColor: "text-white"
-    },
-    { 
-      id: "3", 
-      name: "Owl", 
-      icon: MoonIcon, 
-      gradient: "from-indigo-400 to-purple-300",
-      bgColor: "bg-gradient-to-br",
-      iconColor: "text-white"
-    },
-    { 
-      id: "4", 
-      name: "Fluffy", 
-      icon: CloudIcon, 
-      gradient: "from-gray-300 to-gray-100",
-      bgColor: "bg-gradient-to-br",
-      iconColor: "text-gray-600"
     },
   ];
 
   const achievements: Achievement[] = [
     { 
       id: "1", 
-      name: "Fighter", 
-      icon: ShieldCheckIcon, 
-      gradient: "",
-      bgColor: "bg-yellow-400",
-      iconColor: "text-white",
-      count: 10 
-    },
-    { 
-      id: "2", 
-      name: "Explorer", 
-      icon: LightBulbIcon, 
-      gradient: "",
-      bgColor: "bg-orange-500",
-      iconColor: "text-white",
+      name: "کرم کتاب", 
+      icon: "/image/Profile achivments (1).png", 
       count: 300 
     },
     { 
-      id: "3", 
-      name: "Champion", 
-      icon: TrophyIcon, 
-      gradient: "",
-      bgColor: "bg-blue-500",
-      iconColor: "text-white",
-      count: 250 
+      id: "2", 
+      name: "تیزگوش", 
+      icon: "/image/Profile achivments (2).png", 
+      count: 10 
     },
     { 
+      id: "3", 
+      name: "دیجی تینی", 
+      icon: "/image/Profile achivments (3).png", 
+      count: 100 
+    },  { 
       id: "4", 
-      name: "Archer", 
-      icon: ArrowRightIcon, 
-      gradient: "",
-      bgColor: "bg-green-500",
-      iconColor: "text-white",
-      count: 50 
-    },
+      name: "دیجی تینی", 
+      icon: "/image/Profile achivments (4).png", 
+      count: 100 
+    },  { 
+      id: "5", 
+      name: "دیجی تینی", 
+      icon: "/image/Profile achivments (5).png", 
+      count: 100 
+    },    { 
+      id: "6", 
+      name: "دیجی تینی", 
+      icon: "/image/Profile achivments (6).png", 
+      count: 100 
+    },    { 
+      id: "7", 
+      name: "دیجی تینی", 
+      icon: "/image/Profile achivments (7).png", 
+      count: 100 
+    },    
+    { 
+      id: "8", 
+      name: "دیجی تینی", 
+      icon: "/image/Profile achivments (8).png", 
+      count: 100 
+    },    
+    { 
+      id: "9", 
+      name: "دیجی تینی", 
+      icon: "/image/Profile achivments (9).png", 
+      count: 100 
+    },    
+  ];
+
+  const packages: Package[] = [
+    { id: "1", digits: 100, price: 25000, label: "پکیج کوچک", giftIcon: "/iconGift/IMG_5447.PNG", gradient: "from-blue-50 to-blue-100" },
+    { id: "2", digits: 200, price: 50000, label: "پکیج متوسط", giftIcon: "/iconGift/IMG_5448.PNG", gradient: "from-green-50 to-green-100" },
+    { id: "3", digits: 300, price: 75000, label: "پکیج بزرگ", popular: true, giftIcon: "/iconGift/IMG_5449.PNG", gradient: "from-purple-50 to-purple-100" },
+    { id: "4", digits: 400, price: 100000, label: "پکیج ویژه", giftIcon: "/iconGift/IMG_5450.PNG", gradient: "from-pink-50 to-pink-100" },
+    { id: "5", digits: 1000, price: 250000, label: "پکیج طلایی", giftIcon: "/iconGift/IMG_5451.PNG", gradient: "from-yellow-50 to-yellow-100", bonus: 100 },
+    { id: "6", digits: 2000, price: 500000, label: "پکیج الماس", giftIcon: "/iconGift/IMG_5452.PNG", gradient: "from-indigo-50 to-indigo-100", bonus: 100 },
   ];
 
   useEffect(() => {
@@ -238,7 +246,26 @@ const UserInfo = () => {
   };
   const userAvatar = getAvatarPath(userData?.avatar);
   const userHandle = userData?.phone_number || userData?.phone || userData?.nickname || "@user";
-  const joinYear = userData?.created_at ? new Date(userData.created_at).getFullYear() : 2024;
+  
+  // Format join date in Persian with day, month, and year
+  const formatJoinDate = (): string => {
+    if (!userData?.created_at) {
+      // Default to current date if no date is available
+      const date = new Date();
+      return new Intl.DateTimeFormat("fa-IR", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      }).format(date);
+    }
+    const date = new Date(userData.created_at);
+    return new Intl.DateTimeFormat("fa-IR", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    }).format(date);
+  };
+  const joinDate = formatJoinDate();
 
   // Sample stats
   const stats = {
@@ -249,6 +276,10 @@ const UserInfo = () => {
     league: "Emerald",
     xp: 65638,
     topFinishes: 10,
+    level: 15,
+    record: 265,
+    monthlyTitle: "تیزگوش برتر",
+    digit: 100000,
   };
 
   // Format balance function
@@ -382,18 +413,7 @@ const UserInfo = () => {
             </span>
           </motion.button>
 
-          {/* Digit Balance */}
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => navigate('/wallet-digit')}
-            className="flex items-center gap-2 px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors border border-gray-200"
-          >
-            <img src={lineIconPaths.digit} className="w-5 h-5" alt="دیجیت" />
-            <span className="text-sm font-bold text-gray-800">
-              {new Intl.NumberFormat("fa-IR").format(digitBalance)} دیجیت
-            </span>
-          </motion.button>
+
 
           {/* Back Button */}
           <motion.button
@@ -424,20 +444,19 @@ const UserInfo = () => {
           <div className="flex items-center gap-2">
             <span className="text-gray-800 text-sm font-medium">{userHandle}</span>
             <span className="text-gray-500 text-sm">•</span>
-            <span className="text-gray-500 text-sm">عضویت در {joinYear}</span>
+            <span className="text-gray-500 text-sm">دیجی تینی از {joinDate}</span>
           </div>
         </motion.div>
 
         {/* Action Buttons */}
         <div className="flex items-center justify-center gap-3 mb-6">
           <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={handleOpenAddFriendModal}
-            className="flex items-center gap-2 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-xl font-semibold transition-colors border border-gray-200"
+            className="p-3 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors border border-gray-200"
           >
-            <UserPlusIcon className="w-5 h-5" />
-            <span>افزودن دوست</span>
+            <UserPlusIcon className="w-6 h-6 text-gray-800" />
           </motion.button>
           <motion.button
             whileHover={{ scale: 1.05 }}
@@ -457,22 +476,44 @@ const UserInfo = () => {
           </motion.button>
         </div>
 
+        {/* Asset Shelf Section */}
+        <div className="mb-6">
+          <h2 className="text-gray-800 text-lg font-bold mb-4">طاقچه دارایی‌ها</h2>
+          <div className="grid grid-cols-3 gap-3">
+            {packages.map((pkg, index) => (
+              <motion.div
+                key={pkg.id}
+                initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ delay: index * 0.05, type: "spring", stiffness: 200 }}
+                whileHover={{ scale: 1.05, y: -3 }}
+                className={`relative bg-gradient-to-br ${pkg.gradient} rounded-2xl p-3 border-2 border-white shadow-md cursor-pointer group overflow-hidden`}
+              >
+                <div className="flex flex-col items-center">
+                  <img 
+                    src={pkg.giftIcon} 
+                    alt={pkg.label}
+                    className="w-16 h-16 object-contain mb-2 group-hover:scale-110 transition-transform"
+                  />
+                  <span className="text-gray-800 text-xs font-semibold text-center">{pkg.label}</span>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
         {/* Stats Section */}
         <div className="mb-6">
-          <h2 className="text-gray-800 text-lg font-bold mb-4">آمار</h2>
+          <h2 className="text-gray-800 text-lg font-bold mb-4">وضعیت</h2>
           <div className="bg-white border border-gray-200 rounded-xl p-4">
-            <div className="grid grid-cols-3 gap-4">
-              <div className="flex flex-col items-center">
-                <span className="text-2xl font-bold text-gray-800">{stats.courses}</span>
-                <span className="text-xs text-gray-600 mt-1">دوره‌ها</span>
-              </div>
-              <div className="flex flex-col items-center border-r border-l border-gray-200">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex flex-col items-center border-l border-gray-200">
                 <span className="text-2xl font-bold text-gray-800">{stats.following}</span>
-                <span className="text-xs text-gray-600 mt-1">کتاب ها</span>
+                <img src={lineIconPaths.book} className="w-5 h-5 mt-1" alt="کتاب" />
               </div>
               <div className="flex flex-col items-center">
                 <span className="text-2xl font-bold text-gray-800">{stats.followers}</span>
-                <span className="text-xs text-gray-600 mt-1">پادکست ها</span>
+                <img src={lineIconPaths.podcast} className="w-5 h-5 mt-1" alt="پادکست" />
               </div>
             </div>
           </div>
@@ -482,62 +523,68 @@ const UserInfo = () => {
         <div className="mb-6">
           <h2 className="text-gray-800 text-lg font-bold mb-4">خلاصه</h2>
           <div className="grid grid-cols-2 gap-4">
-            {/* Streak */}
+            {/* Level */}
             <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 }}
-              className="bg-white border border-gray-200 rounded-xl p-4 hover:border-[#7e4bd0] transition-colors"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="bg-white border border-gray-200 rounded-xl p-4"
             >
-              <div className="flex items-center gap-2 mb-2">
-                <FireIcon className="w-5 h-5 text-orange-500" />
-                <span className="text-gray-800 font-bold text-lg">{stats.streak}</span>
-              </div>
-              <span className="text-gray-600 text-xs">روز استریک</span>
-            </motion.div>
-
-            {/* League */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3 }}
-              className="bg-white border border-gray-200 rounded-xl p-4 hover:border-[#7e4bd0] transition-colors"
-            >
-              <div className="flex items-center gap-2 mb-2">
-                <TrophyIcon className="w-5 h-5 text-[#7e4bd0]" />
-                <span className="text-gray-800 font-bold text-lg">{stats.league}</span>
-              </div>
-              <span className="text-gray-600 text-xs">لیگ</span>
-            </motion.div>
-
-            {/* XP */}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.4 }}
-              className="bg-white border border-gray-200 rounded-xl p-4 hover:border-[#7e4bd0] transition-colors"
-            >
-              <div className="flex items-center gap-2 mb-2">
-                <BoltIcon className="w-5 h-5 text-yellow-500" />
-                <span className="text-gray-800 font-bold text-lg">
-                  {new Intl.NumberFormat("fa-IR").format(stats.xp)}
+              <div className="flex flex-col items-center">
+                <FaStar className="w-6 h-6 text-yellow-500 mb-2" />
+                <span className="text-gray-600 text-sm mb-1">سطح</span>
+                <span className="text-2xl font-bold text-gray-800">
+                  {new Intl.NumberFormat("fa-IR").format(stats.level)}
                 </span>
               </div>
-              <span className="text-gray-600 text-xs">امتیاز XP</span>
             </motion.div>
 
-            {/* Top Finishes */}
+            {/* Record */}
             <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.5 }}
-              className="bg-white border border-gray-200 rounded-xl p-4 hover:border-[#7e4bd0] transition-colors"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="bg-white border border-gray-200 rounded-xl p-4"
             >
-              <div className="flex items-center gap-2 mb-2">
-                <TrophyIcon className="w-5 h-5 text-yellow-400" />
-                <span className="text-gray-800 font-bold text-lg">{stats.topFinishes}</span>
+              <div className="flex flex-col items-center">
+                <FaTrophy className="w-6 h-6 text-orange-500 mb-2" />
+                <span className="text-gray-600 text-sm mb-1">رکورد</span>
+                <span className="text-2xl font-bold text-gray-800">
+                  {new Intl.NumberFormat("fa-IR").format(stats.record)} روز
+                </span>
               </div>
-              <span className="text-gray-600 text-xs">رتبه‌های برتر</span>
+            </motion.div>
+
+            {/* Monthly Title */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="bg-white border border-gray-200 rounded-xl p-4"
+            >
+              <div className="flex flex-col items-center">
+                <FaCrown className="w-6 h-6 text-purple-500 mb-2" />
+                <span className="text-gray-600 text-sm mb-1">لقب ماه</span>
+                <span className="text-lg font-bold text-gray-800 text-center">
+                  {stats.monthlyTitle}
+                </span>
+              </div>
+            </motion.div>
+
+            {/* Digit */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="bg-white border border-gray-200 rounded-xl p-4"
+            >
+              <div className="flex flex-col items-center">
+                <img src={lineIconPaths.digit} className="w-6 h-6 mb-2" alt="دیجیت" />
+                <span className="text-gray-600 text-sm mb-1">دیجیت</span>
+                <span className="text-2xl font-bold text-gray-800">
+                  {new Intl.NumberFormat("fa-IR").format(stats.digit)}
+                </span>
+              </div>
             </motion.div>
           </div>
         </div>
@@ -545,12 +592,12 @@ const UserInfo = () => {
         {/* Monthly Badges Section */}
         <div className="mb-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-gray-800 text-lg font-bold">نشان‌های ماهانه</h2>
+            <h2 className="text-gray-800 text-lg font-bold">دستاوردهای  ماه</h2>
             <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
               <ChevronLeftIcon className="w-5 h-5 text-gray-500" />
             </button>
           </div>
-          <div className="flex items-center gap-4 overflow-x-auto scrollbar-hide pb-2">
+          <div className="flex items-center justify-start">
             {monthlyBadges.map((badge, index) => {
               const IconComponent = badge.icon;
               return (
@@ -559,13 +606,14 @@ const UserInfo = () => {
                   initial={{ opacity: 0, scale: 0.8, y: 20 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   transition={{ delay: 0.6 + index * 0.1, type: "spring", stiffness: 200 }}
-                  whileHover={{ scale: 1.1, y: -5 }}
-                  className="shrink-0"
+                  whileHover={{ scale: 1.05, y: -3 }}
+                  className="flex flex-col items-center"
                 >
-                  <div className={`relative w-20 h-20 ${badge.bgColor} ${badge.gradient} rounded-2xl flex items-center justify-center border-2 border-white group cursor-pointer overflow-hidden`}>
+                  <div className={`relative w-24 h-24 ${badge.bgColor} ${badge.gradient} rounded-2xl flex items-center justify-center border-2 border-white shadow-lg group cursor-pointer overflow-hidden mb-3`}>
                     <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300"></div>
-                    <IconComponent className={`w-10 h-10 ${badge.iconColor} relative z-10`} />
+                    <IconComponent className={`w-12 h-12 ${badge.iconColor} relative z-10`} />
                   </div>
+                  <span className="text-gray-800 text-sm font-semibold">{badge.name}</span>
                 </motion.div>
               );
             })}
@@ -575,12 +623,12 @@ const UserInfo = () => {
         {/* Achievements Section */}
         <div className="mb-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-gray-800 text-lg font-bold">دستاوردها</h2>
+            <h2 className="text-gray-800 text-lg font-bold">مدال‌های من</h2>
             <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
               <ChevronLeftIcon className="w-5 h-5 text-gray-500" />
             </button>
           </div>
-          <div className="flex items-center gap-4 overflow-x-auto scrollbar-hide pb-2">
+          <div className="grid grid-cols-4 gap-4">
             {achievements.map((achievement, index) => {
               const IconComponent = achievement.icon;
               return (
@@ -590,21 +638,10 @@ const UserInfo = () => {
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   transition={{ delay: 0.9 + index * 0.1, type: "spring", stiffness: 200 }}
                   whileHover={{ scale: 1.05, y: -3 }}
-                  className="shrink-0 relative"
+                  className="flex flex-col items-center"
                 >
-                  <div className={`w-24 h-28 ${achievement.bgColor} rounded-2xl rounded-b-xl flex flex-col items-center justify-center border-2 border-white relative overflow-hidden group cursor-pointer`}>
-                    {/* Icon Section */}
-                    <div className="flex-1 flex items-center justify-center w-full rounded-t-2xl">
-                      <IconComponent className={`w-12 h-12 ${achievement.iconColor}`} />
-                    </div>
-                    
-                    {/* Count Badge */}
-                    <div className="w-full bg-white px-2 py-2.5 rounded-b-xl">
-                      <span className="text-xs font-bold text-gray-800 block text-center">
-                        {new Intl.NumberFormat("fa-IR").format(achievement.count)}
-                      </span>
-                    </div>
-                  </div>
+                  <img src={achievement.icon} alt="" className="w-full aspect-[1/1] rounded-2xl" />
+                  <span className="text-gray-800 text-sm font-semibold mt-2">{achievement.name}</span>
                 </motion.div>
               );
             })}

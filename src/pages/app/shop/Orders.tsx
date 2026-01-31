@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import WalletHeader from "../../../components/shared/Wallet/WalletHeader";
 import { formatPrice } from "../../../utils/priceUtils";
 import { useModal } from "../../../contexts/ModalContext";
 
@@ -66,7 +65,7 @@ const Orders = () => {
   if (orders.length === 0) {
     return (
       <div className="flex flex-col bg-white min-h-screen pb-32">
-        <WalletHeader greeting="محمد مهرابی" subtitle="@mohammad-mehrabi" />
+    
         <div className="flex flex-col items-center justify-center flex-1 px-4 py-20">
           <img src="/gif/List.gif" alt="لیست سفارشات" className="w-60 h-60 mb-4" />
           <p className="font-bold">سفارشی وجود ندارد</p>
@@ -83,8 +82,6 @@ const Orders = () => {
 
   return (
     <div className="flex flex-col bg-white min-h-screen pb-32">
-      <WalletHeader greeting="محمد مهرابی" subtitle="@mohammad-mehrabi" />
-
       <div className="px-4 flex flex-col gap-4 mt-2 pb-8">
         {orders.map((order) => (
           <motion.div

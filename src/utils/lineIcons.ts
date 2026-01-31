@@ -11,6 +11,7 @@ export function lineIcon(filename: string): string {
 
 /** Predefined line icon paths synced with public/icons/line icons/ file names */
 export const lineIconPaths = {
+  ahduff: lineIcon("ahduff.svg"),
   book: lineIcon("book.svg"),
   cafe: lineIcon("cafe.svg"),
   card: lineIcon("card.svg"),
