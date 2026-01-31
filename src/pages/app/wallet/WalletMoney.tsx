@@ -573,7 +573,7 @@ function WalletMoney() {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20 md:pb-4" dir="rtl">
-      <WalletTabs activeTab="money" />
+      <WalletTabs activeTab="money" isParentInvited={isParentInvited} />
 
       <div className={`px-4 md:px-6 lg:px-8 py-4 md:py-6 lg:py-8 max-w-6xl mx-auto relative ${isParentInvited ? 'bg-white' : 'inset-0 bg-gradient-to-br from-white/95 via-purple-50/90 to-indigo-50/90 backdrop-blur-md'}`}>
         {isParentInvited ? (

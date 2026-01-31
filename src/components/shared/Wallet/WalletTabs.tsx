@@ -54,10 +54,10 @@ function WalletTabs({ activeTab, onTabChange, isParentInvited = true }: WalletTa
         return (
           <div
             key={tab.id}
-            onClick={() => handleTabClick(tab.id, tab.path, isDisabled)}
+            onClick={() => !isDisabled && handleTabClick(tab.id, tab.path, isDisabled)}
             className={`h-10 border gap-2 rounded-lg flex justify-center items-center transition-all ${
               isDisabled
-                ? "opacity-50 cursor-not-allowed"
+                ? "opacity-50 cursor-not-allowed pointer-events-none"
                 : "cursor-pointer hover:opacity-80"
             } ${
               isActive
@@ -74,7 +74,7 @@ function WalletTabs({ activeTab, onTabChange, isParentInvited = true }: WalletTa
             />
             <p
               className={`text-xs font-medium ${
-                isActive ? "text-[#7e4bd0]" : "text-black"
+                isActive ? "text-[#7e4bd0]" : isDisabled ? "text-gray-400" : "text-black"
               }`}
             >
               {tab.label}
