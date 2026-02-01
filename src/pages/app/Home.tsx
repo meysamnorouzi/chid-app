@@ -73,14 +73,14 @@ const HOME_MAP_HOTSPOTS: Hotspot[] = [
     path: "/digibook",
   },
   { id: "digibook", type: "rect", x: 1051, y: 0, width: 525, height: 301, path: "/digibook" },
-  /** Shahre farang path (d=" M 790.48 704.34 C ... Z") — bbox + a little buffer; only this shape goes to shahr-farang. */
+  /** Shahre farang path (d=" M 790.48 704.34 C ... Z") — bbox + buffer, extra at bottom. */
   {
     id: "shahr-farang-shape",
     type: "rect",
     x: 777,
     y: 689,
     width: 55,
-    height: 44,
+    height: 90,
     path: "/shahr-farang",
   },
   /** Radio teen path (d=" M 969.84 721.77 C ... Z") — bbox + a little buffer; only this shape goes to radioteen. */

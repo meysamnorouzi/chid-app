@@ -118,7 +118,7 @@ const UserInfo = () => {
     },
   ];
 
-  const achievements: Achievement[] = [
+  const allAchievements: Achievement[] = [
     { 
       id: "1", 
       name: "کرم کتاب", 
@@ -164,6 +164,10 @@ const UserInfo = () => {
       count: 100 
     },      
   ];
+  // Only show کرم کتاب and تیزگوش for now - hide others
+  const achievements = allAchievements.filter((a) => 
+    a.name === "کرم کتاب" || a.name === "تیزگوش"
+  );
 
   const packages: Package[] = [
     { id: "1", digits: 100, price: 25000, label: "پکیج کوچک", giftIcon: "/iconGift/IMG_5447.PNG", gradient: "from-blue-50 to-blue-100" },

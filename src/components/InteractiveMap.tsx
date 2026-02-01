@@ -28,6 +28,55 @@ const MIN_ZOOM = 1;
 const MAX_ZOOM = 10;
 const ZOOM_SENSITIVITY = 0.002;
 
+/** Visible viewBox region with xMidYMid slice - depends on container aspect ratio. */
+function getVisibleViewBox(
+  containerW: number,
+  containerH: number,
+  vbW: number,
+  vbH: number
+): { xMin: number; xMax: number; yMin: number; yMax: number } {
+  if (containerW <= 0 || containerH <= 0) {
+    return { xMin: 0, xMax: vbW, yMin: 0, yMax: vbH };
+  }
+  const containerAspect = containerW / containerH;
+  const vbAspect = vbW / vbH;
+  if (containerAspect >= vbAspect) {
+    // Wider container: full width visible, vertical slice (top/bottom cropped)
+    const visibleH = (containerH / containerW) * vbW;
+    const yMin = (vbH - visibleH) / 2;
+    const yMax = (vbH + visibleH) / 2;
+    return { xMin: 0, xMax: vbW, yMin, yMax };
+  } else {
+    // Taller container: full height visible, horizontal slice (left/right cropped)
+    const visibleW = (containerW / containerH) * vbH;
+    const xMin = (vbW - visibleW) / 2;
+    const xMax = (vbW + visibleW) / 2;
+    return { xMin, xMax, yMin: 0, yMax: vbH };
+  }
+}
+
+/** Clamp transform: allow pan until SVG edges reach viewport edges (no empty space).
+ *  Pan range enables exploring all edges at any zoom level. */
+function clampTransform(
+  x: number,
+  y: number,
+  scale: number,
+  visible: { xMin: number; xMax: number; yMin: number; yMax: number }
+): { x: number; y: number } {
+  const contentW = MAP_VIEWBOX.width * scale;
+  const contentH = MAP_VIEWBOX.height * scale;
+  const visibleW = visible.xMax - visible.xMin;
+  const visibleH = visible.yMax - visible.yMin;
+  const xMin = visible.xMax - contentW;
+  const xMax = visible.xMin;
+  const yMin = visible.yMax - contentH;
+  const yMax = visible.yMin;
+  return {
+    x: Math.max(xMin, Math.min(xMax, x)),
+    y: Math.max(yMin, Math.min(yMax, y)),
+  };
+}
+
 const DEFAULT_HOTSPOTS: Hotspot[] = [
   { id: "shop", type: "rect", x: 700, y: 400, width: 120, height: 80, path: "/shop" },
   { id: "wallet", type: "circle", cx: 400, cy: 450, r: 60, path: "/wallet-money" },
@@ -69,6 +118,7 @@ export function InteractiveMap({
 
   const [transform, setTransform] = useState({ x: 0, y: 0, scale: 1 });
   const [isPanning, setIsPanning] = useState(false);
+  const containerSizeRef = useRef({ w: MAP_VIEWBOX.width, h: MAP_VIEWBOX.height });
   const panStart = useRef<{ x: number; y: number; startX: number; startY: number } | null>(null);
   const pinchStart = useRef<{ distance: number; center: { x: number; y: number }; scale: number; x: number; y: number } | null>(null);
   const transformRef = useRef(transform);
@@ -76,6 +126,25 @@ export function InteractiveMap({
   const hasPannedRef = useRef(false);
 
   transformRef.current = transform;
+
+  useEffect(() => {
+    const updateSize = (el: Element) => {
+      const rect = el.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0) {
+        containerSizeRef.current = { w: rect.width, h: rect.height };
+      }
+    };
+    const container = containerRef.current;
+    if (container) {
+      updateSize(container);
+      const ro = new ResizeObserver((entries) => {
+        for (const e of entries) updateSize(e.target);
+      });
+      ro.observe(container);
+      return () => ro.disconnect();
+    }
+    return undefined;
+  }, [mapInner]);
 
   useEffect(() => {
     let cancelled = false;
@@ -108,16 +177,20 @@ export function InteractiveMap({
   const handleMouseMove = useCallback(
     (e: React.MouseEvent) => {
       if (!panStart.current || !svgRef.current) return;
+      const svg = svgRef.current;
+      const rect = svg.getBoundingClientRect();
+      const w = rect.width || containerSizeRef.current.w;
+      const h = rect.height || containerSizeRef.current.h;
       const dx = e.clientX - panStart.current.startX;
       const dy = e.clientY - panStart.current.startY;
       if (Math.hypot(dx, dy) > 8) hasPannedRef.current = true;
-      const ctm = svgRef.current.getScreenCTM();
+      const ctm = svg.getScreenCTM();
       if (!ctm) return;
-      setTransform({
-        ...transform,
-        x: panStart.current.x + dx / ctm.a,
-        y: panStart.current.y + dy / ctm.d,
-      });
+      const rawX = panStart.current.x + dx / ctm.a;
+      const rawY = panStart.current.y + dy / ctm.d;
+      const visible = getVisibleViewBox(w, h, MAP_VIEWBOX.width, MAP_VIEWBOX.height);
+      const { x, y } = clampTransform(rawX, rawY, transform.scale, visible);
+      setTransform({ ...transform, x, y });
     },
     [transform]
   );
@@ -205,27 +278,35 @@ export function InteractiveMap({
     [transform]
   );
 
+  const getVisibleBounds = useCallback(() => {
+    const el = svgRef.current;
+    const w = el ? (el.getBoundingClientRect().width || containerSizeRef.current.w) : containerSizeRef.current.w;
+    const h = el ? (el.getBoundingClientRect().height || containerSizeRef.current.h) : containerSizeRef.current.h;
+    return getVisibleViewBox(w, h, MAP_VIEWBOX.width, MAP_VIEWBOX.height);
+  }, []);
+
   const handleTouchMove = useCallback(
     (e: React.TouchEvent) => {
+      const visible = getVisibleBounds();
       if (e.touches.length === 2 && pinchStart.current && svgRef.current) {
         e.preventDefault();
         const dist = getTouchDistance(Array.from(e.touches) as { clientX: number; clientY: number }[]);
         const ratio = dist / pinchStart.current.distance;
         const newScale = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, pinchStart.current.scale * ratio));
         const { center, x, y } = pinchStart.current;
-        const newX = x + (center.x - x) * (1 - newScale / pinchStart.current.scale);
-        const newY = y + (center.y - y) * (1 - newScale / pinchStart.current.scale);
+        const rawX = x + (center.x - x) * (1 - newScale / pinchStart.current.scale);
+        const rawY = y + (center.y - y) * (1 - newScale / pinchStart.current.scale);
+        const { x: newX, y: newY } = clampTransform(rawX, rawY, newScale, visible);
         setTransform({ x: newX, y: newY, scale: newScale });
       } else if (e.touches.length === 1 && panStart.current && svgRef.current) {
         const ctm = svgRef.current.getScreenCTM();
         if (!ctm) return;
         const dx = e.touches[0].clientX - panStart.current.startX;
         const dy = e.touches[0].clientY - panStart.current.startY;
-        setTransform({
-          ...transform,
-          x: panStart.current.x + dx / ctm.a,
-          y: panStart.current.y + dy / ctm.d,
-        });
+        const rawX = panStart.current.x + dx / ctm.a;
+        const rawY = panStart.current.y + dy / ctm.d;
+        const { x, y } = clampTransform(rawX, rawY, transform.scale, visible);
+        setTransform({ ...transform, x, y });
       }
     },
     [transform]
@@ -244,12 +325,17 @@ export function InteractiveMap({
     if (!el || !mapInner) return;
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
+      const rect = el.getBoundingClientRect();
+      const w = rect.width || containerSizeRef.current.w;
+      const h = rect.height || containerSizeRef.current.h;
       const delta = 1 - e.deltaY * ZOOM_SENSITIVITY;
       const { x, y, scale } = transformRef.current;
       const pt = screenToViewBox(el, e.clientX, e.clientY);
       const newScale = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, scale * delta));
-      const newX = x + (pt.x - x) * (1 - newScale / scale);
-      const newY = y + (pt.y - y) * (1 - newScale / scale);
+      const rawX = x + (pt.x - x) * (1 - newScale / scale);
+      const rawY = y + (pt.y - y) * (1 - newScale / scale);
+      const visible = getVisibleViewBox(w, h, MAP_VIEWBOX.width, MAP_VIEWBOX.height);
+      const { x: newX, y: newY } = clampTransform(rawX, rawY, newScale, visible);
       setTransform({ x: newX, y: newY, scale: newScale });
     };
     el.addEventListener("wheel", onWheel, { passive: false });

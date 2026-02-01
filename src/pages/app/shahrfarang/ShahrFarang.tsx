@@ -30,13 +30,19 @@ const CATEGORIES: ShahrfarangCategory[] = [
   { id: "bizteen", name: "بیزینس تین", desc: "کسب‌وکار نوجوان", imageUrl: `${SHAHRFARANG_IMAGE_BASE}/بیزینس تین.jpg` },
 ];
 
-/** Videos from public/videos/ — used in explore grid and reels */
-const VIDEOS: ReelsVideo[] = [
+/** Base videos from public/videos/ — repeated to fill page for sample */
+const BASE_VIDEOS: ReelsVideo[] = [
   { id: "1", src: `${VIDEOS_BASE}/IMG_0798.MP4`, categoryId: "funtime", views: "۱۲K", title: "ویدیو سرگرمی" },
   { id: "2", src: `${VIDEOS_BASE}/IMG_0810.MP4`, categoryId: "tech", views: "۸.۵K", title: "تکنولوژی" },
   { id: "3", src: `${VIDEOS_BASE}/video_2026-01-31_19-06-29.mp4`, categoryId: "fashion", views: "۲۳K", title: "مد و فشن" },
   { id: "4", src: `${VIDEOS_BASE}/video_2026-01-31_19-06-33.mp4`, categoryId: "cooking", views: "۱۵K", title: "آشپزی" },
 ];
+
+/** Repeat base videos to fill full page as sample tiles */
+const VIDEOS: ReelsVideo[] = Array.from({ length: 24 }, (_, i) => {
+  const base = BASE_VIDEOS[i % BASE_VIDEOS.length];
+  return { ...base, id: `${base.id}-${i}` };
+});
 
 /** Aspect ratio classes for varied tile sizes — Instagram Explore style */
 const ASPECT_RATIOS = [

@@ -237,7 +237,6 @@ const AppRoutes = () => {
         <Route path="/request-card" element={<RequestCard />} />
         <Route path="/select-card-design" element={<SelectCardDesign />} />
         <Route path="/wallet_charge" element={<WalletCharge />} />
-        <Route path="/user-info" element={<UserInfo />} />
       </Route>
       {/* App Page - Protected Routes */}
       <Route element={<ProtectedRoute />}>
@@ -247,6 +246,7 @@ const AppRoutes = () => {
         </Route>
         {/* Other pages with main layout */}
         <Route element={<MainLayout />}>
+          <Route path="/user-info" element={<UserInfo />} />
           <Route path="/friends" element={<Friends />} />
           <Route path="/shop" element={<Shop />} />
           <Route path="/shop/:id" element={<ProductDetail />} />
