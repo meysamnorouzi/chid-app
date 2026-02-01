@@ -162,59 +162,6 @@ const RadioTeen = () => {
               </motion.section>
               <img src="/image/رادیو تین.jpg" alt="" className="w-full rounded-2xl" />
 
-              {/* Featured: ویژه امروز — کمدی */}
-              {(() => {
-                const featCat = PILL_CATEGORIES.find((c) => c.id === FEATURED_CATEGORY_ID);
-                return (
-                  <motion.section
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4 }}
-                    className="relative rounded-2xl overflow-hidden shadow-lg min-h-[180px]"
-                  >
-
-                    <img
-                      src={featCat?.image ?? `${RADIOTEEN_IMG}/کمدی.png`}
-                      alt=""
-                      className="absolute inset-0 w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/20" />
-                    <div className="relative z-10 p-5 text-white flex flex-col h-full justify-end">
-                      <p className="text-sm font-medium opacity-90 mb-0.5">
-                        ویژه امروز: {featCat?.name ?? "کمدی"}
-                      </p>
-                      <h2 className="text-xl font-bold mb-1">
-                        پادکست‌های طنز و شاد
-                      </h2>
-                      <p className="text-sm opacity-90 mb-4">
-                        پیشنهاد این هفته
-                      </p>
-                      <div className="flex gap-3">
-                        {FEATURED_EPISODES.map((ep) => (
-                          <button
-                            key={ep.id}
-                            onClick={() => handleEpisodeClick(ep)}
-                            className="flex-1 min-w-0 flex items-center gap-2 bg-white/20 rounded-xl p-2 backdrop-blur-sm hover:bg-white/30 transition"
-                          >
-                            <img
-                              src={featCat?.image ?? ep.coverUrl}
-                              alt=""
-                              className="w-12 h-12 rounded-lg object-cover aspect-square"
-                            />
-                            <div className="text-right truncate">
-                              <p className="text-sm font-semibold truncate">
-                                {ep.title}
-                              </p>
-                              <p className="text-xs opacity-80">{ep.duration}</p>
-                            </div>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </motion.section>
-                );
-              })()}
-
               {/* دسته‌بندی پادکست‌ها - ۸ کتگوری */}
               <motion.section
                 initial={{ opacity: 0, y: 15 }}

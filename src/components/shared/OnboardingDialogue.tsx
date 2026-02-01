@@ -3,6 +3,12 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
 const ONBOARDING_TEXTS: Record<string, string> = {
+  "first-welcome": `به شهر دیجی‌تین خوش اومدی
+اینجا فقط یه اپ نیست؛
+یه شهره که توش می‌تونی
+بگردی، انتخاب کنی و کم‌کم پیشرفت کنی.
+
+من کنارتم که توی شهر گم نشی`,
   "wallet-shape": `اینجا مرکز فرماندهی پولته
 می‌تونی ببینی چقدر داری،
 کِی خرج کردی

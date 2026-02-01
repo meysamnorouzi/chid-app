@@ -537,7 +537,14 @@ const ProductDetail = () => {
   useEffect(() => {
     setCurrentImageIndex(0);
   }, [id]);
-  
+
+  // Scroll to top when entering product detail
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, [id]);
+
   // Navigation functions
   const goToNextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % productImages.length);

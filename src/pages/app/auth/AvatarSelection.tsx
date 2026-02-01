@@ -29,8 +29,6 @@ const avatarList = [
   "rabi.svg",
   "robot police.svg",
   "sarmaee.svg",
-  "skull.svg",
-  "ufi.svg",
   "wiking.svg",
 ];
 

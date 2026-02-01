@@ -36,7 +36,6 @@ const cardDesigns: CardDesign[] = [
   { id: "c-special-2", name: "ناروتو", image: "/carts/c special 2.svg" },
   { id: "c-special-3", name: "لیلی", image: "/carts/c special 3.svg" },
   { id: "c-special-4", name: "شازده", image: "/carts/c special 4.svg" },
-  { id: "13", name: "کارت دیجی تین", image: "/carts/Screenshot 2026-01-31 at 1.16.16 AM.png" },
 ];
 
 // Step types: 3 verification steps before card selection
@@ -73,6 +72,13 @@ function RequestCard() {
 
   // Get user name from localStorage or use default
   const userName = "میثم نوروزی"; // Can be loaded from localStorage/context
+
+  // Scroll to top whenever step changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, [currentStep]);
 
   // Extract dominant color from image
   const extractDominantColor = (imageUrl: string) => {

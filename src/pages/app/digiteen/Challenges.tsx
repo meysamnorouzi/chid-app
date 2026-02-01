@@ -149,7 +149,7 @@ const Challenges = () => {
               transition={{ delay: 0.15, duration: 0.4 }}
               className="font-bold text-[18px] text-white"
             >
-              چالش بزن، دیجیت بگیر
+              چالش‌های دوره‌ای دیجی‌تین رو از دست نده! 
             </motion.p>
             <motion.p
               initial={{ opacity: 0, x: -12 }}
@@ -157,7 +157,7 @@ const Challenges = () => {
               transition={{ delay: 0.25, duration: 0.4 }}
               className="font-semibold text-sm text-white/90 mt-1"
             >
-              درس و پادکست تموم کن، جایزه بگیر
+    مهارتت رو به رخ بکش، دیجیت بگیر
             </motion.p>
           </div>
           <motion.img

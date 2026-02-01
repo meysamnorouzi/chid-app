@@ -42,10 +42,14 @@ function WalletTabs({ activeTab, onTabChange, isParentInvited = true }: WalletTa
       onTabChange(tab);
     }
     navigate(path);
+    // Scroll to top when changing tabs
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
   };
 
   return (
-    <div className="grid grid-cols-3 items-center px-4 gap-2 bg-white py-2 sticky top-0 z-10">
+    <div className="grid grid-cols-3 items-center px-4 gap-2 bg-white py-2 sticky top-20 z-10">
       {tabs.map((tab) => {
         const isActive = activeTab === tab.id;
         const isSavingTab = tab.id === "saving";

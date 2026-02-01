@@ -162,13 +162,7 @@ const UserInfo = () => {
       name: "دیجی تینی", 
       icon: "/image/Profile achivments (8).png", 
       count: 100 
-    },    
-    { 
-      id: "9", 
-      name: "دیجی تینی", 
-      icon: "/image/Profile achivments (9).png", 
-      count: 100 
-    },    
+    },      
   ];
 
   const packages: Package[] = [

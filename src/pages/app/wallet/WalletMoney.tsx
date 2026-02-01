@@ -457,6 +457,15 @@ function WalletMoney() {
     loadWalletData();
   }, []);
 
+  // Scroll to top when parent is invited and view switches to main wallet
+  useEffect(() => {
+    if (isParentInvited) {
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    }
+  }, [isParentInvited]);
+
   const formatBalance = (balance: number): string => {
     return new Intl.NumberFormat("fa-IR").format(balance);
   };

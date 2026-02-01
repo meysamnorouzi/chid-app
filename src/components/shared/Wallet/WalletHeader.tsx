@@ -63,16 +63,15 @@ function WalletHeader({
       <div className="relative">
         <div
           onClick={showCartBadge ? handleIconClick : undefined}
-          className={`p-2 border border-[#7e4bd0] w-12 h-12 flex justify-center items-center rounded-full ${
-            showCartBadge ? "cursor-pointer hover:bg-purple-50 transition-colors" : ""
-          }`}
+          className={`p-2 border border-[#7e4bd0] w-12 h-12 flex justify-center items-center rounded-full ${showCartBadge ? "cursor-pointer hover:bg-purple-50 transition-colors" : ""
+            }`}
         >
-          {icon || 
-          <div  
-      onClick={() => navigate(`/messages`)}
-      >
-             <img src={lineIconPaths.notif} className="w-5 h-5" alt="notifications" />
-        </div>
+          {icon ||
+            <div
+              onClick={() => navigate(`/messages`)}
+            >
+              <img src={lineIconPaths.notif} className="w-5 h-5" alt="notifications" />
+            </div>
           }
         </div>
         {showCartBadge && cartItemsCount > 0 && (

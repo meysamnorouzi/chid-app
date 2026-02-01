@@ -15,7 +15,7 @@ interface MainLayoutProps {
 function MainLayoutInner({ children }: { children?: ReactNode }) {
   const location = useLocation();
   const headerConfig = usePageHeader();
-  const shopIcon = location.pathname === "/shop" ? (
+  const shopIcon = (location.pathname === "/shop" || location.pathname.startsWith("/shop/")) ? (
     <img src={lineIconPaths.store} className="w-5 h-5" alt="فروشگاه" />
   ) : undefined;
   return (

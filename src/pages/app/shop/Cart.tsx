@@ -73,6 +73,13 @@ const Cart = () => {
     };
   }, []);
 
+  // Scroll to top when entering cart
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, []);
+
   // Handle purchase
   const handlePurchase = () => {
     if (!hasEnoughBalance || totalPrice === 0 || cartItems.length === 0) {
@@ -202,7 +209,7 @@ const Cart = () => {
   }
 
   return (
-    <div className="flex flex-col bg-white min-h-screen pb-40 md:pb-4">
+    <div className="flex flex-col bg-white min-h-screen pb-24 md:pb-4">
       <div className="px-4 md:px-6 lg:px-8 flex flex-col md:flex-row md:gap-6 lg:gap-8 gap-4 pb-40 md:pb-4 max-w-7xl mx-auto w-full">
         {/* Left Column: Cart Items */}
         <div className="md:w-2/3 lg:w-3/5 flex flex-col gap-4 md:gap-6">
@@ -388,7 +395,7 @@ const Cart = () => {
       </div>
 
       {/* Fixed Summary and Action Buttons - Mobile Only */}
-      <div className="fixed md:hidden bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-4 shadow-lg z-40">
+      <div className="md:hidden bg-white border-t border-gray-200 px-4 py-4 z-40">
         {/* Wallet Balance */}
         <div className="rounded-lg p-4 mb-3 text-[#7e4bd0]">
           <div className="flex items-center justify-between">

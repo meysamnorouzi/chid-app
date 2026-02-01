@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { lineIconPaths } from "../../utils/lineIcons";
@@ -6,6 +6,7 @@ import { InteractiveMap, type Hotspot, type ClickableBounds } from "../../compon
 import { OnboardingDialogue } from "../../components/shared/OnboardingDialogue";
 
 const ONBOARDING_STORAGE_KEY = "chid_onboarding_seen";
+const FIRST_WELCOME_STORAGE_KEY = "child_first_welcome_seen";
 const ONBOARDING_HOTSPOTS = ["wallet-shape", "shop-shape", "cafe-shape", "profile-shape", "saving-shape", "onboarding-only-shape", "cinema-onboarding-shape", "smartinez-onboarding-shape"] as const;
 const HOTSPOT_LABELS: Record<string, string> = {
   "wallet-shape": "کیف پول",
@@ -190,9 +191,28 @@ const Home = () => {
     path: string;
     label: string;
   } | null>(null);
+  const [showFirstWelcome, setShowFirstWelcome] = useState(false);
+
+  // Show first-time welcome on initial visit
+  useEffect(() => {
+    const seen = localStorage.getItem(FIRST_WELCOME_STORAGE_KEY);
+    if (!seen) {
+      setShowFirstWelcome(true);
+    }
+  }, []);
+
+  const handleFirstWelcomeClose = useCallback(() => {
+    localStorage.setItem(FIRST_WELCOME_STORAGE_KEY, "true");
+    setShowFirstWelcome(false);
+  }, []);
 
   const handleHotspotClick = useCallback(
     (hotspot: { id: string; path: string }) => {
+      // Don't show hotspot onboarding while first welcome is visible
+      if (showFirstWelcome) {
+        if (hotspot.path) navigate(hotspot.path);
+        return;
+      }
       const isOnboardingHotspot = ONBOARDING_HOTSPOTS.includes(
         hotspot.id as (typeof ONBOARDING_HOTSPOTS)[number]
       );
@@ -208,7 +228,7 @@ const Home = () => {
         navigate(hotspot.path);
       }
     },
-    [navigate]
+    [navigate, showFirstWelcome]
   );
 
   const handleOnboardingClose = useCallback(() => {
@@ -307,6 +327,18 @@ const Home = () => {
         />
       </div>
 
+      {/* First-time welcome - only on first visit */}
+      <AnimatePresence>
+        {showFirstWelcome && (
+          <OnboardingDialogue
+            key="first-welcome"
+            hotspotId="first-welcome"
+            path=""
+            label=""
+            onClose={handleFirstWelcomeClose}
+          />
+        )}
+      </AnimatePresence>
       {/* Onboarding dialogue - between Boz (bottom-left) and menu (bottom-right) */}
       <AnimatePresence>
         {onboarding && (
