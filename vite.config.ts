@@ -9,13 +9,13 @@ export default defineConfig({
     VitePWA({
       registerType: 'prompt', // User chooses when to update
       devOptions: { enabled: true }, // Test PWA in dev
-      includeAssets: ['logo/logo.svg'],
+      includeAssets: ['logo/logo.svg', 'logo/icon-purple.svg'],
       manifest: {
         name: 'Digiteen',
         short_name: 'Digiteen',
         description: 'Digiteen - دیجی‌تین',
-        theme_color: '#7653AE',
-        background_color: '#F9F9F9',
+        theme_color: '#7e4bd0',
+        background_color: '#7e4bd0',
         display: 'standalone',
         orientation: 'portrait-primary',
         scope: '/',
@@ -23,19 +23,19 @@ export default defineConfig({
         id: '/',
         icons: [
           {
-            src: '/logo/logo.svg',
+            src: '/logo/icon-purple.svg',
             sizes: '192x192',
             type: 'image/svg+xml',
             purpose: 'any',
           },
           {
-            src: '/logo/logo.svg',
+            src: '/logo/icon-purple.svg',
             sizes: '512x512',
             type: 'image/svg+xml',
             purpose: 'any',
           },
           {
-            src: '/logo/logo.svg',
+            src: '/logo/icon-purple.svg',
             sizes: '512x512',
             type: 'image/svg+xml',
             purpose: 'maskable',
@@ -43,6 +43,37 @@ export default defineConfig({
         ],
         categories: ['social', 'lifestyle'],
         prefer_related_applications: false,
+        // App shortcuts: long-press icon on Android shows these actions
+        shortcuts: [
+          {
+            name: 'کیف پول',
+            short_name: 'کیف پول',
+            description: 'ورود به کیف پول',
+            url: '/wallet-money',
+            icons: [{ src: '/logo/icon-purple.svg', sizes: '192x192', type: 'image/svg+xml', purpose: 'any' }],
+          },
+          {
+            name: 'فروشگاه',
+            short_name: 'فروشگاه',
+            description: 'ورود به فروشگاه',
+            url: '/shop',
+            icons: [{ src: '/logo/icon-purple.svg', sizes: '192x192', type: 'image/svg+xml', purpose: 'any' }],
+          },
+          {
+            name: 'پروفایل',
+            short_name: 'پروفایل',
+            description: 'ورود به پروفایل',
+            url: '/user-info',
+            icons: [{ src: '/logo/icon-purple.svg', sizes: '192x192', type: 'image/svg+xml', purpose: 'any' }],
+          },
+          {
+            name: 'پیام‌ها',
+            short_name: 'پیام‌ها',
+            description: 'ورود به پیام‌ها',
+            url: '/messages',
+            icons: [{ src: '/logo/icon-purple.svg', sizes: '192x192', type: 'image/svg+xml', purpose: 'any' }],
+          },
+        ],
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2,ttf}'],
