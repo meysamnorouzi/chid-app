@@ -3,6 +3,7 @@ import { ThemeProvider } from './theme';
 import AppRoutes from './routes/AppRoutes';
 import SplashScreen from './components/SplashScreen';
 import { ModalProvider } from './contexts/ModalContext';
+import { ReloadPrompt, InstallPrompt, OfflineBanner } from './components/pwa';
 import './App.css';
 
 function App() {
@@ -18,7 +19,12 @@ function App() {
         {showSplash ? (
           <SplashScreen onComplete={handleSplashComplete} />
         ) : (
-          <AppRoutes />
+          <>
+            <OfflineBanner />
+            <AppRoutes />
+            <ReloadPrompt />
+            <InstallPrompt />
+          </>
         )}
       </ModalProvider>
     </ThemeProvider>

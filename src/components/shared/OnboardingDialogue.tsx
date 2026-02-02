@@ -97,9 +97,17 @@ export function OnboardingDialogue({
     return () => clearInterval(timer);
   }, [hotspotId, fullText]);
 
-  const handleGo = () => {
+  const handleGo = (e: React.PointerEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     onClose();
     if (path) navigate(path);
+  };
+
+  const handleSecondaryClose = (e: React.PointerEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onClose();
   };
 
   const isOnboardingOnly = !path;
@@ -113,6 +121,8 @@ export function OnboardingDialogue({
       exit={{ opacity: 0, y: 10, scale: 0.95 }}
       transition={{ type: "spring", damping: 25, stiffness: 300 }}
       className="absolute bottom-32 left-28 right-16 z-[45] mx-auto max-w-sm"
+      onClick={(e) => e.stopPropagation()}
+      onPointerDown={(e) => e.stopPropagation()}
     >
       <div
         className="relative rounded-2xl bg-white/95 backdrop-blur-md shadow-xl border border-gray-200/80 overflow-hidden"
@@ -128,15 +138,17 @@ export function OnboardingDialogue({
             )}
           </p>
           <motion.button
+            type="button"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            onClick={handleGo}
+            onPointerDown={handleGo}
             className="mt-4 w-full py-3 px-4 rounded-xl bg-[#7e4bd0] text-white font-bold text-base shadow-lg hover:bg-[#6a3fb8] transition-all active:scale-[0.98]"
           >
             {isOnboardingOnly ? "متوجه شدم" : `برو به ${label}`}
           </motion.button>
           <button
-            onClick={onClose}
+            type="button"
+            onPointerDown={handleSecondaryClose}
             className="mt-2 w-full py-1.5 text-gray-500 text-sm hover:text-gray-700 transition-colors"
           >
             {isOnboardingOnly ? "رد کردن" : "بعداً"}
