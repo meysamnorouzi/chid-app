@@ -1,9 +1,10 @@
 /**
  * PWA Reload Prompt
- * Shows toast when new content is available or app is ready to work offline.
+ * Shows toast only when new content is available (needRefresh). offlineReady is ignored.
  * Uses registerType: 'prompt' so user can choose when to reload.
  */
 
+import { useEffect } from 'react';
 import { useRegisterSW } from 'virtual:pwa-register/react';
 
 export function ReloadPrompt() {
@@ -14,7 +15,6 @@ export function ReloadPrompt() {
   } = useRegisterSW({
     onRegistered(registration) {
       if (registration) {
-        // Optional: check for updates every hour
         setInterval(() => registration.update(), 60 * 60 * 1000);
       }
     },
@@ -23,12 +23,17 @@ export function ReloadPrompt() {
     },
   });
 
+  // Ignore offlineReady: clear it so we never show any "offline ready" UI.
+  useEffect(() => {
+    if (offlineReady) setOfflineReady(false);
+  }, [offlineReady, setOfflineReady]);
+
   const close = () => {
     setOfflineReady(false);
     setNeedRefresh(false);
   };
 
-  if (!offlineReady && !needRefresh) return null;
+  if (!needRefresh) return null;
 
   return (
     <div
@@ -39,11 +44,7 @@ export function ReloadPrompt() {
     >
       <div className="flex flex-col gap-3">
         <p className="text-sm text-gray-800 dark:text-gray-200">
-          {offlineReady ? (
-            <>اپلیکیشن آماده کار آفلاین است.</>
-          ) : (
-            <>محتوای جدید موجود است. برای به‌روزرسانی دکمه بارگذاری را بزنید.</>
-          )}
+          محتوای جدید موجود است. برای به‌روزرسانی دکمه بارگذاری را بزنید.
         </p>
         <div className="flex gap-2 justify-end">
           {needRefresh && (
