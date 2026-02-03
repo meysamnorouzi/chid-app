@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -72,6 +72,22 @@ const RadioTeen = () => {
   const category = selectedCategoryId
     ? PILL_CATEGORIES.find((c) => c.id === selectedCategoryId)
     : null;
+
+  // Scroll to top when entering RadioTeen
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, []);
+
+  // Scroll to top when switching to category view
+  useEffect(() => {
+    if (viewMode === "category") {
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    }
+  }, [viewMode]);
 
   const episodesByCategory = useMemo(() => {
     if (!selectedCategoryId) return [];

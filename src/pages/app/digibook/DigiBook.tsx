@@ -146,7 +146,7 @@ const DigiBook = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.1 }}
               >
-                <h3 className="text-lg font-bold text-gray-800 mb-3">ادامه بخوان</h3>
+                <h3 className="text-lg font-bold text-gray-800 mb-3">ادامه بده</h3>
                 <div className="space-y-3">
                   {CONTINUE_READING.map((book) => (
                     <motion.div
@@ -329,7 +329,6 @@ const DigiBook = () => {
                   <BookmarkIcon className="w-5 h-5 text-[#7e4bd0]" />
                   قفسه فعال
                 </h3>
-                <p className="text-sm text-gray-500 mb-3">آخرین پارت و موقعیت اسکرول ذخیره می‌شود.</p>
                 <div className="space-y-3">
                   {CONTINUE_READING.map((book) => (
                     <motion.div

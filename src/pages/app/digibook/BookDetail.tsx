@@ -22,6 +22,13 @@ export default function BookDetail() {
     setOfflineIds(getOfflineBookIds());
   }, [bookId]);
 
+  // Scroll to top when entering book detail
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, [bookId]);
+
   const handleSaveOffline = () => {
     if (!bookId) return;
     setBookOffline(bookId, !isOffline);

@@ -74,20 +74,20 @@ const IMG2 = "/image/af0a4321-a97c-4f47-82c1-1507d9c2ca61.png";
 
 /** Mock books for list views (Home, Explore, Library). */
 export const TRENDING_BOOKS: BookItem[] = [
-  { id: "t1", title: "سفر به ستاره‌ها", author: "نویسنده الف", coverUrl: COVER1, categoryId: "scifi" },
-  { id: "t2", title: "قلعه اژدها", author: "نویسنده ب", coverUrl: COVER2, categoryId: "fantasy" },
-  { id: "t3", title: "راز شب", author: "نویسنده ج", coverUrl: COVER3, categoryId: "mystery" },
+  { id: "t1", title: "سفر به ستاره‌ها", author: "مهدی رحمانی", coverUrl: COVER1, categoryId: "scifi" },
+  { id: "t2", title: "قلعه اژدها", author: "سارا احمدی", coverUrl: COVER2, categoryId: "fantasy" },
+  { id: "t3", title: "راز شب", author: "علی کریمی", coverUrl: COVER3, categoryId: "mystery" },
   { id: "pdf1", title: "کتاب نمونه PDF", author: "دیجی‌بوک", coverUrl: COVER4, categoryId: "literature" },
-  { id: "t4", title: "دنیای مانگا", author: "نویسنده د", coverUrl: COVER5, categoryId: "manga" },
+  { id: "t4", title: "دنیای مانگا", author: "مریم نوری", coverUrl: COVER5, categoryId: "manga" },
 ];
 
 export const CONTINUE_READING: BookItem[] = [
-  { id: "c1", title: "دنیای مانگا", author: "نویسنده د", coverUrl: COVER5, categoryId: "manga", part: 3, progress: 45 },
-  { id: "c2", title: "کمیک قهرمانان", author: "نویسنده ه", coverUrl: COVER1, categoryId: "comic", part: 1, progress: 80 },
+  { id: "c1", title: "دنیای مانگا", author: "مریم نوری", coverUrl: COVER5, categoryId: "manga", part: 3, progress: 45 },
+  { id: "c2", title: "کمیک قهرمانان", author: "رضا موسوی", coverUrl: COVER1, categoryId: "comic", part: 1, progress: 80 },
 ];
 
 export const LIBRARY_OFFLINE: BookItem[] = [
-  { id: "o1", title: "کتاب آفلاین نمونه", author: "نویسنده و", coverUrl: COVER2, categoryId: "fantasy", isOffline: true },
+  { id: "o1", title: "کتاب آفلاین نمونه", author: "نگار حسینی", coverUrl: COVER2, categoryId: "fantasy", isOffline: true },
 ];
 
 /** All books for list views (Explore, Home) — used by getBooksByCategory. */
@@ -106,7 +106,7 @@ const BOOK_DETAILS: Record<string, BookDetail> = {
   t1: {
     id: "t1",
     title: "سفر به ستاره‌ها",
-    author: "نویسنده الف",
+    author: "مهدی رحمانی",
     coverUrl: COVER1,
     categoryId: "scifi",
     summary: "داستان نوجوانی که با سفینهٔ خود به اعماق فضا سفر می‌کند و با موجودات فرازمینی روبه‌رو می‌شود.",
@@ -138,7 +138,7 @@ const BOOK_DETAILS: Record<string, BookDetail> = {
   t2: {
     id: "t2",
     title: "قلعه اژدها",
-    author: "نویسنده ب",
+    author: "سارا احمدی",
     coverUrl: COVER2,
     categoryId: "fantasy",
     summary: "شوالیهٔ جوانی باید قلعهٔ اژدها را فتح کند تا پادشاهی را نجات دهد.",
@@ -155,7 +155,7 @@ const BOOK_DETAILS: Record<string, BookDetail> = {
   t3: {
     id: "t3",
     title: "راز شب",
-    author: "نویسنده ج",
+    author: "علی کریمی",
     coverUrl: COVER3,
     categoryId: "mystery",
     summary: "یک کارآگاه جوان باید راز قتل در شب را حل کند.",
@@ -176,7 +176,7 @@ const BOOK_DETAILS: Record<string, BookDetail> = {
   t4: {
     id: "t4",
     title: "دنیای مانگا",
-    author: "نویسنده د",
+    author: "مریم نوری",
     coverUrl: COVER5,
     categoryId: "manga",
     summary: "مانگای محبوب نوجوانان با دنیای خیالی و قهرمانان فراموش‌نشدنی.",
@@ -196,7 +196,7 @@ const BOOK_DETAILS: Record<string, BookDetail> = {
   c1: {
     id: "c1",
     title: "دنیای مانگا",
-    author: "نویسنده د",
+    author: "مریم نوری",
     coverUrl: COVER5,
     categoryId: "manga",
     summary: "مانگای محبوب نوجوانان با دنیای خیالی و قهرمانان فراموش‌نشدنی.",
@@ -210,7 +210,7 @@ const BOOK_DETAILS: Record<string, BookDetail> = {
   c2: {
     id: "c2",
     title: "کمیک قهرمانان",
-    author: "نویسنده ه",
+    author: "رضا موسوی",
     coverUrl: COVER1,
     categoryId: "comic",
     summary: "قهرمانان ابرقدرت در نبرد با شر.",
@@ -223,7 +223,7 @@ const BOOK_DETAILS: Record<string, BookDetail> = {
   o1: {
     id: "o1",
     title: "کتاب آفلاین نمونه",
-    author: "نویسنده و",
+    author: "نگار حسینی",
     coverUrl: COVER2,
     categoryId: "fantasy",
     summary: "نمونه‌ای که ذخیره آفلاین شده است.",
