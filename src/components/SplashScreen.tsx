@@ -1,9 +1,10 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-const SPLASH_VIDEO = '/videos/IMG_5515.MP4';
+// Video lives in public/gif/ next to Splashscreen.gif
+const SPLASH_VIDEO = '/gif/IMG_5515.MP4';
 const SPLASH_GIF = '/gif/Splashscreen.gif';
 
-/** iOS (Safari, Chrome/CriOS, etc.) – use video because GIF doesn't play reliably. */
+/** iOS (Safari, Chrome/CriOS, etc.) – prefer video; fall back to GIF if video fails. */
 function isIOS(): boolean {
   const ua = navigator.userAgent;
   return (
@@ -23,6 +24,35 @@ const splashMediaStyle: React.CSSProperties = {
 
 const SplashScreen = ({ onComplete }: { onComplete: () => void }) => {
   const imgRef = useRef<HTMLImageElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [videoFailed, setVideoFailed] = useState(false);
+
+  const useVideo = isIOS() && !videoFailed;
+
+  // iOS: programmatic play() – autoPlay often ignored until we call play()
+  useEffect(() => {
+    if (!useVideo) return;
+    const video = videoRef.current;
+    if (!video) return;
+
+    const onError = () => setVideoFailed(true);
+    const play = () => {
+      video.play().catch(onError);
+    };
+
+    if (video.readyState >= 2) {
+      play();
+    } else {
+      video.addEventListener('loadeddata', play, { once: true });
+      video.addEventListener('canplay', play, { once: true });
+      video.addEventListener('error', onError, { once: true });
+      return () => {
+        video.removeEventListener('loadeddata', play);
+        video.removeEventListener('canplay', play);
+        video.removeEventListener('error', onError);
+      };
+    }
+  }, [useVideo]);
 
   useEffect(() => {
     if (!isIOS() && imgRef.current) {
@@ -38,8 +68,6 @@ const SplashScreen = ({ onComplete }: { onComplete: () => void }) => {
     return () => clearTimeout(timer);
   }, [onComplete]);
 
-  const useVideo = isIOS();
-
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center"
@@ -48,14 +76,17 @@ const SplashScreen = ({ onComplete }: { onComplete: () => void }) => {
       <div className="flex flex-col items-center justify-center">
         {useVideo ? (
           <video
+            ref={videoRef}
             src={SPLASH_VIDEO}
             autoPlay
             loop
             muted
             playsInline
+            preload="auto"
             className="object-contain"
             style={splashMediaStyle}
             aria-label="Logo"
+            onError={() => setVideoFailed(true)}
           />
         ) : (
           <img

@@ -18,7 +18,7 @@ export interface ShahrfarangCategory {
 }
 
 const CATEGORIES: ShahrfarangCategory[] = [
-  // { id: "all", name: "همه", desc: "", imageUrl: `${SHAHRFARANG_IMAGE_BASE}/فان تایم.jpg` },
+  { id: "all", name: "همه", desc: "همه دسته‌ها", imageUrl: `${SHAHRFARANG_IMAGE_BASE}/فان تایم.jpg` },
   { id: "funtime", name: "فان تایم", desc: "سرگرمی و لحظات شاد", imageUrl: `${SHAHRFARANG_IMAGE_BASE}/فان تایم.jpg` },
   { id: "tech", name: "تکنولوژی و دیجیتال", desc: "نکات و ترفندهای دیجیتال", imageUrl: `${SHAHRFARANG_IMAGE_BASE}/تکنولوژی.jpg` },
   { id: "fashion", name: "مد و فشن", desc: "استایل و مد نوجوان", imageUrl: `${SHAHRFARANG_IMAGE_BASE}/مد.jpg` },
@@ -88,7 +88,7 @@ const ShahrFarang = () => {
 
   return (
     <div className="flex flex-col bg-white pb-24 min-h-screen overflow-hidden" dir="rtl">
-      <div className="px-4 md:px-6 lg:px-8 flex-1 overflow-y-auto min-h-0 max-w-7xl py-4 mx-auto w-full">
+      <div className="px-4 md:px-6 lg:px-8 flex-1 overflow-y-auto min-h-0 max-w-7xl pt-0 pb-4 mx-auto w-full">
         {/* Categories row — like Shop */}
         <div className="flex gap-3 md:gap-4 lg:gap-5 mb-3 md:mb-4 overflow-x-auto md:overflow-x-visible scrollbar-hide pb-2 md:pb-0 md:justify-center md:flex-wrap">
           {CATEGORIES.map((cat) => (
