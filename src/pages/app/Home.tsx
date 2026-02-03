@@ -271,13 +271,12 @@ const Home = () => {
 
   return (
     <div className="w-full h-full min-h-0 flex flex-col overflow-hidden relative">
-      {/* Header with Profile and Notification - safe area so it's below notch/status bar on iPhone */}
+      {/* Header with Profile and Notification */}
       <motion.div
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
         className="absolute top-0 left-0 right-0 z-40 bg-gradient-to-b from-white/95 to-transparent backdrop-blur-sm"
-        style={{ paddingTop: 'max(1rem, env(safe-area-inset-top))' }}
       >
         <div className="flex items-center justify-between p-4">
           {/* User Profile Section */}
