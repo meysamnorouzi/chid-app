@@ -21,6 +21,7 @@ declare global {
 const DISMISS_KEY = 'pwa-install-dismissed';
 const DISMISS_DAYS = 7;
 const SHOW_DELAY_MS = 2500;
+const IOS_SHOW_DELAY_MS = 800; // Shorter delay so iOS users see the hint sooner (no beforeinstallprompt to wait for)
 const ANDROID_FALLBACK_DELAY_MS = 10000; // Wait longer before showing "go to menu" so beforeinstallprompt has time to fire
 
 function isStandalone(): boolean {
@@ -31,9 +32,14 @@ function isStandalone(): boolean {
   );
 }
 
+/** Detects iOS including iPhone Chrome (CriOS), Safari, and iPad. */
 function isIOS(): boolean {
-  return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const ua = navigator.userAgent;
+  return (
+    /iPad|iPhone|iPod/.test(ua) ||
+    /CriOS|FxiOS|EdgiOS/.test(ua) || // Chrome/Firefox/Edge on iOS
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+  );
 }
 
 function isAndroid(): boolean {
@@ -76,7 +82,8 @@ export function InstallPrompt() {
     };
     window.addEventListener('beforeinstallprompt', handler);
 
-    const delay = setTimeout(() => setReadyToShow(true), SHOW_DELAY_MS);
+    const delayMs = isIOS() ? IOS_SHOW_DELAY_MS : SHOW_DELAY_MS;
+    const delay = setTimeout(() => setReadyToShow(true), delayMs);
 
     return () => {
       window.removeEventListener('beforeinstallprompt', handler);
@@ -128,12 +135,17 @@ export function InstallPrompt() {
     localStorage.setItem(DISMISS_KEY, Date.now().toString());
   };
 
+  const installPromptStyle: React.CSSProperties = {
+    direction: 'rtl',
+    paddingBottom: 'max(1rem, env(safe-area-inset-bottom))',
+  };
+
   // Android/Chrome: native install prompt (when beforeinstallprompt fired)
   if (showPrompt && deferredPrompt && !isInstalled) {
     return (
       <div
         className="fixed bottom-4 left-4 right-4 z-[9998] p-4 rounded-xl shadow-lg border border-gray-200 bg-white dark:bg-gray-800 dark:border-gray-700"
-        style={{ direction: 'rtl' }}
+        style={installPromptStyle}
         role="dialog"
         aria-label="نصب اپلیکیشن"
       >
@@ -165,7 +177,7 @@ export function InstallPrompt() {
     return (
       <div
         className="fixed bottom-4 left-4 right-4 z-[9998] p-4 rounded-xl shadow-lg border border-gray-200 bg-white dark:bg-gray-800 dark:border-gray-700"
-        style={{ direction: 'rtl' }}
+        style={installPromptStyle}
         role="dialog"
         aria-label="نصب اپلیکیشن"
       >
@@ -192,7 +204,7 @@ export function InstallPrompt() {
     return (
       <div
         className="fixed bottom-4 left-4 right-4 z-[9998] p-4 rounded-xl shadow-lg border border-gray-200 bg-white dark:bg-gray-800 dark:border-gray-700"
-        style={{ direction: 'rtl' }}
+        style={installPromptStyle}
         role="dialog"
         aria-label="نصب اپلیکیشن"
       >

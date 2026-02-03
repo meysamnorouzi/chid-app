@@ -1,28 +1,45 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+
+const SPLASH_GIF = '/gif/Splashscreen.gif';
+
+/** Detect iOS (Safari, Chrome/CriOS, etc.) for GIF animation workarounds. */
+function isIOS(): boolean {
+  const ua = navigator.userAgent;
+  return /iPad|iPhone|iPod|CriOS|FxiOS|EdgiOS/.test(ua) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+}
 
 const SplashScreen = ({ onComplete }: { onComplete: () => void }) => {
   const imgRef = useRef<HTMLImageElement>(null);
+  const [gifSrc, setGifSrc] = useState(() => `${SPLASH_GIF}#t=${Date.now()}`);
 
   useEffect(() => {
-    // Force GIF to restart from beginning
-    if (imgRef.current) {
-      const img = imgRef.current;
-      const src = img.src;
-      // Remove and re-add src to force reload
+    const img = imgRef.current;
+    if (!img) return;
+
+    const runForcePlay = () => {
+      const currentSrc = img.src;
       img.src = '';
-      img.src = src;
+      img.removeAttribute('src');
+      requestAnimationFrame(() => {
+        img.src = currentSrc.split('#')[0] + `#t=${Date.now()}`;
+      });
+    };
+
+    if (isIOS()) {
+      // iOS/WebKit: GIF often doesn't animate until after a short delay and a forced reload.
+      const t = setTimeout(runForcePlay, 150);
+      return () => clearTimeout(t);
     }
+
+    runForcePlay();
   }, []);
 
   useEffect(() => {
-    // Complete after exactly 3 seconds
     const timer = setTimeout(() => {
       onComplete();
     }, 3000);
-
-    return () => {
-      clearTimeout(timer);
-    };
+    return () => clearTimeout(timer);
   }, [onComplete]);
 
   return (
@@ -31,18 +48,20 @@ const SplashScreen = ({ onComplete }: { onComplete: () => void }) => {
       style={{ backgroundColor: '#7e4bd0' }}
     >
       <div className="flex flex-col items-center justify-center gap-6">
-        {/* GIF - Static in center */}
         <div className="flex items-center justify-center">
           <img
             ref={imgRef}
-            src="/gif/Splashscreen.gif"
+            src={gifSrc}
             alt="Logo"
             className="object-contain"
-            style={{ 
-              width: '100vw', 
+            style={{
+              width: '100vw',
               height: '100vh',
               maxWidth: '100vw',
-              maxHeight: '100vh'
+              maxHeight: '100vh',
+              // Promote to own layer so WebKit animates the GIF (helps on iOS)
+              transform: 'translateZ(0)',
+              WebkitTransform: 'translateZ(0)',
             }}
           />
         </div>
