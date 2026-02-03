@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { formatPrice } from "../../../utils/priceUtils";
+import { formatPrice, parsePrice, formatNumber } from "../../../utils/priceUtils";
 
 interface OrderItem {
   productId: string;
@@ -100,9 +100,14 @@ const OrderReceipt = () => {
                       <p className="text-xs text-gray-500">{item.shopName}</p>
                     )}
                     <div className="flex items-center justify-between mt-1">
-                      <span className="text-xs text-gray-600">تعداد: {item.quantity}</span>
+                      <span className="text-xs text-gray-600">تعداد: {formatNumber(item.quantity)}</span>
                       <span className="text-sm font-bold text-gray-800">
-                        {formatPrice(parseFloat(item.finalPrice) * item.quantity)} تومان
+                        {formatPrice(
+                          (typeof item.finalPrice === "number"
+                            ? item.finalPrice
+                            : parsePrice(String(item.finalPrice ?? ""))) * item.quantity
+                        )}{" "}
+                        تومان
                       </span>
                     </div>
                   </div>

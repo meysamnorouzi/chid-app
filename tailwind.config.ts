@@ -212,7 +212,7 @@ export default {
         }
       },
       fontFamily: {
-        sans: ['YekanBakh', 'system-ui', 'sans-serif']
+        sans: ['IRANSansX', 'system-ui', 'sans-serif']
       },
       colors: {
         gray: {

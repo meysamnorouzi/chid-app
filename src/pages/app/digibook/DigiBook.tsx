@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronLeftIcon,
+  ChevronRightIcon,
   MagnifyingGlassIcon,
   PencilSquareIcon,
   BookmarkIcon,
@@ -249,7 +250,7 @@ const DigiBook = () => {
                       className="p-2 rounded-full border border-gray-200 hover:bg-gray-50"
                       aria-label="برگشت"
                     >
-                      <ChevronLeftIcon className="w-5 h-5 text-gray-600" />
+                      <ChevronRightIcon className="w-5 h-5 text-gray-600" />
                     </button>
                     <h2 className="text-xl font-bold text-gray-800">
                       {category?.name}

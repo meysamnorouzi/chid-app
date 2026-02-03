@@ -592,7 +592,8 @@ function RequestCard() {
                         <video
                           src={videoUrl}
                           controls
-                          className="w-full h-full object-contain"
+                          className="w-full h-full object-contain mirror-video"
+                          style={{ transform: "scaleX(-1)" }}
                           playsInline
                         />
                       )}
@@ -800,12 +801,12 @@ function RequestCard() {
                         <div className="absolute bottom-0 left-0 w-24 h-24 bg-white rounded-full -ml-12 -mb-12"></div>
                       </div>
 
-                      {/* Back Content - matches WalletMoney card back layout */}
-                      <div className="relative z-10 h-full flex flex-col justify-between p-6">
+                      {/* Back Content - matches WalletMoney card back layout — English numerals for card */}
+                      <div className="relative z-10 h-full flex flex-col justify-between p-6 pb-20 latin-nums">
                         <div className="flex-1 flex flex-col justify-start pt-1">
                           {/* Full name on right (justify-start in RTL = right side) */}
                           <div className="w-full flex justify-start mb-3">
-                            <p className="text-white text-base font-semibold drop-shadow-lg">
+                            <p className="text-white text-lg font-semibold drop-shadow-lg" style={{ fontFamily: "'IRANSansX', system-ui, sans-serif" }}>
                               {userName}
                             </p>
                           </div>
@@ -833,10 +834,10 @@ function RequestCard() {
                             </div>
                           </div>
                         </div>
-
-                        {/* Magnet bar - below the card content (taller like WalletMoney) */}
-                        <div className="h-16 bg-black/30 rounded mt-2" />
                       </div>
+
+                      {/* Magnet bar - full width, stuck to bottom, 2px gray border top */}
+                      <div className="absolute bottom-0 left-0 right-0 h-16 bg-black border-t-2 border-gray-500 z-10" />
                     </div>
                   </div>
                 </motion.div>

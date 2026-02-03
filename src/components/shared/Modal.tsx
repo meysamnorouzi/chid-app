@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { XMarkIcon } from '@heroicons/react/24/solid'
 import type { ReactNode } from 'react'
@@ -67,10 +68,10 @@ function Modal({
     exit: { scale: 0.95, opacity: 0 }
   }
 
-  return (
+  const modalContent = (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[9999] pointer-events-none flex items-end md:items-center justify-center">
+        <div className="fixed inset-0 z-[10000] pointer-events-none flex items-end md:items-center justify-center">
           {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
@@ -85,9 +86,9 @@ function Modal({
             initial={isMobile ? mobileVariants.initial : desktopVariants.initial}
             animate={isMobile ? mobileVariants.animate : desktopVariants.animate}
             exit={isMobile ? mobileVariants.exit : desktopVariants.exit}
-            transition={{ 
-              type: 'spring', 
-              damping: 30, 
+            transition={{
+              type: 'spring',
+              damping: 30,
               stiffness: 300,
               opacity: { duration: 0.2 }
             }}
@@ -95,18 +96,18 @@ function Modal({
               fixed md:relative
               bottom-0 md:bottom-auto
               left-0 right-0 md:left-auto md:right-auto
-              ${backgroundColor} 
+              ${backgroundColor}
               rounded-t-3xl md:rounded-2xl
-              shadow-2xl 
-              overflow-hidden 
-              transition-colors duration-500 
-              flex flex-col 
+              shadow-2xl
+              overflow-hidden
+              transition-colors duration-500
+              flex flex-col
               pointer-events-auto
               w-full md:w-full
               ${maxWidth}
               mx-auto
             `}
-            style={{ 
+            style={{
               maxHeight: '85vh',
               height: 'auto',
               minHeight: 'auto'
@@ -130,7 +131,7 @@ function Modal({
             )}
 
             {/* Modal body */}
-            <div 
+            <div
               className="px-6 md:px-8 pb-8 md:pb-6 pt-6 md:pt-8 overflow-y-auto flex-1 flex flex-col min-h-0"
             >
               {title && (
@@ -143,7 +144,7 @@ function Modal({
                   {title}
                 </motion.h2>
               )}
-              
+
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -157,6 +158,10 @@ function Modal({
       )}
     </AnimatePresence>
   )
+
+  return typeof document !== 'undefined'
+    ? createPortal(modalContent, document.body)
+    : modalContent
 }
 
 export default Modal

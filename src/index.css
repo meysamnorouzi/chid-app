@@ -1,9 +1,68 @@
 @import "tailwindcss";
 
+/* IranSansX (Pro) – text: Webfonts; numbers: Farsi numerals (FaNum) */
+/* Using IRANSansXFaNum so all text and numbers use IranSansX with Farsi numerals (۰۱۲۳۴۵۶۷۸۹) */
+/* Path: /font/IranSansX(Pro)/IranSansX(Pro)/Farsi numerals/Woff2/ */
 @font-face {
-  font-family: 'YekanBakh';
-  src: url('/font/YekanBakh-VF.ttf') format('truetype');
-  font-weight: 100 900;
+  font-family: 'IRANSansX';
+  src: url('/font/IranSansX(Pro)/IranSansX(Pro)/Farsi%20numerals/Woff2/IRANSansXFaNum-Thin.woff2') format('woff2');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'IRANSansX';
+  src: url('/font/IranSansX(Pro)/IranSansX(Pro)/Farsi%20numerals/Woff2/IRANSansXFaNum-UltraLight.woff2') format('woff2');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'IRANSansX';
+  src: url('/font/IranSansX(Pro)/IranSansX(Pro)/Farsi%20numerals/Woff2/IRANSansXFaNum-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'IRANSansX';
+  src: url('/font/IranSansX(Pro)/IranSansX(Pro)/Farsi%20numerals/Woff2/IRANSansXFaNum-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'IRANSansX';
+  src: url('/font/IranSansX(Pro)/IranSansX(Pro)/Farsi%20numerals/Woff2/IRANSansXFaNum-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'IRANSansX';
+  src: url('/font/IranSansX(Pro)/IranSansX(Pro)/Farsi%20numerals/Woff2/IRANSansXFaNum-DemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'IRANSansX';
+  src: url('/font/IranSansX(Pro)/IranSansX(Pro)/Farsi%20numerals/Woff2/IRANSansXFaNum-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'IRANSansX';
+  src: url('/font/IranSansX(Pro)/IranSansX(Pro)/Farsi%20numerals/Woff2/IRANSansXFaNum-ExtraBold.woff2') format('woff2');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'IRANSansX';
+  src: url('/font/IranSansX(Pro)/IranSansX(Pro)/Farsi%20numerals/Woff2/IRANSansXFaNum-Black.woff2') format('woff2');
+  font-weight: 900;
   font-style: normal;
   font-display: swap;
 }
@@ -14,7 +73,7 @@ html, body {
   width: 100%;
   height: 100%;
   overflow-x: hidden;
-  font-family: 'YekanBakh', system-ui, sans-serif;
+  font-family: 'IRANSansX', system-ui, sans-serif;
   direction: rtl;
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -29,6 +88,12 @@ body::-webkit-scrollbar {
 #root {
   width: 100%;
   height: 100%;
+}
+
+/* Card back (wallet, request-card): force English/Latin numerals for card number, CVV, expiry */
+.latin-nums {
+  font-variant-numeric: normal;
+  font-family: system-ui, -apple-system, sans-serif;
 }
 
 @keyframes slideIn {

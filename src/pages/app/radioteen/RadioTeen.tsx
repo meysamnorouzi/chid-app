@@ -156,7 +156,7 @@ const RadioTeen = () => {
                     placeholder="چی می‌خوای بشنوی؟"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pr-10 pl-4 py-3 rounded-xl border border-gray-200 focus:border-[#7e4bd0] focus:ring-2 focus:ring-[#7e4bd0]/20 outline-none text-gray-800 placeholder-gray-400 font-sans"
+                    className="w-full pr-10 pl-4 py-3 rounded-xl border border-gray-200 focus:border-[#7e4bd0] focus:ring-2 focus:ring-[#7e4bd0]/20 outline-none text-gray-800 placeholder-gray-400 [font-family:inherit] placeholder:[font-family:inherit]"
                   />
                 </div>
               </motion.section>
@@ -272,7 +272,7 @@ const RadioTeen = () => {
                   placeholder="چی می‌خوای بشنوی؟"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pr-10 pl-4 py-3 rounded-xl border border-gray-200 focus:border-[#7e4bd0] focus:ring-2 focus:ring-[#7e4bd0]/20 outline-none text-gray-800 placeholder-gray-400 font-sans"
+                  className="w-full pr-10 pl-4 py-3 rounded-xl border border-gray-200 focus:border-[#7e4bd0] focus:ring-2 focus:ring-[#7e4bd0]/20 outline-none text-gray-800 placeholder-gray-400 [font-family:inherit] placeholder:[font-family:inherit]"
                 />
               </div>
 
@@ -362,7 +362,7 @@ const RadioTeen = () => {
                   className="w-full h-2 rounded-full appearance-none bg-gray-200 accent-[#7e4bd0]"
                 />
                 <div className="flex justify-between text-xs text-gray-400 mt-1">
-                  <span>{Math.floor((progress / 100) * 45)} دقیقه</span>
+                  <span>{Math.floor((progress / 100) * 45).toLocaleString("fa-IR")} دقیقه</span>
                   <span>{selectedEpisode.duration}</span>
                 </div>
               </div>
@@ -454,7 +454,7 @@ const RadioTeen = () => {
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}
-            className="fixed bottom-20 left-4 right-4 z-40 rounded-2xl bg-white/80 backdrop-blur-xl border border-white/50 shadow-lg p-3 flex items-center gap-3"
+            className="fixed bottom-20 left-4 right-4 z-30 rounded-2xl bg-white/80 backdrop-blur-xl border border-white/50 shadow-lg p-3 flex items-center gap-3"
             style={{ maxWidth: "calc(430px - 2rem)", margin: "0 auto" }}
           >
             <img

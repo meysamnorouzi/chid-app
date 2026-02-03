@@ -137,7 +137,7 @@ export default function PdfReader({ title, pdfUrl, onClose }: PdfReaderProps) {
                       renderAnnotationLayer={true}
                       loading={
                         <div className="min-h-[400px] flex items-center justify-center text-gray-400 text-sm">
-                          صفحه {pageNumber}…
+                          صفحه {pageNumber.toLocaleString("fa-IR")}…
                         </div>
                       }
                     />

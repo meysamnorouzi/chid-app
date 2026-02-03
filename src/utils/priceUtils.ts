@@ -2,9 +2,14 @@
  * Utility functions for price formatting and parsing
  */
 
-// تابع برای تبدیل عدد به فرمت فارسی با جداکننده هزارگان
+// تابع برای تبدیل عدد به فرمت فارسی با جداکننده هزارگان و اعداد فارسی
 export const formatPrice = (price: number): string => {
   return price.toLocaleString("fa-IR");
+};
+
+/** Format any number to Persian numerals (۰۱۲۳۴۵۶۷۸۹) and Persian thousands separator. Use everywhere except card back (wallet/request-card). */
+export const formatNumber = (n: number): string => {
+  return n.toLocaleString("fa-IR");
 };
 
 // تابع برای تبدیل رشته قیمت فارسی به عدد

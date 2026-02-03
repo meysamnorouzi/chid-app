@@ -10,7 +10,7 @@ import {
   ArrowDownTrayIcon,
 } from "@heroicons/react/24/outline";
 import { useCart } from "../../../hooks/useCart";
-import { formatPrice } from "../../../utils/priceUtils";
+import { formatPrice, formatNumber } from "../../../utils/priceUtils";
 import { useToast } from "../../../components/shared/Toast/ToastProvider";
 
 const Cart = () => {
@@ -281,7 +281,7 @@ const Cart = () => {
                           <MinusIcon className="w-4 h-4 md:w-5 md:h-5 text-gray-700" />
                         </button>
                         <span className="px-3 md:px-4 py-1 md:py-1.5 text-sm md:text-base font-semibold text-black min-w-8 md:min-w-10 text-center">
-                          {item.quantity}
+                          {formatNumber(item.quantity)}
                         </span>
                         <button
                           onClick={() =>
@@ -414,7 +414,7 @@ const Cart = () => {
         <div className="bg-gray-50 rounded-lg p-4 mb-3">
           <div className="flex items-center justify-between mb-3">
             <span className="text-sm text-gray-600">تعداد کالاها</span>
-            <span className="text-sm font-semibold text-black">{totalItems} عدد</span>
+            <span className="text-sm font-semibold text-black">{formatNumber(totalItems)} عدد</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-sm text-gray-600">جمع کل</span>

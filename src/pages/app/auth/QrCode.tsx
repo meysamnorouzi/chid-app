@@ -247,24 +247,25 @@ const QrCode = () => {
   };
 
   return (
-    <div className="flex flex-col w-full min-h-screen md:justify-center md:items-center md:bg-gray-50">
-      <div className="w-full flex flex-col md:max-w-md md:bg-white md:rounded-2xl md:shadow-lg md:overflow-hidden">
-        <div className="w-full flex justify-center items-center bg-[#7e4bd0] p-12 min-h-[300px] rounded-b-3xl md:min-h-[200px] md:rounded-t-2xl md:rounded-b-none">
+    <div className="flex flex-col w-full h-full min-h-0 md:justify-center md:items-center md:bg-gray-50 md:min-h-screen">
+      <div className="w-full flex flex-col h-full min-h-0 md:h-auto md:max-w-md md:bg-white md:rounded-2xl md:shadow-lg md:overflow-hidden">
+        {/* Top section: same height on all auth pages */}
+        <div className="w-full shrink-0 flex justify-center items-center bg-[#7e4bd0] h-[100px] py-4 px-6 rounded-b-3xl md:h-[200px] md:min-h-[200px] md:py-12 md:px-12 md:rounded-t-2xl md:rounded-b-none">
           <img
             src="/logo/QR.gif"
             alt=""
-            className="w-40 -mt-14"
+            className="w-20 h-20 object-contain md:w-40 md:-mt-14"
           />
         </div>
-        <div className="flex flex-col w-full items-center justify-start flex-1 pt-10 p-4 md:pt-0 md:p-8">
-          <div className="w-full mb-8 md:mb-0">
-            <div className="flex flex-col gap-3">
+        <div className="flex-1 min-h-0 flex flex-col w-full items-center justify-start pt-4 pb-4 px-4 overflow-y-auto md:pt-0 md:p-8 md:overflow-visible">
+          <div className="w-full mb-4 md:mb-0">
+            <div className="flex flex-col gap-2 md:gap-3">
             {/* QR Scanner Preview Box */}
             <div className="space-y-2 w-full">
 
               <div className="relative w-full">
                 {/* Scanner Preview Box */}
-                <div className="w-64 h-64 mx-auto mb-4 rounded-xl overflow-hidden bg-gray-100 border-2 border-gray-200 flex items-center justify-center relative">
+                <div className="w-48 h-48 md:w-64 md:h-64 mx-auto mb-3 md:mb-4 rounded-xl overflow-hidden bg-gray-100 border-2 border-gray-200 flex items-center justify-center relative">
                   {/* Always render the scanner element when permission is granted, but hide it when not scanning */}
                   {hasCameraPermission === true && (
                     <div
@@ -335,7 +336,7 @@ const QrCode = () => {
             <button
               type="button"
               onClick={() => navigate('/login')}
-              className="w-full border border-[#7e4bd0] hover:bg-gray-800 disabled:bg-gray-400 disabled:cursor-not-allowed text-[#7e4bd0] font-semibold py-3.5 rounded-xl  shadow-gray-300 transition-all active:scale-[0.98]"
+              className="w-full border border-[#7e4bd0] hover:bg-gray-800 disabled:bg-gray-400 disabled:cursor-not-allowed text-[#7e4bd0] font-semibold py-3 rounded-xl shadow-gray-300 transition-all active:scale-[0.98] md:py-3.5"
             >
               برگشت به صفحه قبلی
             </button>
@@ -343,7 +344,7 @@ const QrCode = () => {
               type="button"
               onClick={handleSubmit}
               disabled={!validateLoginLink(loginLink)}
-              className="w-full bg-[#7e4bd0] hover:bg-gray-800 disabled:bg-[#ad80f4] border border-[#7e4bd0] disabled:cursor-not-allowed text-white font-semibold py-3.5 rounded-xl  shadow-gray-300 transition-all active:scale-[0.98]"
+              className="w-full bg-[#7e4bd0] hover:bg-gray-800 disabled:bg-[#ad80f4] border border-[#7e4bd0] disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl shadow-gray-300 transition-all active:scale-[0.98] md:py-3.5"
             >
               ورود به دیجی تین
             </button>

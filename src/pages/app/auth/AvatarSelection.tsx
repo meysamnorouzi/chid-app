@@ -39,7 +39,15 @@ const AvatarSelection = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [startAngle, setStartAngle] = useState(0);
   const [startRotation, setStartRotation] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
 
   // محاسبه زاویه از مرکز به نقطه کلیک/لمس
   const getAngleFromCenter = (clientX: number, clientY: number): number => {
@@ -151,12 +159,12 @@ const AvatarSelection = () => {
   };
 
   return (
-    <div className="flex flex-col w-full min-h-screen bg-gradient-to-b from-purple-50 via-white to-purple-50">
+    <div className="flex flex-col w-full h-full min-h-0 bg-gradient-to-b from-purple-50 via-white to-purple-50 md:min-h-screen">
       {/* Circular Avatar Selector */}
-      <div className="flex-1 flex items-center justify-center relative overflow-hidden py-8 px-4">
+      <div className="flex-1 min-h-0 flex items-center justify-center relative overflow-hidden py-4 px-4 md:py-8">
         <div 
           ref={containerRef}
-          className="relative w-full max-w-2xl aspect-square touch-none select-none"
+          className="relative w-full max-w-2xl aspect-square max-h-[min(60dvh,400px)] touch-none select-none md:max-h-none"
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
@@ -167,7 +175,7 @@ const AvatarSelection = () => {
         >
           {/* Center Avatar - Large */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-none">
-            <div className="relative w-48 h-48 md:w-56 md:h-56">
+            <div className="relative w-32 h-32 md:w-56 md:h-56">
               {/* Glow Effect */}
               <div className="absolute inset-0 bg-purple-400 rounded-full blur-2xl opacity-30" />
               
@@ -193,7 +201,7 @@ const AvatarSelection = () => {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full pointer-events-none">
             {avatarList.map((avatar, index) => {
               // محاسبه موقعیت در دایره با در نظر گیری چرخش
-              const radius = 180; // فاصله از مرکز (پیکسل)
+              const radius = isMobile ? 100 : 180; // فاصله از مرکز (پیکسل)
               const position = getCircularPosition(index, avatarList.length, radius);
               
               return (
@@ -219,11 +227,11 @@ const AvatarSelection = () => {
       </div>
 
       {/* Continue Button - Fixed Bottom */}
-      <div className="sticky bottom-0 left-0 right-0 p-4 bg-white/95 backdrop-blur-sm border-t border-gray-200">
+      <div className="shrink-0 p-3 md:p-4 bg-white/95 backdrop-blur-sm border-t border-gray-200">
         <div className="max-w-2xl mx-auto">
           <button
             onClick={handleContinue}
-            className="w-full py-4 rounded-2xl font-bold text-lg bg-[#7e4bd0] hover:bg-purple-700 text-white shadow-xl shadow-purple-300/50 hover:shadow-2xl hover:shadow-purple-400/50 transition-all active:scale-[0.98]"
+            className="w-full py-3 md:py-4 rounded-2xl font-bold text-base md:text-lg bg-[#7e4bd0] hover:bg-purple-700 text-white shadow-xl shadow-purple-300/50 hover:shadow-2xl hover:shadow-purple-400/50 transition-all active:scale-[0.98]"
           >
             ادامه
           </button>

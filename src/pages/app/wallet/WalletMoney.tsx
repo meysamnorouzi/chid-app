@@ -479,13 +479,13 @@ function WalletMoney() {
     if (hours < 24) {
       if (hours === 0) {
         const minutes = Math.floor(diff / (1000 * 60));
-        return minutes < 1 ? "همین الان" : `${minutes} دقیقه پیش`;
+        return minutes < 1 ? "همین الان" : `${minutes.toLocaleString("fa-IR")} دقیقه پیش`;
       }
-      return `${hours} ساعت پیش`;
+      return `${hours.toLocaleString("fa-IR")} ساعت پیش`;
     }
     const days = Math.floor(hours / 24);
     if (days === 1) return "دیروز";
-    if (days < 7) return `${days} روز پیش`;
+    if (days < 7) return `${days.toLocaleString("fa-IR")} روز پیش`;
     return date.toLocaleDateString("fa-IR", { month: "long", day: "numeric" });
   };
 
@@ -673,7 +673,7 @@ function WalletMoney() {
 
                     {/* Back of Card */}
                     <div
-                      className="absolute inset-0 rounded-2xl p-6 overflow-hidden aspect-video select-none cursor-pointer"
+                      className="absolute inset-0 rounded-2xl overflow-hidden aspect-video select-none cursor-pointer"
                       style={{
                         backfaceVisibility: "hidden",
                         WebkitBackfaceVisibility: "hidden",
@@ -702,13 +702,12 @@ function WalletMoney() {
                         <div className="absolute bottom-0 right-0 w-24 h-24 bg-white rounded-full -mr-12 -mb-12"></div>
                       </div>
 
-                      {/* Back Content: full name top-right, below it card number; CVV2/EXP labels left of values; magnet bar at bottom */}
-                      <div className="relative z-10 h-full flex flex-col justify-between">
-
+                      {/* Back Content: full name top-right, below it card number; CVV2/EXP labels left of values — English numerals for card */}
+                      <div className="relative z-10 h-full flex flex-col justify-between p-6 pb-20 latin-nums">
                         <div className="flex-1 flex flex-col justify-start pt-1">
                           {/* Full name on right (justify-start in RTL = right side) */}
                           <div className="w-full flex justify-start mb-3">
-                            <p className="text-white text-base font-semibold drop-shadow-lg">
+                            <p className="text-white text-lg font-semibold drop-shadow-lg" style={{ fontFamily: "'IRANSansX', system-ui, sans-serif" }}>
                               میثم نوروزی
                             </p>
                           </div>
@@ -736,10 +735,10 @@ function WalletMoney() {
                             </div>
                           </div>
                         </div>
-
-                        {/* Magnet bar - below the card content */}
-                        <div className="h-16 bg-black/30 rounded mt-2" />
                       </div>
+
+                      {/* Magnet bar - full width, stuck to bottom, 2px gray border top */}
+                      <div className="absolute bottom-0 left-0 right-0 h-16 bg-black border-t-2 border-gray-500 z-10" />
                     </div>
                   </div>
                 </div>

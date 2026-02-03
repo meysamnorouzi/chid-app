@@ -14,7 +14,7 @@ import { HeartIcon as HeartIconSolid } from "@heroicons/react/24/solid";
 import { Breadcrumb, Chips, useToast } from "../../../components/shared";
 import { useCart } from "../../../hooks/useCart";
 import { useFavorites } from "../../../hooks/useFavorites";
-import { formatPrice, parsePrice } from "../../../utils/priceUtils";
+import { formatPrice, parsePrice, formatNumber } from "../../../utils/priceUtils";
 
 interface ProductVariant {
   id: string;
@@ -1024,7 +1024,7 @@ const ProductDetail = () => {
               {/* Header */}
               <div className="flex items-center justify-between">
                 <button className="text-sm md:text-base text-gray-600 hover:text-gray-800 transition-colors">
-                  مشاهده {product.reviews.summary.totalReviews} دیدگاه <span className="inline-block">›</span>
+                  مشاهده {formatNumber(product.reviews.summary.totalReviews)} دیدگاه <span className="inline-block">›</span>
                 </button>
                 <h2 className="text-base md:text-lg font-semibold text-black">دیدگاه کاربرها</h2>
               </div>
@@ -1034,11 +1034,11 @@ const ProductDetail = () => {
                 <div className="flex items-center gap-1">
                   <StarIcon className="w-5 h-5 md:w-6 md:h-6 fill-yellow-400 text-yellow-400" />
                   <span className="text-base md:text-lg font-semibold text-black">
-                    {product.reviews.summary.overallRating}
+                    {product.reviews.summary.overallRating.toLocaleString("fa-IR")}
                   </span>
                 </div>
                 <span className="text-sm md:text-base text-gray-500">
-                  (بر اساس نظر {product.reviews.summary.buyerReviewsCount} خریدار)
+                  (بر اساس نظر {formatNumber(product.reviews.summary.buyerReviewsCount)} خریدار)
                 </span>
               </div>
 

@@ -18,8 +18,8 @@ interface TextReaderProps {
 
 const FONT_SIZES = [14, 16, 18, 20, 22];
 const FONTS: { id: FontFamily; label: string; fontFamily: string }[] = [
-  { id: "vazir", label: "وزیر", fontFamily: "'YekanBakh', system-ui, sans-serif" },
-  { id: "iranyekan", label: "ایران‌یکان", fontFamily: "'YekanBakh', system-ui, sans-serif" },
+  { id: "vazir", label: "وزیر", fontFamily: "'IRANSansX', system-ui, sans-serif" },
+  { id: "iranyekan", label: "ایران‌یکان", fontFamily: "'IRANSansX', system-ui, sans-serif" },
 ];
 
 const THEMES: { id: ThemeMode; label: string; bg: string; text: string }[] = [
@@ -146,7 +146,7 @@ export default function TextReader({ title, paragraphs, onClose }: TextReaderPro
           style={{
             fontSize: `${fontSize}px`,
             lineHeight: 1.8,
-            fontFamily: FONTS.find((f) => f.id === fontFamily)?.fontFamily ?? "'YekanBakh', system-ui, sans-serif",
+            fontFamily: FONTS.find((f) => f.id === fontFamily)?.fontFamily ?? "'IRANSansX', system-ui, sans-serif",
           }}
         >
           {paragraphs.map((text, index) => (

@@ -17,14 +17,14 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
   return (
     <ThemeLayout>
       <ToastProvider position="top-center" maxToasts={3}>
-        <div className="min-h-screen flex flex-col" dir="rtl">
-          {/* Header */}
-
-          {/* Main Content */}
-          <main className="flex-1 bg-white" role="main">
+        {/* Single viewport on mobile (100dvh = dynamic viewport, accounts for browser UI/address bar); no page scroll */}
+        <div
+          className="flex flex-col bg-white h-[100dvh] max-h-[100dvh] md:h-auto md:min-h-screen md:max-h-none"
+          dir="rtl"
+        >
+          <main className="flex-1 min-h-0 flex flex-col overflow-hidden" role="main">
             {children || <Outlet />}
           </main>
-
         </div>
       </ToastProvider>
     </ThemeLayout>

@@ -6,6 +6,41 @@ import { lineIconPaths } from "../../../utils/lineIcons";
 
 const TEEN_AVATARS_BASE = "/logo/teens%20profiles";
 
+export interface UserProfile {
+  username: string;
+  name: string;
+  avatar: string;
+  bio?: string;
+  digits?: number; // optional display balance
+}
+
+// Searchable users – multiple results with more data (teen profile avatars)
+const SEARCHABLE_USERS: UserProfile[] = [
+  { username: "ali_rezaei", name: "علی رضایی", avatar: `${TEEN_AVATARS_BASE}/dep.svg`, bio: "برنامه‌نویس و عاشق تکنولوژی", digits: 320 },
+  { username: "sara_mohammadi", name: "سارا محمدی", avatar: `${TEEN_AVATARS_BASE}/ferzi.svg`, bio: "طراح UI/UX", digits: 150 },
+  { username: "amir_khan", name: "امیر خان", avatar: `${TEEN_AVATARS_BASE}/batman.svg`, bio: "بازیکن حرفه‌ای", digits: 500 },
+  { username: "fateme_ahmadi", name: "فاطمه احمدی", avatar: `${TEEN_AVATARS_BASE}/rabi.svg`, bio: "دانشجو", digits: 80 },
+  { username: "ali_digi", name: "علی", avatar: `${TEEN_AVATARS_BASE}/batman.svg`, bio: "علاقه‌مند به بازی", digits: 200 },
+  { username: "sara_teen", name: "سارا", avatar: `${TEEN_AVATARS_BASE}/elphy.svg`, bio: "دوستان جدید", digits: 100 },
+  { username: "mamad", name: "ممد", avatar: `${TEEN_AVATARS_BASE}/hero.svg`, bio: "دیجیت نوجوان", digits: 450 },
+  { username: "reza_teen", name: "رضا", avatar: `${TEEN_AVATARS_BASE}/dep.svg`, bio: "کافه و دوستان", digits: 120 },
+  { username: "parsa", name: "پارسا", avatar: `${TEEN_AVATARS_BASE}/naroto.svg`, bio: "انیمه و گیم", digits: 90 },
+  { username: "narges", name: "نرگس", avatar: `${TEEN_AVATARS_BASE}/skull.svg`, bio: "موسیقی و هنر", digits: 300 },
+  { username: "amir_digi", name: "امیر", avatar: `${TEEN_AVATARS_BASE}/wiking.svg`, bio: "کتاب و سفر", digits: 180 },
+  { username: "dorsa", name: "درسا", avatar: `${TEEN_AVATARS_BASE}/cap.svg`, bio: "ورزش و سلامتی", digits: 220 },
+];
+
+function searchUsers(query: string): UserProfile[] {
+  const q = query.trim().toLowerCase();
+  if (!q) return [];
+  return SEARCHABLE_USERS.filter(
+    (u) =>
+      u.username.toLowerCase().includes(q) ||
+      u.name.includes(query.trim()) ||
+      u.name.toLowerCase().includes(q)
+  );
+}
+
 // Gift card config: amount, title, icon from public/icons/gift
 const GIFT_CARDS = [
   { amount: 100, title: "هدیه ۱۰۰ دیجیت", icon: "/icons/gift/small.svg" },
@@ -32,25 +67,19 @@ const GiftIconWhite = ({ className }: { className?: string }) => (
   </svg>
 );
 
-// Fixed result: علی رضایی with teen profile avatar (same style as Friends/Cafe)
-const GIFT_SEARCH_RESULT = {
-  username: "ali_rezaei",
-  name: "علی رضایی",
-  avatar: `${TEEN_AVATARS_BASE}/dep.svg`,
-  bio: "برنامه‌نویس و عاشق تکنولوژی",
-};
-
 const formatBalance = (n: number) => new Intl.NumberFormat("fa-IR").format(n);
 
 function GiveGiftDigit() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchedProfile, setSearchedProfile] = useState<typeof GIFT_SEARCH_RESULT | null>(null);
+  const [searchResults, setSearchResults] = useState<UserProfile[]>([]);
+  const [selectedProfile, setSelectedProfile] = useState<UserProfile | null>(null);
   const [selectedGiftAmount, setSelectedGiftAmount] = useState<number | null>(GIFT_CARDS[0].amount);
   const [giftMessage, setGiftMessage] = useState("");
   const [cardIndex, setCardIndex] = useState(0);
   const [parentDigitBalance, setParentDigitBalance] = useState(0);
   const sliderRef = useRef<HTMLDivElement>(null);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const submitSectionRef = useRef<HTMLDivElement>(null);
   const lastProgrammaticScrollAt = useRef<number>(0);
 
@@ -65,13 +94,11 @@ function GiveGiftDigit() {
     }
   }, []);
 
-  // Typing anything in the input shows علی رضایی
+  // Search: show multiple results when user types
   useEffect(() => {
-    if (searchQuery.trim()) {
-      setSearchedProfile(GIFT_SEARCH_RESULT);
-    } else {
-      setSearchedProfile(null);
-    }
+    const results = searchUsers(searchQuery);
+    setSearchResults(results);
+    if (!searchQuery.trim()) setSelectedProfile(null);
   }, [searchQuery]);
 
   const updateSelectedFromScroll = useCallback(() => {
@@ -94,27 +121,25 @@ function GiveGiftDigit() {
     return () => el.removeEventListener("scroll", updateSelectedFromScroll);
   }, [updateSelectedFromScroll]);
 
+  // When user first selects a recipient, reset gift card selection to first (slider stays at 0)
   useEffect(() => {
-    if (searchedProfile) {
+    if (selectedProfile) {
       setCardIndex(0);
       setSelectedGiftAmount(GIFT_CARDS[0].amount);
-      requestAnimationFrame(() => {
-        sliderRef.current?.scrollTo({ left: 0, behavior: "auto" });
-      });
     }
-  }, [searchedProfile]);
+  }, [selectedProfile]);
 
-  // Scroll to submit section when user selects a card so the button is easy to click
+  // Scroll page to submit section once when user first selects a recipient (not on every card change)
   useEffect(() => {
-    if (!searchedProfile || selectedGiftAmount == null) return;
+    if (!selectedProfile) return;
     const t = setTimeout(() => {
       submitSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
     }, 300);
     return () => clearTimeout(t);
-  }, [selectedGiftAmount, searchedProfile]);
+  }, [selectedProfile]);
 
   const handleGiveGift = () => {
-    if (!searchedProfile || !selectedGiftAmount || selectedGiftAmount <= 0 || selectedGiftAmount > parentDigitBalance) return;
+    if (!selectedProfile || !selectedGiftAmount || selectedGiftAmount <= 0 || selectedGiftAmount > parentDigitBalance) return;
 
     const parentWalletKey = "parentWallet";
     const stored = localStorage.getItem(parentWalletKey);
@@ -127,7 +152,7 @@ function GiveGiftDigit() {
     const activities = storedActivities ? JSON.parse(storedActivities) : [];
     activities.unshift({
       id: `gift_${Date.now()}`,
-      title: `هدیه دادن دیجیت به ${searchedProfile.name}`,
+      title: `هدیه دادن دیجیت به ${selectedProfile.name}`,
       amount: selectedGiftAmount,
       type: "expense",
       date: Date.now(),
@@ -170,32 +195,90 @@ function GiveGiftDigit() {
           />
         </div>
 
-        {/* Result: علی رضایی with teen profile avatar */}
-        {searchedProfile ? (
-          <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
-            <div className="flex items-center gap-3">
-              <img
-                src={searchedProfile.avatar}
-                alt={searchedProfile.name}
-                className="w-12 h-12 rounded-full object-cover object-top border-2 border-[#7e4bd0]"
-              />
-              <div className="flex-1">
-                <p className="font-bold text-gray-900">{searchedProfile.name}</p>
-                <p className="text-xs text-gray-500">@{searchedProfile.username}</p>
-                {searchedProfile.bio && (
-                  <p className="text-xs text-gray-600 mt-1">{searchedProfile.bio}</p>
-                )}
+        {/* Search results: multiple users with more data */}
+        {searchQuery.trim() && (
+          <div className="space-y-2">
+            <p className="text-sm font-semibold text-gray-700">
+              {searchResults.length > 0
+                ? `${searchResults.length} نفر یافت شد — یکی را انتخاب کنید`
+                : "نتیجه‌ای یافت نشد"}
+            </p>
+            {searchResults.length > 0 && (
+              <div className="max-h-64 overflow-y-auto space-y-2 pr-1 no-scrollbar">
+                {searchResults.map((user) => (
+                  <motion.div
+                    key={user.username}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => setSelectedProfile(user)}
+                    className={`bg-white border rounded-xl p-3 shadow-sm cursor-pointer transition-all flex items-center gap-3 ${
+                      selectedProfile?.username === user.username
+                        ? "border-[#7e4bd0] ring-2 ring-[#7e4bd0]/30"
+                        : "border-gray-200 hover:border-[#7e4bd0]/50"
+                    }`}
+                  >
+                    <img
+                      src={user.avatar}
+                      alt={user.name}
+                      className="w-12 h-12 rounded-full object-cover object-top border-2 border-gray-200 shrink-0"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-gray-900 truncate">{user.name}</p>
+                      <p className="text-xs text-gray-500 dir-ltr text-right">@{user.username}</p>
+                      {user.bio && (
+                        <p className="text-xs text-gray-600 mt-0.5 line-clamp-2">{user.bio}</p>
+                      )}
+                      {user.digits != null && (
+                        <p className="text-xs text-amber-600 mt-1">
+                          موجودی: {formatBalance(user.digits)} دیجیت
+                        </p>
+                      )}
+                    </div>
+                    {selectedProfile?.username === user.username && (
+                      <CheckIcon className="w-6 h-6 text-[#7e4bd0] shrink-0" strokeWidth={2.5} />
+                    )}
+                  </motion.div>
+                ))}
               </div>
-            </div>
+            )}
           </div>
-        ) : (
+        )}
+
+        {!searchQuery.trim() && !selectedProfile && (
           <div className="flex flex-col items-center justify-center py-12 text-gray-400">
             <img src={lineIconPaths.searchRiz} className="w-16 h-16 mb-2" alt="جستجو" />
             <p className="text-sm">نام کاربری را وارد کنید</p>
           </div>
         )}
 
-        {searchedProfile && (
+        {/* Selected recipient — visible when user is chosen for sending gift */}
+        {selectedProfile && (
+          <div className="bg-gradient-to-r from-[#7e4bd0]/10 to-amber-500/10 border-2 border-[#7e4bd0]/30 rounded-xl p-4 shadow-sm">
+            <p className="text-xs font-semibold text-gray-500 mb-2">هدیه به:</p>
+            <div className="flex items-center gap-3">
+              <img
+                src={selectedProfile.avatar}
+                alt={selectedProfile.name}
+                className="w-14 h-14 rounded-full object-cover object-top border-2 border-[#7e4bd0]"
+              />
+              <div className="flex-1 min-w-0">
+                <p className="font-bold text-gray-900">{selectedProfile.name}</p>
+                <p className="text-sm text-gray-500 dir-ltr text-right">@{selectedProfile.username}</p>
+                {selectedProfile.bio && (
+                  <p className="text-xs text-gray-600 mt-1">{selectedProfile.bio}</p>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedProfile(null)}
+                className="text-sm font-medium text-[#7e4bd0] hover:underline shrink-0"
+              >
+                تغییر
+              </button>
+            </div>
+          </div>
+        )}
+
+        {selectedProfile && (
           <>
             <div className="space-y-3">
               <label className="block text-sm font-semibold text-gray-700">
@@ -212,36 +295,25 @@ function GiveGiftDigit() {
                   return (
                     <motion.div
                       key={card.amount}
+                      ref={(el) => {
+                        if (cardRefs.current) cardRefs.current[index] = el;
+                      }}
                       role="button"
                       tabIndex={0}
                       whileTap={{ scale: 0.98 }}
                       onClick={() => {
-                        const el = sliderRef.current;
-                        if (!el) return;
-                        const cardWidth = el.offsetWidth * 0.88 + 12;
-                        const isRtl = document.documentElement.dir === "rtl" || document.documentElement.getAttribute("dir") === "rtl";
                         setCardIndex(index);
                         setSelectedGiftAmount(card.amount);
                         lastProgrammaticScrollAt.current = Date.now();
-                        el.scrollTo({
-                          left: isRtl ? -index * cardWidth : index * cardWidth,
-                          behavior: "smooth",
-                        });
+                        cardRefs.current[index]?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
                       }}
                       onKeyDown={(e) => {
                         if (e.key === "Enter" || e.key === " ") {
                           e.preventDefault();
-                          const el = sliderRef.current;
-                          if (!el) return;
-                          const cardWidth = el.offsetWidth * 0.88 + 12;
-                          const isRtl = document.documentElement.dir === "rtl" || document.documentElement.getAttribute("dir") === "rtl";
                           setCardIndex(index);
                           setSelectedGiftAmount(card.amount);
                           lastProgrammaticScrollAt.current = Date.now();
-                          el.scrollTo({
-                            left: isRtl ? -index * cardWidth : index * cardWidth,
-                            behavior: "smooth",
-                          });
+                          cardRefs.current[index]?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
                         }
                       }}
                       className={`flex-[0_0_88%] min-w-[88%] snap-start snap-always shrink-0 rounded-2xl overflow-hidden shadow-lg transition-all my-4 mx-2 ${

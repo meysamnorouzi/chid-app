@@ -223,13 +223,13 @@ function WalletSaving() {
     if (hours < 24) {
       if (hours === 0) {
         const minutes = Math.floor(diff / (1000 * 60));
-        return minutes < 1 ? "همین الان" : `${minutes} دقیقه پیش`;
+        return minutes < 1 ? "همین الان" : `${minutes.toLocaleString("fa-IR")} دقیقه پیش`;
       }
-      return `${hours} ساعت پیش`;
+      return `${hours.toLocaleString("fa-IR")} ساعت پیش`;
     }
     const days = Math.floor(hours / 24);
     if (days === 1) return "دیروز";
-    if (days < 7) return `${days} روز پیش`;
+    if (days < 7) return `${days.toLocaleString("fa-IR")} روز پیش`;
     return date.toLocaleDateString("fa-IR", { month: "long", day: "numeric" });
   };
 

@@ -45,7 +45,7 @@ const ProgressIndicator = ({ currentStep }: { currentStep: number }) => {
                 </svg>
               ) : (
                 <span className={`text-sm font-medium transition-all duration-500 ${isActive ? 'text-white animate-number-fade' : 'text-gray-800'}`}>
-                  {stepNumber}
+                  {stepNumber.toLocaleString("fa-IR")}
                 </span>
               )}
             </div>

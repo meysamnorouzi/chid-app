@@ -262,11 +262,11 @@ function MessagesPage() {
     const minutes = Math.floor(diff / (1000 * 60));
 
     if (minutes < 1) return "همین الان";
-    if (minutes < 60) return `${minutes} دقیقه پیش`;
-    if (hours < 24) return `${hours} ساعت پیش`;
+    if (minutes < 60) return `${minutes.toLocaleString("fa-IR")} دقیقه پیش`;
+    if (hours < 24) return `${hours.toLocaleString("fa-IR")} ساعت پیش`;
     const days = Math.floor(hours / 24);
     if (days === 1) return "دیروز";
-    if (days < 7) return `${days} روز پیش`;
+    if (days < 7) return `${days.toLocaleString("fa-IR")} روز پیش`;
     return date.toLocaleDateString("fa-IR", { month: "long", day: "numeric" });
   };
 

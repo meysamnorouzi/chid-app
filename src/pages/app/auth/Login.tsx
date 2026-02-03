@@ -64,18 +64,19 @@ const Login = () => {
   };
 
   return (
-    <div className="flex flex-col w-full min-h-screen md:justify-center md:items-center md:bg-gray-50">
-      <div className="w-full flex flex-col md:max-w-md md:bg-white md:rounded-2xl md:shadow-lg md:overflow-hidden">
-        <div className="w-full flex justify-center items-center bg-[#7e4bd0] p-12 min-h-[300px] rounded-b-3xl md:min-h-[200px] md:rounded-t-2xl md:rounded-b-none">
+    <div className="flex flex-col w-full h-full min-h-0 md:justify-center md:items-center md:bg-gray-50 md:min-h-screen">
+      <div className="w-full flex flex-col h-full min-h-0 md:h-auto md:max-w-md md:bg-white md:rounded-2xl md:shadow-lg md:overflow-hidden">
+        {/* Top section: same height on all auth pages; smaller on mobile to fit one view */}
+        <div className="w-full shrink-0 flex justify-center items-center bg-[#7e4bd0] h-[100px] py-4 px-6 rounded-b-3xl md:h-[200px] md:min-h-[200px] md:py-12 md:px-12 md:rounded-t-2xl md:rounded-b-none">
           <img
             src="/logo/cheshmak.gif"
             alt=""
-            className="w-40 -mt-14"
+            className="w-20 h-20 object-contain md:w-40 md:-mt-14"
           />
         </div>
-        <div className="flex flex-col w-full items-center justify-start flex-1 pt-10 p-4 md:pt-0 md:p-8">
-          <div className="w-full mb-8 md:mb-0">
-            <div className="flex flex-col gap-3">
+        <div className="flex-1 min-h-0 flex flex-col w-full items-center justify-start pt-4 pb-4 px-4 overflow-y-auto md:pt-0 md:p-8 md:overflow-visible">
+          <div className="w-full mb-4 md:mb-0">
+            <div className="flex flex-col gap-2 md:gap-3">
             {error && (
               <div className="w-full p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm text-center">
                 {error}
@@ -109,7 +110,7 @@ const Login = () => {
               isNumberOrLink={true}
               required
             />
-          <div className="flex gap-2 w-full mb-5">
+          <div className="flex gap-2 w-full mb-3 md:mb-5">
             <p>رمزعبور رو فراموش کردی؟</p>
             <p 
               className=" text-[#7e4bd0] cursor-pointer hover:underline"
@@ -121,7 +122,7 @@ const Login = () => {
           <button
             type="button"
             onClick={() => navigate('/qrcode')}
-            className="w-full border border-[#7e4bd0] hover:bg-gray-800 disabled:bg-gray-400 disabled:cursor-not-allowed text-[#7e4bd0] font-semibold py-3.5 rounded-xl  shadow-gray-300 transition-all active:scale-[0.98]"
+            className="w-full border border-[#7e4bd0] hover:bg-gray-800 disabled:bg-gray-400 disabled:cursor-not-allowed text-[#7e4bd0] font-semibold py-3 rounded-xl shadow-gray-300 transition-all active:scale-[0.98] md:py-3.5"
           >
             ورود با کیوارکد
           </button>
@@ -129,12 +130,12 @@ const Login = () => {
             type="button"
             onClick={handleLogin}
             disabled={isLoading}
-            className="w-full bg-[#7e4bd0] hover:bg-gray-800 disabled:bg-gray-400 border border-[#7e4bd0] disabled:cursor-not-allowed text-white font-semibold py-3.5 rounded-xl  shadow-gray-300 transition-all active:scale-[0.98]"
+            className="w-full bg-[#7e4bd0] hover:bg-gray-800 disabled:bg-gray-400 border border-[#7e4bd0] disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl shadow-gray-300 transition-all active:scale-[0.98] md:py-3.5"
           >
             {isLoading ? 'در حال ورود...' : 'ورود به دیجی تین'}
           </button>
 
-          <div className="flex gap-2 w-full mt-8 justify-center text-center">
+          <div className="flex gap-2 w-full mt-4 md:mt-8 justify-center text-center">
             <p>اکانت نداری؟</p>
             <p 
               className=" text-[#7e4bd0] cursor-pointer hover:underline"

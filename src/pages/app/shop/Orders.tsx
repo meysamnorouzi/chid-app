@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { formatPrice } from "../../../utils/priceUtils";
+import { formatPrice, formatNumber } from "../../../utils/priceUtils";
 import { useModal } from "../../../contexts/ModalContext";
 
 interface OrderItem {
@@ -97,7 +97,7 @@ const Orders = () => {
                 <p className="text-xs text-gray-500">{order.orderDate}</p>
               </div>
               <span
-                className={`px-3 py-1 rounded-full h-6 text-xs font-semibold ${getStatusBadgeColor(
+                className={`shrink-0 whitespace-nowrap px-3 py-1 rounded-full h-6 text-xs font-semibold ${getStatusBadgeColor(
                   order.statusBadge
                 )}`}
               >
@@ -115,7 +115,7 @@ const Orders = () => {
                     </p>
                     <div className="flex justify-between">
                       <span className="text-xs">
-                        تعداد: {item.quantity}
+                        تعداد: {formatNumber(item.quantity)}
                       </span>
                    
                     </div>
@@ -169,7 +169,7 @@ const Orders = () => {
                 <div className="flex justify-between">
                   <h3 className="font-bold text-lg">جزئیات سفارش</h3>
                   <span
-                    className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusBadgeColor(
+                    className={`shrink-0 whitespace-nowrap px-3 py-1 rounded-full text-xs font-semibold ${getStatusBadgeColor(
                       selectedOrder.statusBadge
                     )}`}
                   >
@@ -200,7 +200,7 @@ const Orders = () => {
                       )}
                       <div className="flex justify-between mt-1">
                         <span className="text-xs">
-                          تعداد: {item.quantity}
+                          تعداد: {formatNumber(item.quantity)}
                         </span>
          
                       </div>

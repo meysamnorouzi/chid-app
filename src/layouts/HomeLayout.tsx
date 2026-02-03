@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { createContext, useCallback, useContext, useRef } from "react";
 import { Outlet } from "react-router-dom";
 import { ThemeLayout } from "../theme";
 import { ToastProvider } from "../components/shared/Toast";
@@ -8,6 +9,16 @@ import { useNavigate } from "react-router-dom";
 import { lineIconPaths } from "../utils/lineIcons";
 import { LineHomeIcon } from "../components/shared/LineHomeIcon";
 import ProfileMenuModal from "../components/shared/Wallet/ProfileMenuModal";
+
+/** Register a callback to run when the Boz (bottom-left) image is tapped. Used by Home to show first-welcome onboarding. */
+const BozClickContext = createContext<{
+  registerBozClick: (handler: (() => void) | null) => void;
+} | null>(null);
+
+export function useBozClick() {
+  const ctx = useContext(BozClickContext);
+  return ctx;
+}
 
 interface HomeLayoutProps {
   children?: ReactNode;
@@ -23,6 +34,10 @@ const HomeLayout = ({ children }: HomeLayoutProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const navigate = useNavigate();
+  const bozClickRef = useRef<(() => void) | null>(null);
+  const registerBozClick = useCallback((handler: (() => void) | null) => {
+    bozClickRef.current = handler;
+  }, []);
 
   /* Same icons and order as bottom nav (wallet, store, goals, cafe) + profile */
   const menuItems = [
@@ -35,26 +50,34 @@ const HomeLayout = ({ children }: HomeLayoutProps) => {
 
   return (
     <ThemeLayout>
-      <ToastProvider position="top-center" maxToasts={3}>
-        {/* 100dvh on mobile keeps bottom menu/boz in view; 100vh fallback from h-screen */}
-        <div
-          className="flex flex-col relative w-full overflow-hidden min-h-0 h-screen max-h-screen"
-          style={{ height: '100dvh', maxHeight: '100dvh' }}
-          dir="rtl"
-        >
-          {/* Main Content - fills remaining space, no overflow */}
-          <main className="flex-1 min-h-0 overflow-hidden flex flex-col" role="main">
-            {children || <Outlet />}
-          </main>
+      <BozClickContext.Provider value={{ registerBozClick }}>
+        <ToastProvider position="top-center" maxToasts={3}>
+          {/* 100dvh on mobile keeps bottom menu/boz in view; 100vh fallback from h-screen */}
+          <div
+            className="flex flex-col relative w-full overflow-hidden min-h-0 h-screen max-h-screen"
+            style={{ height: '100dvh', maxHeight: '100dvh' }}
+            dir="rtl"
+          >
+            {/* Main Content - fills remaining space, no overflow */}
+            <main className="flex-1 min-h-0 overflow-hidden flex flex-col" role="main">
+              {children || <Outlet />}
+            </main>
 
-          {/* Boz icon - bottom left, inside viewport */}
-          <div className="absolute bottom-0 left-0 z-40 p-4 pointer-events-none">
-            <img
-              src="/icons/boz.svg"
-              className="w-32 h-62 object-contain "
-              alt="Boz"
-            />
-          </div>
+            {/* Boz icon - bottom left; tap shows default onboarding (first-welcome) */}
+            <div
+              className="absolute bottom-0 left-0 z-40 p-4 cursor-pointer touch-manipulation"
+              onClick={() => bozClickRef.current?.()}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); bozClickRef.current?.(); } }}
+              role="button"
+              tabIndex={0}
+              aria-label="نمایش راهنمای خوش‌آمد"
+            >
+              <img
+                src="/icons/boz.svg"
+                className="w-32 h-62 object-contain pointer-events-none select-none"
+                alt="Boz"
+              />
+            </div>
 
           {/* Menu Button - Bottom Right, inside viewport */}
           <div className="absolute bottom-6 right-6 z-50">
@@ -136,18 +159,25 @@ const HomeLayout = ({ children }: HomeLayoutProps) => {
                               transition={{ duration: 0.3 }}
                             />
                             
-                            {/* Icon - same as bottom nav */}
-                            <motion.img
-                              src={item.iconSrc}
-                              alt={item.label}
-                              className="w-7 h-7 relative z-10 object-contain"
-                              style={{ 
-                                filter: 'brightness(0) saturate(100%) invert(32%) sepia(95%) saturate(3000%) hue-rotate(245deg) brightness(0.95) contrast(1.1)',
-                                WebkitFilter: 'brightness(0) saturate(100%) invert(32%) sepia(95%) saturate(3000%) hue-rotate(245deg) brightness(0.95) contrast(1.1)'
+                            {/* Icon - mask + background for exact purple on all devices (avoids iOS filter→pink shift) */}
+                            <motion.div
+                              className="w-7 h-7 relative z-10 shrink-0"
+                              role="img"
+                              aria-hidden
+                              style={{
+                                backgroundColor: "#7e4bd0",
+                                maskImage: `url(${item.iconSrc})`,
+                                maskSize: "contain",
+                                maskRepeat: "no-repeat",
+                                maskPosition: "center",
+                                WebkitMaskImage: `url(${item.iconSrc})`,
+                                WebkitMaskSize: "contain",
+                                WebkitMaskRepeat: "no-repeat",
+                                WebkitMaskPosition: "center",
                               }}
-                              whileHover={{ 
+                              whileHover={{
                                 rotate: [0, -10, 10, -10, 0],
-                                transition: { duration: 0.5 }
+                                transition: { duration: 0.5 },
                               }}
                             />
                           </motion.button>
@@ -237,6 +267,7 @@ const HomeLayout = ({ children }: HomeLayoutProps) => {
           onClose={() => setIsProfileModalOpen(false)}
         />
       </ToastProvider>
+      </BozClickContext.Provider>
     </ThemeLayout>
   );
 };

@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { lineIconPaths } from "../../utils/lineIcons";
 import { InteractiveMap, type Hotspot, type ClickableBounds } from "../../components/InteractiveMap";
 import { OnboardingDialogue } from "../../components/shared/OnboardingDialogue";
+import ProfileMenuModal from "../../components/shared/Wallet/ProfileMenuModal";
+import { useBozClick } from "../../layouts/HomeLayout";
 
 const ONBOARDING_STORAGE_KEY = "chid_onboarding_seen";
 const FIRST_WELCOME_STORAGE_KEY = "child_first_welcome_seen";
@@ -186,12 +188,14 @@ function setOnboardingSeen(id: string) {
 
 const Home = () => {
   const navigate = useNavigate();
+  const bozClick = useBozClick();
   const [onboarding, setOnboarding] = useState<{
     hotspotId: string;
     path: string;
     label: string;
   } | null>(null);
   const [showFirstWelcome, setShowFirstWelcome] = useState(false);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
   // Show first-time welcome on initial visit
   useEffect(() => {
@@ -201,6 +205,13 @@ const Home = () => {
     }
   }, []);
 
+  // Tap on Boz (bottom-left image) shows the default onboarding text every time
+  useEffect(() => {
+    if (!bozClick) return;
+    bozClick.registerBozClick(() => setShowFirstWelcome(true));
+    return () => bozClick.registerBozClick(null);
+  }, [bozClick]);
+
   const handleFirstWelcomeClose = useCallback(() => {
     localStorage.setItem(FIRST_WELCOME_STORAGE_KEY, "true");
     setShowFirstWelcome(false);
@@ -208,9 +219,12 @@ const Home = () => {
 
   const handleHotspotClick = useCallback(
     (hotspot: { id: string; path: string }) => {
+      const isProfileHotspot = hotspot.id === "profile-shape" || hotspot.path === "/user-info";
+
       // Don't show hotspot onboarding while first welcome is visible
       if (showFirstWelcome) {
-        if (hotspot.path) navigate(hotspot.path);
+        if (isProfileHotspot) setIsProfileModalOpen(true);
+        else if (hotspot.path) navigate(hotspot.path);
         return;
       }
       const isOnboardingHotspot = ONBOARDING_HOTSPOTS.includes(
@@ -224,6 +238,8 @@ const Home = () => {
           path: hotspot.path,
           label: HOTSPOT_LABELS[hotspot.id] ?? "این بخش",
         });
+      } else if (isProfileHotspot) {
+        setIsProfileModalOpen(true);
       } else if (hotspot.path) {
         navigate(hotspot.path);
       }
@@ -234,7 +250,9 @@ const Home = () => {
   const handleOnboardingClose = useCallback(() => {
     if (onboarding) {
       setOnboardingSeen(onboarding.hotspotId);
+      const wasProfileOnboarding = onboarding.hotspotId === "profile-shape";
       setOnboarding(null);
+      if (wasProfileOnboarding) setIsProfileModalOpen(true);
     }
   }, [onboarding]);
 
@@ -267,7 +285,7 @@ const Home = () => {
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
               className="relative cursor-pointer"
-              onClick={() => navigate('/user-info')}
+              onClick={() => setIsProfileModalOpen(true)}
             >
               <img
                 src={userAvatar.startsWith('/') ? userAvatar : `/logo/teens profiles/${userAvatar}`}
@@ -312,7 +330,7 @@ const Home = () => {
             </div>
             {/* Notification Badge - Optional */}
             <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center border-2 border-white">
-              <span className="text-[10px] font-bold text-white">3</span>
+              <span className="text-[10px] font-bold text-white">۳</span>
             </div>
           </motion.div>
         </div>
@@ -326,6 +344,12 @@ const Home = () => {
           onHotspotClick={handleHotspotClick}
         />
       </div>
+
+      {/* Profile popover - same as profile avatar/menu elsewhere in app */}
+      <ProfileMenuModal
+        isOpen={isProfileModalOpen}
+        onClose={() => setIsProfileModalOpen(false)}
+      />
 
       {/* First-time welcome - only on first visit */}
       <AnimatePresence>
