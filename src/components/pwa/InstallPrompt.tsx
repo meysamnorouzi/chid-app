@@ -1,8 +1,8 @@
 /**
  * PWA Install Prompt
- * - Android/Chrome: when beforeinstallprompt fires, shows "نصب" button; otherwise shows instructions.
- * - iOS Safari: shows instructions (Share → Add to Home Screen).
- * - Shown after a short delay so it appears once the app is ready.
+ * - Android/Chrome: when beforeinstallprompt fires, shows "نصب" button; click triggers native install.
+ * - iOS Safari: shows instructions (Share → Add to Home Screen) - no programmatic install available.
+ * - Captures beforeinstallprompt early (index.html) so we never miss it during splash/load.
  */
 
 import { useState, useEffect } from 'react';
@@ -12,9 +12,16 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
 }
 
+declare global {
+  interface Window {
+    __beforeInstallPrompt?: BeforeInstallPromptEvent | null;
+  }
+}
+
 const DISMISS_KEY = 'pwa-install-dismissed';
 const DISMISS_DAYS = 7;
 const SHOW_DELAY_MS = 2500;
+const ANDROID_FALLBACK_DELAY_MS = 10000; // Wait longer before showing "go to menu" so beforeinstallprompt has time to fire
 
 function isStandalone(): boolean {
   return (
@@ -53,17 +60,23 @@ export function InstallPrompt() {
     setIsInstalled(installed);
     if (installed) return;
 
+    // Use early-captured prompt from index.html (caught before React/splash loads)
+    const earlyPrompt = window.__beforeInstallPrompt;
+    if (earlyPrompt) {
+      setDeferredPrompt(earlyPrompt);
+      setShowPrompt(true);
+      window.__beforeInstallPrompt = null; // consumed
+    }
+
     const handler = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
       setShowPrompt(true);
-      setShowAndroidHint(false); // native prompt takes over
+      setShowAndroidHint(false);
     };
     window.addEventListener('beforeinstallprompt', handler);
 
-    const delay = setTimeout(() => {
-      setReadyToShow(true);
-    }, SHOW_DELAY_MS);
+    const delay = setTimeout(() => setReadyToShow(true), SHOW_DELAY_MS);
 
     return () => {
       window.removeEventListener('beforeinstallprompt', handler);
@@ -79,8 +92,10 @@ export function InstallPrompt() {
       setShowIOSHint(true);
       return;
     }
+    // Android: only show "go to menu" fallback after a longer delay, giving beforeinstallprompt time to fire
     if (isAndroid() && !deferredPrompt) {
-      setShowAndroidHint(true);
+      const t = setTimeout(() => setShowAndroidHint(true), ANDROID_FALLBACK_DELAY_MS);
+      return () => clearTimeout(t);
     }
   }, [readyToShow, isInstalled, deferredPrompt]);
 
