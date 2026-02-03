@@ -105,11 +105,11 @@ const Register = () => {
     <div className="flex flex-col w-full h-full min-h-0 md:justify-center md:items-center md:bg-gray-50 md:min-h-screen">
       <div className="w-full flex flex-col h-full min-h-0 md:h-auto md:max-w-md md:bg-white md:rounded-2xl md:shadow-lg md:overflow-hidden">
         {/* Top section: same height on all auth pages */}
-        <div className="w-full shrink-0 flex justify-center items-center bg-[#7e4bd0] h-[100px] py-4 px-6 rounded-b-3xl md:h-[200px] md:min-h-[200px] md:py-12 md:px-12 md:rounded-t-2xl md:rounded-b-none">
+        <div className="w-full shrink-0 flex justify-center items-center bg-[#7e4bd0] h-[250px] py-4 px-6 rounded-b-3xl md:h-[250px] md:min-h-[250px] md:py-12 md:px-12 md:rounded-t-2xl md:rounded-b-none">
           <img
             src="/logo/Form.gif"
             alt=""
-            className="w-20 h-20 object-contain md:w-40 md:-mt-14"
+            className="w-40 h-40 object-contain md:w-40 md:-mt-14"
           />
         </div>
         <div className="flex-1 min-h-0 flex flex-col w-full items-center justify-start pt-4 pb-4 px-4 overflow-y-auto md:justify-center md:pt-0 md:p-8 md:overflow-visible">

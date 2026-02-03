@@ -7,7 +7,7 @@ const PasswordNot = () => {
     <div className="flex flex-col w-full h-full min-h-0 md:justify-center md:items-center md:bg-gray-50 md:min-h-screen">
       <div className="w-full flex flex-col h-full min-h-0 md:h-auto md:max-w-md md:bg-white md:rounded-2xl md:shadow-lg md:overflow-hidden">
         {/* Top section: same height on all auth pages */}
-        <div className="w-full shrink-0 flex justify-center items-center bg-[#7e4bd0] h-[100px] py-4 px-6 rounded-b-3xl md:h-[200px] md:min-h-[200px] md:py-12 md:px-12 md:rounded-t-2xl md:rounded-b-none">
+        <div className="w-full shrink-0 flex justify-center items-center bg-[#7e4bd0] h-[250px] py-4 px-6 rounded-b-3xl md:h-[250px] md:min-h-[250px] md:py-12 md:px-12 md:rounded-t-2xl md:rounded-b-none">
           <img
             src="/gif/Done.gif"
             alt=""
