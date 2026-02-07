@@ -24,7 +24,7 @@ export function useCircleReveal() {
 }
 
 const REVEAL_DURATION = 0.7;
-const EASE = [0.33, 1, 0.68, 1]; // easeOutExpo — fast start, smooth finish
+const EASE = [0.33, 1, 0.68, 1] as const; // easeOutExpo — fast start, smooth finish
 
 function CircleRevealOverlay({
   state,
