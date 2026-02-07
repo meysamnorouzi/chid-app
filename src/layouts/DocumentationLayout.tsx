@@ -49,7 +49,6 @@ const DocumentationContent = ({ children }: DocumentationLayoutProps) => {
   return (
     <div 
       className="min-h-screen transition-colors duration-300"
-      style={{ backgroundColor: theme.background.body }}
     >
       <div className="app-shell">
         <div className="flex w-full h-screen overflow-hidden">
@@ -136,7 +135,6 @@ const DocumentationLoginContent = ({ children }: DocumentationLayoutProps) => {
     <div
       className="min-h-screen transition-colors duration-300"
       dir="ltr"
-      style={{ backgroundColor: theme.background.body }}
     >
       <div className="app-shell">
         <main className="w-full flex-1" role="main">

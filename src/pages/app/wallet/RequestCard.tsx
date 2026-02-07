@@ -347,7 +347,7 @@ function RequestCard() {
         )}
       </div>
 
-      <div className="px-4 md:px-6 lg:px-8 py-6 md:py-8 lg:py-10 mx-auto pb-32 md:pb-24 max-w-6xl min-h-screen flex md:items-center">
+      <div className="px-4 pt-6 md:px-6 lg:px-8 lg:py-10 mx-auto pb-32 md:pb-24 max-w-6xl flex md:items-center bg-gray-50">
         <AnimatePresence mode="wait">
           {/* Step 1: Intro - Description & Continue */}
           {currentStep === "intro" && (

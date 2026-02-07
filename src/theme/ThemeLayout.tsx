@@ -23,12 +23,7 @@ const ThemeLayout = ({ children }: ThemeLayoutProps) => {
 
   return (
     <div
-      className="min-h-screen transition-colors duration-300"
-      style={{
-        backgroundColor: theme.background.body,
-        color: theme.mode === 'dark' ? theme.colors.light.inverse : theme.colors.dark.default,
-      }}
-    >
+      className="min-h-screen transition-colors duration-300">
       <div className="app-shell">
         {children}
       </div>

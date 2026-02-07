@@ -22,7 +22,7 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
           className="flex flex-col bg-white h-[100dvh] max-h-[100dvh] md:h-auto md:min-h-screen md:max-h-none"
           dir="rtl"
         >
-          <main className="flex-1 min-h-0 flex flex-col overflow-hidden" role="main">
+          <main className="flex-1 min-h-0 flex flex-col" role="main">
             {children || <Outlet />}
           </main>
         </div>

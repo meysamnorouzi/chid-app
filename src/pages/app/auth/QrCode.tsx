@@ -12,6 +12,35 @@ const QrCode = () => {
   const [error, setError] = useState<string>('');
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const scannerId = 'qr-scanner-preview';
+  const isMountedRef = useRef(true);
+
+  // Stop scanner and release camera; safe to call from cleanup. Ref is cleared so no callback uses it after.
+  const stopScannerCleanup = () => {
+    const scanner = scannerRef.current;
+    scannerRef.current = null;
+    if (!scanner) return;
+    scanner
+      .stop()
+      .then(() => {
+        try {
+          scanner.clear();
+        } catch {
+          // ignore
+        }
+      })
+      .catch(() => {
+        // ignore; avoid unhandled rejection
+      });
+    // Force-stop any remaining video tracks (e.g. from library's stream)
+    try {
+      document.querySelectorAll('video').forEach((video) => {
+        const src = video.srcObject as MediaStream | null;
+        if (src?.getTracks) src.getTracks().forEach((t) => t.stop());
+      });
+    } catch {
+      // ignore
+    }
+  };
 
   // Check if camera permission is already granted on mount
   useEffect(() => {
@@ -19,11 +48,20 @@ const QrCode = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Start scanner if permission is granted
+  // On unmount only: stop camera so leaving the page never leaves it on or freezes the app
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+      stopScannerCleanup();
+    };
+  }, []);
+
+  // Start scanner if permission is granted and user hasn't scanned yet (camera stays off after scan until "اسکن مجدد")
   useEffect(() => {
     let mounted = true;
 
-    if (hasCameraPermission === true && !isScanning && !scannerRef.current && mounted) {
+    if (hasCameraPermission === true && !isScanning && !scannerRef.current && !loginLink && mounted) {
       // Wait for the element to be rendered in DOM
       const checkAndStart = () => {
         const element = document.getElementById(scannerId);
@@ -43,18 +81,9 @@ const QrCode = () => {
 
     return () => {
       mounted = false;
-      if (scannerRef.current) {
-        scannerRef.current
-          .stop()
-          .then(() => {
-            scannerRef.current?.clear();
-          })
-          .catch((err: unknown) => {
-            console.error('Error stopping scanner:', err);
-          });
-      }
+      stopScannerCleanup();
     };
-  }, [hasCameraPermission, isScanning]);
+  }, [hasCameraPermission, isScanning, loginLink]);
 
 
   const startScanner = async () => {
@@ -106,18 +135,19 @@ const QrCode = () => {
   };
 
   const handleScanSuccess = async (decodedText: string) => {
+    if (!isMountedRef.current) return;
     // Stop scanning
     if (scannerRef.current) {
       try {
         await scannerRef.current.stop();
         scannerRef.current.clear();
         scannerRef.current = null;
-        setIsScanning(false);
+        if (isMountedRef.current) setIsScanning(false);
       } catch (err) {
         console.error('Error stopping scanner:', err);
       }
     }
-
+    if (!isMountedRef.current) return;
     // Set the scanned data to input
     setLoginLink(decodedText);
     setError(''); // Clear any previous errors

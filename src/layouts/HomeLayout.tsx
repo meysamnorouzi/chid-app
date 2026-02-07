@@ -182,9 +182,8 @@ const HomeLayout = ({ children }: HomeLayoutProps) => {
                             />
                           </motion.button>
 
-                          {/* Label Box - Positioned absolutely to the left; same link as icon */}
-                          <motion.button
-                            type="button"
+                          {/* Label Box - Positioned absolutely to the left */}
+                          <motion.div
                             initial={{ opacity: 0, x: -10 }}
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: -10 }}
@@ -192,20 +191,12 @@ const HomeLayout = ({ children }: HomeLayoutProps) => {
                               delay: index * 0.08 + 0.1,
                               duration: 0.3
                             }}
-                            onClick={() => {
-                              if (item.path === "/user-info") {
-                                setIsProfileModalOpen(true);
-                                setIsMenuOpen(false);
-                              } else {
-                                navigate(item.path);
-                                setIsMenuOpen(false);
-                              }
-                            }}
-                            className="absolute right-full mr-2 top-1/2 -translate-y-1/2 w-24 px-3 py-2 bg-white rounded-lg shadow-lg border border-gray-100 flex items-center justify-center cursor-pointer text-sm font-medium text-gray-700 text-center hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#7e4bd0]/30"
-                            aria-label={item.label}
+                            className="absolute right-full mr-2 top-1/2 -translate-y-1/2 w-24 px-3 py-2 bg-white rounded-lg shadow-lg border border-gray-100 flex items-center justify-center"
                           >
-                            {item.label}
-                          </motion.button>
+                            <span className="text-sm font-medium text-gray-700 text-center">
+                              {item.label}
+                            </span>
+                          </motion.div>
                         </div>
                       );
                     })}
